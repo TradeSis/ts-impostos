@@ -27,7 +27,7 @@ if (!empty($montamenu['menuHeader'])){
             <span class="material-symbols-outlined">menu_open</span>
         </div>
 
-        <a href="<?php echo URLROOT ?>/sistema" class="logo"><img src="../img/brand/white.png" width="150"></a>
+        <a href="<?php echo URLROOT ?>/painel" class="logo"><img src="../img/brand/white.png" width="150"></a>
 
         <div class=" col-md navbar navbar-expand navbar1">
             <ul class="navbar-nav mx-auto ml-4" id="novoMenu2">
