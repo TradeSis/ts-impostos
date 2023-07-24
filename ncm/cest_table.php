@@ -1,7 +1,6 @@
 <?php
 
-include_once '../head.php';
-include_once '../database/ncm.php';
+include_once(__DIR__ . '/../database/ncm.php');
 
 $filtroEntrada = null;
 $dadosCest = null;

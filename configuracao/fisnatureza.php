@@ -1,8 +1,7 @@
 <?php
 // gabriel 060623 15:06
 
-include_once('../head.php');
-include_once('../database/fisnatureza.php');
+include_once(__DIR__ . '/../database/fisnatureza.php');
 
 $naturezas = buscaNatureza();
 

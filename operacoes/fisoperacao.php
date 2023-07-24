@@ -1,11 +1,10 @@
 <?php
 // gabriel 060623 15:06
 
-include_once('../head.php');
-include_once('../database/fisoperacao.php');
-include_once('../database/fisatividade.php');
-include_once('../database/fisnatureza.php');
-include_once('../database/fisprocesso.php');
+include_once(__DIR__ . '/../database/fisoperacao.php');
+include_once(__DIR__ . '/../database/fisatividade.php');
+include_once(__DIR__ . '/../database/fisnatureza.php');
+include_once(__DIR__ . '/../database/fisprocesso.php');
 
 $atividades = buscaAtividade();
 $processos = buscaProcesso();

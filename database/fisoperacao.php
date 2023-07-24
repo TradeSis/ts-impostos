@@ -4,7 +4,7 @@
 if (session_status() === PHP_SESSION_NONE) {
 	session_start();
 }
-include_once('../conexao.php');
+include_once __DIR__ . "/../conexao.php";
 
 function buscaOperacao($idOperacao = null)
 {
@@ -13,7 +13,7 @@ function buscaOperacao($idOperacao = null)
 	$apiEntrada = array(
 		'idOperacao' => $idOperacao,
 	);
-	$operacao = chamaAPI(null, '/fiscal/fisoperacao', json_encode($apiEntrada), 'GET');
+	$operacao = chamaAPI(null, '/impostos/fisoperacao', json_encode($apiEntrada), 'GET');
 	return $operacao;
 }
 
@@ -32,7 +32,7 @@ if (isset($_GET['operacao'])) {
 			'idEntSai' => $_POST['idEntSai'],
 			'xfop' => $_POST['xfop']
 		);
-		$operacao = chamaAPI(null, '/fiscal/fisoperacao', json_encode($apiEntrada), 'PUT');
+		$operacao = chamaAPI(null, '/impostos/fisoperacao', json_encode($apiEntrada), 'PUT');
 	}
 
 	if ($operacao == "alterar") {
@@ -46,14 +46,14 @@ if (isset($_GET['operacao'])) {
 			'idEntSai' => $_POST['idEntSai'],
 			'xfop' => $_POST['xfop']
 		);
-		$operacao = chamaAPI(null, '/fiscal/fisoperacao', json_encode($apiEntrada), 'POST');
+		$operacao = chamaAPI(null, '/impostos/fisoperacao', json_encode($apiEntrada), 'POST');
 	}
 
 	if ($operacao == "excluir") {
 		$apiEntrada = array(
 			'idOperacao' => $_POST['idOperacao']
 		);
-		$operacao = chamaAPI(null, '/fiscal/fisoperacao', json_encode($apiEntrada), 'DELETE');
+		$operacao = chamaAPI(null, '/impostos/fisoperacao', json_encode($apiEntrada), 'DELETE');
 	}
 
 	if ($operacao == "filtrar") {
@@ -94,7 +94,7 @@ if (isset($_GET['operacao'])) {
 
 		$_SESSION['filtro_operacao'] = $apiEntrada;
 
-		$operacao = chamaAPI(null, '/fiscal/fisoperacao', json_encode($apiEntrada), 'GET');
+		$operacao = chamaAPI(null, '/impostos/fisoperacao', json_encode($apiEntrada), 'GET');
 
 		echo json_encode($operacao);
 		return $operacao;

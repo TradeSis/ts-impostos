@@ -1,7 +1,7 @@
 <?php
 // gabriel 060623 15:06
 
-include_once('../conexao.php');
+include_once __DIR__ . "/../conexao.php";
 
 function buscaAtividade($idAtividade=null)
 {
@@ -10,7 +10,7 @@ function buscaAtividade($idAtividade=null)
 	$apiEntrada = array(
 		'idAtividade' => $idAtividade,
 	);
-	$atividade = chamaAPI(null, '/fiscal/fisatividade', json_encode($apiEntrada), 'GET');
+	$atividade = chamaAPI(null, '/impostos/fisatividade', json_encode($apiEntrada), 'GET');
 	return $atividade;
 }
 
@@ -23,7 +23,7 @@ if (isset($_GET['operacao'])) {
 		$apiEntrada = array(
 			'nomeAtividade' => $_POST['nomeAtividade']
 		);
-		$atividade = chamaAPI(null, '/fiscal/fisatividade', json_encode($apiEntrada), 'PUT');
+		$atividade = chamaAPI(null, '/impostos/fisatividade', json_encode($apiEntrada), 'PUT');
 	}
 
 	if ($operacao=="alterar") {
@@ -31,14 +31,14 @@ if (isset($_GET['operacao'])) {
 			'idAtividade' => $_POST['idAtividade'],
 			'nomeAtividade' => $_POST['nomeAtividade']
 		);
-		$atividade = chamaAPI(null, '/fiscal/fisatividade', json_encode($apiEntrada), 'POST');
+		$atividade = chamaAPI(null, '/impostos/fisatividade', json_encode($apiEntrada), 'POST');
 	}
 	
 	if ($operacao=="excluir") {
 		$apiEntrada = array(
 			'idAtividade' => $_POST['idAtividade']
 		);
-		$atividade = chamaAPI(null, '/fiscal/fisatividade', json_encode($apiEntrada), 'DELETE');
+		$atividade = chamaAPI(null, '/impostos/fisatividade', json_encode($apiEntrada), 'DELETE');
 	}
 
 
