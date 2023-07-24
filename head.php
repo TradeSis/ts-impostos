@@ -3,7 +3,10 @@
 // Lucas 29032023 - modificado tempo da seção
 // Lucas 09032023 -  linha 5, foi adicionado parametro de tempo 
 // helio 26012023 16:16
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+	session_start();
+}
+
 include_once __DIR__ . "/../config.php";
 
 if (!isset($_SESSION['LAST_ACTIVITY']) || !isset($_SESSION['usuario'])) {

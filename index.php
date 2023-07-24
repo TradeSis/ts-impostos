@@ -1,4 +1,5 @@
 <?php
+include_once "head.php";
 include_once __DIR__ . "/../config.php";
 include_once ROOT . "/painel/index.php";
 include_once ROOT . "/sistema/database/montaMenu.php";
@@ -37,7 +38,7 @@ $configuracao = 1;
 
                 <?php if ($configuracao == 1) { ?>
                     <li class="nav-item">
-                        <a class="nav-link" id="ConfiguracaoImpostos-tab" data-toggle="tab" href="#ConfiguracaoImpostos" role="tab" aria-controls="ConfiguracaoImpostos" aria-selected="true" style="color:black" data-toggle="tooltip" data-placement="top" title="Configurações"><i class="bi bi-gear" style="font-size: 18px;"></i></a>
+                        <a class="nav-link" id="configuracao-tab" data-toggle="tab" href="#configuracao" role="tab" aria-controls="configuracao" aria-selected="true" style="color:black" data-toggle="tooltip" data-placement="top" title="Configurações"><i class="bi bi-gear" style="font-size: 18px;"></i></a>
                     </li>
                 <?php } ?>
             </ul>
@@ -53,8 +54,8 @@ $configuracao = 1;
                 <?php } ?>
 
                 <?php if ($configuracao == 1) { ?>
-                    <div class="tab-pane fade" id="ConfiguracaoImpostos" role="tabpanel" aria-labelledby="ConfiguracaoImpostos-tab">
-                        <?php include 'ConfiguracaoImpostos.php' ?>
+                    <div class="tab-pane fade" id="configuracao" role="tabpanel" aria-labelledby="configuracao-tab">
+                        <?php include 'configuracao.php' ?>
                     </div>
                 <?php } ?>
             </div>
