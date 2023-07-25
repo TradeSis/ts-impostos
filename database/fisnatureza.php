@@ -42,8 +42,7 @@ if (isset($_GET['operacao'])) {
 	}
 
 
-
-	header('Location: ../operacoes/fisnatureza.php');	
+	header('Location: ../configuracao?stab=fisnatureza');
 	
 }
 

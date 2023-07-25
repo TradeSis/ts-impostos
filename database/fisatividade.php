@@ -42,8 +42,8 @@ if (isset($_GET['operacao'])) {
 	}
 
 
-
-	header('Location: ../operacoes/fisatividade.php');	
+	
+	header('Location: ../configuracao?stab=fisatividade');
 	
 }
 
