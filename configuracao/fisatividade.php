@@ -1,11 +1,9 @@
 <?php
 // gabriel 060623 15:06
-
-include_once('../head.php');
-include_once('../database/fisatividade.php');
+include_once(__DIR__ . '/../head.php');
+include_once(__DIR__ . '/../database/fisatividade.php');
 
 $atividades = buscaAtividade();
-
 ?>
 
 <body class="bg-transparent">

@@ -3,7 +3,7 @@
 if (session_status() === PHP_SESSION_NONE) {
 	session_start();
 }
-include_once('../conexao.php');
+include_once __DIR__ . "/../conexao.php";
 
 function buscaNCM($Descricao = null, $codigoNcm = null)
 {
@@ -18,7 +18,7 @@ function buscaNCM($Descricao = null, $codigoNcm = null)
 
 	/* echo json_encode($apiEntrada);
 	return; */
-	$ncm = chamaAPI(null, '/fiscal/ncm', json_encode($apiEntrada), 'GET');
+	$ncm = chamaAPI(null, '/impostos/ncm', json_encode($apiEntrada), 'GET');
 
 	return $ncm;
 }
@@ -41,7 +41,7 @@ if (isset($_GET['operacao'])) {
 		$_SESSION['filtro_ncm'] = $apiEntrada;
 		//echo json_encode(($apiEntrada));
 		/* return; */
-		$ncm = chamaAPI(null, '/fiscal/ncm', json_encode($apiEntrada), 'GET');
+		$ncm = chamaAPI(null, '/impostos/ncm', json_encode($apiEntrada), 'GET');
 
 		echo json_encode($ncm);
 		return $ncm;

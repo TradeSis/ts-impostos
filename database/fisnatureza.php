@@ -1,7 +1,7 @@
 <?php
 // gabriel 060623 15:06
 
-include_once('../conexao.php');
+include_once __DIR__ . "/../conexao.php";
 
 function buscaNatureza($idNatureza=null)
 {
@@ -10,7 +10,7 @@ function buscaNatureza($idNatureza=null)
 	$apiEntrada = array(
 		'idNatureza' => $idNatureza,
 	);
-	$natureza = chamaAPI(null, '/fiscal/fisnatureza', json_encode($apiEntrada), 'GET');
+	$natureza = chamaAPI(null, '/impostos/fisnatureza', json_encode($apiEntrada), 'GET');
 	return $natureza;
 }
 
@@ -23,7 +23,7 @@ if (isset($_GET['operacao'])) {
 		$apiEntrada = array(
 			'nomeNatureza' => $_POST['nomeNatureza']
 		);
-		$natureza = chamaAPI(null, '/fiscal/fisnatureza', json_encode($apiEntrada), 'PUT');
+		$natureza = chamaAPI(null, '/impostos/fisnatureza', json_encode($apiEntrada), 'PUT');
 	}
 
 	if ($operacao=="alterar") {
@@ -31,19 +31,18 @@ if (isset($_GET['operacao'])) {
 			'idNatureza' => $_POST['idNatureza'],
 			'nomeNatureza' => $_POST['nomeNatureza']
 		);
-		$natureza = chamaAPI(null, '/fiscal/fisnatureza', json_encode($apiEntrada), 'POST');
+		$natureza = chamaAPI(null, '/impostos/fisnatureza', json_encode($apiEntrada), 'POST');
 	}
 	
 	if ($operacao=="excluir") {
 		$apiEntrada = array(
 			'idNatureza' => $_POST['idNatureza']
 		);
-		$natureza = chamaAPI(null, '/fiscal/fisnatureza', json_encode($apiEntrada), 'DELETE');
+		$natureza = chamaAPI(null, '/impostos/fisnatureza', json_encode($apiEntrada), 'DELETE');
 	}
 
 
-
-	header('Location: ../operacoes/fisnatureza.php');	
+	header('Location: ../configuracao?stab=fisnatureza');
 	
 }
 
