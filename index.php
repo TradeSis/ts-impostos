@@ -1,21 +1,13 @@
 <?php
 include_once __DIR__ . "/../config.php";
 include_once ROOT . "/sistema/painel.php";
-include_once ROOT . "/sistema/database/montaMenu.php";
-$montamenu = buscaMontaMenu('Impostos', $_SESSION['idUsuario']);
-//echo json_encode($montamenu);
+include_once ROOT . "/sistema/database/usuarioAplicativo.php";
 
-$menus = $montamenu['menu'];
-if (!empty($montamenu['menuAtalho'])) {
-    $menusAtalho = $montamenu['menuAtalho'];
-}
-if (!empty($montamenu['menuHeader'])) {
-    $menuHeader = $montamenu['menuHeader'][0];
-}
-//echo json_encode($menusAtalho);
+$nivelMenuUsuario =  buscaUsuarioAplicativo($_SESSION['idUsuario'],'6'); //Impostos
+
 $configuracao = 1; 
 
-$nivelUsuario   =   4;
+$nivelMenu   =   $nivelMenuUsuario['nivelMenu'];
 
 
 
@@ -44,21 +36,21 @@ $nivelUsuario   =   4;
                 ?>    
 
 
-            <?php if ($nivelUsuario>=3) { ?>
+            <?php if ($nivelMenu>=3) { ?>
                 <li class="nav-item ">
                     <a class="nav-link <?php if ($tab=="ncm") {echo " active ";} ?>" 
                         href="?tab=ncm" 
                         role="tab"                        
                         style="color:black">NCM/CEST </a>
                 </li>
-            <?php } if ($nivelUsuario>=3) { ?>
+            <?php } if ($nivelMenu>=3) { ?>
                 <li class="nav-item ">
                     <a class="nav-link <?php if ($tab=="operacoes") {echo " active ";} ?>" 
                         href="?tab=operacoes" 
                         role="tab"                        
                         style="color:black">Operações</a>
                 </li>
-            <?php } if ($nivelUsuario>=4) { ?>
+            <?php } if ($nivelMenu>=4) { ?>
                 <li class="nav-item ">
                     <a class="nav-link <?php if ($tab=="configuracao") {echo " active ";} ?>" 
                         href="?tab=configuracao" 
