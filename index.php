@@ -29,7 +29,7 @@ $nivelMenu   =   $nivelMenuUsuario['nivelMenu'];
 
 
                 <?php
-                    $tab = '';
+                    $tab = 'ncm';
 
                     if (isset($_GET['tab'])) {$tab = $_GET['tab'];}
                
