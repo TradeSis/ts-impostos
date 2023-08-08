@@ -1,15 +1,13 @@
 <?php
 include_once __DIR__ . "/../config.php";
 include_once ROOT . "/sistema/painel.php";
-include_once ROOT . "/sistema/database/usuarioAplicativo.php";
+include_once ROOT . "/sistema/database/loginAplicativo.php";
 
-$nivelMenuUsuario =  buscaUsuarioAplicativo($_SESSION['idUsuario'],'6'); //Impostos
+$nivelMenuLogin =  buscaLoginAplicativo($_SESSION['idLogin'],'Impostos');
 
 $configuracao = 1; 
 
-$nivelMenu   =   $nivelMenuUsuario['nivelMenu'];
-
-
+$nivelMenu   =   $nivelMenuLogin['nivelMenu'];
 
 ?>
 
