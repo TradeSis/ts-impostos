@@ -6,17 +6,18 @@
 if (session_status() === PHP_SESSION_NONE) {
 	session_start();
 }
-
 include_once __DIR__ . "/../config.php";
 
 if (!isset($_SESSION['LAST_ACTIVITY']) || !isset($_SESSION['usuario'])) {
         echo "<script>top.window.location = '" . URLROOT . "/sistema/login.php'</script>";
+		return;
 }
 
 if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > (2 * 60 * 60))) { // 60segundos * MINUTOS * HORAS
         session_unset();
         session_destroy();
         echo "<script>top.window.location = '" . URLROOT . "/sistema/login.php'</script>";
+	return;
 }
 
 $_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
