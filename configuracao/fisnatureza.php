@@ -12,20 +12,20 @@ $naturezas = buscaNatureza();
         
             <div class="row mt-4">
                 <div class="col-sm-8">
-                        <p class="tituloTabela">Naturezas Fiscais</p>
+                        <h2 class="tituloTabela">Naturezas Fiscais</h2>
                     </div>
 
                 <div class="col-sm-4" style="text-align:right">
-                        <a href="fisnatureza_inserir.php" role="button" class="btn btn-primary">Adicionar Natureza</a>
+                        <a href="fisnatureza_inserir.php" role="button" class="btn btn-success"><i class="bi bi-plus-square"></i>&nbsp Novo</a>
                     </div>
           
             </div>
-        <div class="card shadow mt-2">
+        <div class="card mt-2 text-center">
             <table class="table">
-                <thead>
+                <thead class="cabecalhoTabela">
                     <tr>
-                        <th class="text-center">Natureza</th>
-                        <th class="text-center">Ação</th>
+                        <th>Natureza</th>
+                        <th>Ação</th>
 
                     </tr>
                 </thead>
@@ -34,10 +34,10 @@ $naturezas = buscaNatureza();
                 foreach ($naturezas as $natureza) {
                 ?>
                     <tr>
-                        <td class="text-center"><?php echo $natureza['nomeNatureza'] ?></td>
-                        <td class="text-center">
-                            <a class="btn btn-primary btn-sm" href="fisnatureza_alterar.php?idNatureza=<?php echo $natureza['idNatureza'] ?>" role="button">Editar</a>
-                            <a class="btn btn-danger btn-sm" href="fisnatureza_excluir.php?idNatureza=<?php echo $natureza['idNatureza'] ?>" role="button">Excluir</a>
+                        <td><?php echo $natureza['nomeNatureza'] ?></td>
+                        <td>
+                            <a class="btn btn-warning btn-sm" href="fisnatureza_alterar.php?idNatureza=<?php echo $natureza['idNatureza'] ?>" role="button"><i class="bi bi-pencil-square"></i></a>
+                            <a class="btn btn-danger btn-sm" href="fisnatureza_excluir.php?idNatureza=<?php echo $natureza['idNatureza'] ?>" role="button"><i class="bi bi-trash3"></i></a>
                         </td>
                     </tr>
                 <?php } ?>

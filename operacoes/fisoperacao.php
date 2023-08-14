@@ -43,7 +43,7 @@ if (isset($_SESSION['filtro_operacao'])) {
 
         <div class="row">
             <div class=" btnAbre">
-                <span style="font-size: 25px" class="material-symbols-outlined">
+                <span style="font-size: 25px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">
                     filter_alt
                 </span>
 
@@ -54,20 +54,20 @@ if (isset($_SESSION['filtro_operacao'])) {
             </div>
 
             <div class="col-sm" style="text-align:right">
-                <a href="fisoperacao_inserir.php" role="button" class="btn btn-success">Adicionar Operação</a>
+                <a href="fisoperacao_inserir.php" role="button" class="btn btn-success"><i class="bi bi-plus-square"></i>&nbsp Novo</a>
             </div>
         </div>
 
-        <div class="card mt-2">
+        <div class="card mt-2" style="background-color: #EEEEEE">
             <div class="table table-sm table-hover table-striped table-wrapper-scroll-y my-custom-scrollbar diviFrame">
                 <table class="table">
-                    <thead class="thead-light">
+                    <thead class="cabecalhoTabela">
                         <tr>
-                            <th class="text-center">Operação</th>
-                            <th class="text-center">
-                                <form class="d-flex" action="" method="post">
+                            <th>Operação</th>
+                            <th>
+                                <form action="" method="post">
                                     <select class="form-control fonteSelect text-center" name="idAtividade"
-                                        id="FiltroAtividade" style="font-size: 14px;">
+                                        id="FiltroAtividade" style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#12192C">
                                         <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
                                         <?php
                                         foreach ($atividades as $atividade) {
@@ -81,10 +81,10 @@ if (isset($_SESSION['filtro_operacao'])) {
                                     </select>
                                 </form>
                             </th>
-                            <th class="text-center">
-                                <form class="d-flex" action="" method="post">
+                            <th>
+                                <form action="" method="post">
                                     <select class="form-control text-center" name="idProcesso" id="FiltroProcesso"
-                                        style="font-size: 14px;">
+                                        style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#12192C">
                                         <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
                                         <?php
                                         foreach ($processos as $processo) {
@@ -98,10 +98,10 @@ if (isset($_SESSION['filtro_operacao'])) {
                                     </select>
                                 </form>
                             </th>
-                            <th class="text-center">
-                                <form class="d-flex" action="" method="post">
+                            <th>
+                                <form action="" method="post">
                                     <select class="form-control text-center" name="idNatureza" id="FiltroNatureza"
-                                        style="font-size: 14px;">
+                                        style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#12192C">
                                         <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
                                         <?php
                                         foreach ($naturezas as $natureza) {
@@ -115,10 +115,10 @@ if (isset($_SESSION['filtro_operacao'])) {
                                     </select>
                                 </form>
                             </th>
-                            <th class="text-center">idGrupoOper</th>
-                            <th class="text-center">idEntSai</th>
-                            <th class="text-center">xfop</th>
-                            <th class="text-center" colspan="2">Ação</th>
+                            <th>idGrupoOper</th>
+                            <th>idEntSai</th>
+                            <th>xfop</th>
+                            <th colspan="2">Ação</th>
                         </tr>
                     </thead>
 
@@ -169,7 +169,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                         linha = linha + "<TD>" + object.idGrupoOper + "</TD>";
                         linha = linha + "<TD>" + object.idEntSai + "</TD>";
                         linha = linha + "<TD>" + object.xfop + "</TD>";
-                        linha = linha + "<TD>" + "<a class='btn btn-primary btn-sm' href='fisoperacao_alterar.php?idOperacao=" + object.idOperacao + "' role='button'><i class='bi bi-pencil-square'></i></i></a>" + "</TD>";
+                        linha = linha + "<TD>" + "<a class='btn btn-warning btn-sm' href='fisoperacao_alterar.php?idOperacao=" + object.idOperacao + "' role='button'><i class='bi bi-pencil-square'></i></i></a>" + "</TD>";
                         linha = linha + "<TD>" + "<a class='btn btn-danger btn-sm' href='fisoperacao_excluir.php?idOperacao=" + object.idOperacao + "' role='button'><i class='bi bi-trash'></i></i></a>" + "</TD>";
                         linha = linha + "</TR>";
                     }

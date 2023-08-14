@@ -32,26 +32,37 @@ if (isset($_SESSION['filtro_operacao'])) {
 }
 
 ?>
+<style>
 
+.nav-link.active:any-link{
+  background-color: #567381;
+  border: 1px solid #DFDFDF;
+  border-radius: 5px 5px 0px 0px;
+  color: #fff;
+}
+.line {
+        width: 100%;
+        border-bottom: 1px solid #707070;
+    }
+</style>
 <body class="bg-transparent">
 
 
     <div class="container-fluid">
         <div class="mt-3">
-            <div class="card mt-3">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
+                <ul class="nav nav-pills" id="myTab" role="tablist">
+                    <li class="nav-item mr-1">
                         <a class="nav-link active" href="ncm_table.php">NCM</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item mr-1">
                         <a class="nav-link active" href="cest_table.php">Cest</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" style="color:blue" href="#">Operação</a>
+                    <li class="nav-item mr-1">
+                        <a class="nav-link active" style="color: #1B4D60; background-color: #EEEEEE" href="#">Operação</a>
                     </li>
                 </ul>
-
-                <div class="row justify-content-center">
+                <div class="line"></div>
+                <div class="row justify-content-center" style="background-color: #EEEEEE">
                     <div class="col-sm-2">
                         <form class="d-flex" action="" method="post" style="text-align: right;">
                             <select class="form-control" name="FiltroTipoOp" id="FiltroTipoOp">
@@ -78,30 +89,30 @@ if (isset($_SESSION['filtro_operacao'])) {
                             <?php } else { ?>
                                 <input type="text" class="form-control" id="dadosOp" placeholder="Operação">
                             <?php } ?>
+
+                            <button class="btn btn-primary" id="buscar" type="button" style="margin-top:10px;">
+                                <span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">search</span>
+                            </button>
                         </div>
                     </div>
-
-                    <div class="col-sm-3">
-                        <button class="btn btn-primary w-50 mt-3" id="buscar" type="button">Pesquisar</button>
                     </div>
-                    <div class="col-sm-3" style="margin-left:-100px;">
-                        <button class="btn btn-warning w-50 mt-3" id="export" name="export" type="submit">Gerar
+                    <div class="col-sm-12" style="text-align: right;">
+                        <button class="btn btn-warning" id="export" name="export" type="submit">Gerar
                             CSV</button>
                     </div>
-                </div>
+                
 
-                <div
-                    class="table table-sm table-hover table-striped table-bordered table-wrapper-scroll-y my-custom-scrollbar diviFrame mt-2">
+                <div class="table table-sm table-hover table-striped table-bordered table-wrapper-scroll-y my-custom-scrollbar diviFrame mt-2">
                     <table class="table" id="myIframe">
-                        <thead class="thead-light">
+                        <thead class="cabecalhoTabela">
 
                             <tr>
-                                <th class="text-center">Operação</th>
-                                <th class="text-center">
+                                <th>Operação</th>
+                                <th>
                                     <form action="" method="post">
                                         <select class="form-control fonteSelect text-center" name="idAtividade"
                                             id="FiltroAtividade"
-                                            style="font-size: 16px; font-weight: bold; margin-top:-10px; margin-bottom:-6px;">
+                                            style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#12192C">
                                             <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
                                             <?php
                                             foreach ($atividades as $atividade) {
@@ -115,10 +126,10 @@ if (isset($_SESSION['filtro_operacao'])) {
                                         </select>
                                     </form>
                                 </th>
-                                <th class="text-center">
+                                <th>
                                     <form action="" method="post">
                                         <select class="form-control text-center" name="idProcesso" id="FiltroProcesso"
-                                            style="font-size: 16px; font-weight: bold; margin-top:-10px; margin-bottom:-6px;">
+                                            style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#12192C">
                                             <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
                                             <?php
                                             foreach ($processos as $processo) {
@@ -132,10 +143,10 @@ if (isset($_SESSION['filtro_operacao'])) {
                                         </select>
                                     </form>
                                 </th>
-                                <th class="text-center">
+                                <th>
                                     <form action="" method="post">
                                         <select class="form-control text-center" name="idNatureza" id="FiltroNatureza"
-                                            style="font-size: 16px; font-weight: bold; margin-top:-10px; margin-bottom:-6px;">
+                                            style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#12192C">
                                             <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
                                             <?php
                                             foreach ($naturezas as $natureza) {
@@ -149,9 +160,9 @@ if (isset($_SESSION['filtro_operacao'])) {
                                         </select>
                                     </form>
                                 </th>
-                                <th class="text-center">idGrupoOper</th>
-                                <th class="text-center">idEntSai</th>
-                                <th class="text-center">xfop</th>
+                                <th>idGrupoOper</th>
+                                <th>idEntSai</th>
+                                <th>xfop</th>
                             </tr>
                         </thead>
 
@@ -160,7 +171,6 @@ if (isset($_SESSION['filtro_operacao'])) {
                         </tbody>
                     </table>
                 </div>
-            </div>
         </div>
 
 
