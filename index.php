@@ -11,15 +11,6 @@ $nivelMenu   =   $nivelMenuLogin['nivelMenu'];
 
 ?>
 
-<style>
-    .nav-link.active {
-        border-bottom: 3px solid #2E59D9;
-        border-radius: 3px 3px 0 0;
-        color: #1B4D60;
-        background-color: transparent;
-    }
-</style>
-
 <div class="container-fluid mt-1">
     <div class="row">
         <div class="col-md-12 d-flex justify-content-center">
@@ -35,26 +26,26 @@ $nivelMenu   =   $nivelMenuLogin['nivelMenu'];
 
 
             <?php if ($nivelMenu>=3) { ?>
-                <li class="nav-item ">
-                    <a class="nav-link <?php if ($tab=="ncm") {echo " active ";} ?>" 
+                <li class="nav-item mr-1">
+                    <a class="nav-link1 nav-link <?php if ($tab=="ncm") {echo " active ";} ?>" 
                         href="?tab=ncm" 
                         role="tab"                        
-                        style="color:black">NCM/CEST </a>
+                        >NCM/CEST </a>
                 </li>
             <?php } if ($nivelMenu>=3) { ?>
-                <li class="nav-item ">
-                    <a class="nav-link <?php if ($tab=="operacoes") {echo " active ";} ?>" 
+                <li class="nav-item mr-1">
+                    <a class="nav-link1 nav-link <?php if ($tab=="operacoes") {echo " active ";} ?>" 
                         href="?tab=operacoes" 
                         role="tab"                        
-                        style="color:black">Operações</a>
+                        >Operações</a>
                 </li>
             <?php } if ($nivelMenu>=4) { ?>
-                <li class="nav-item ">
-                    <a class="nav-link <?php if ($tab=="configuracao") {echo " active ";} ?>" 
+                <li class="nav-item mr-1">
+                    <a class="nav-link1 nav-link <?php if ($tab=="configuracao") {echo " active ";} ?>" 
                         href="?tab=configuracao" 
                         role="tab"                        
                         data-toggle="tooltip" data-placement="top" title="Configurações"                   
-                        style="color:black"><i class="bi bi-gear" style="font-size: 18px;"></i></a>
+                        ><i class="bi bi-gear"></i></a>
                 </li>
             <?php } ?>
 
