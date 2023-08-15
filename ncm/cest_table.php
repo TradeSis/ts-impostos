@@ -36,7 +36,7 @@ if (isset($_GET['codigoNcm'])) {
 
 
     <div class="container-fluid">
-        <div class="mt-3">
+        <div class="mt-3 text-center">
                 <ul class="nav nav-pills" id="myTab" role="tablist">
                     <li class="nav-item mr-1">
                         <a class="nav-link active" href="ncm_table.php">NCM</a>
