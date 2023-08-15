@@ -76,7 +76,7 @@ $nivelMenu   =   $nivelMenuLogin['nivelMenu'];
 if ($src!=="") {
     //echo URLROOT ."/impostos/". $src;
 ?>
-    <div class="diviFrame" style="overflow:hidden; height: 85vh">
+    <div class="diviFrame">
         <iframe class="iFrame container-fluid " id="iFrameTab" src="<?php echo URLROOT ?>/impostos/<?php echo $src ?>"></iframe>
     </div>
 <?php
