@@ -1,26 +1,15 @@
 <?php
 include_once __DIR__ . "/../config.php";
 include_once ROOT . "/sistema/painel.php";
-include_once ROOT . "/sistema/database/usuarioAplicativo.php";
+include_once ROOT . "/sistema/database/loginAplicativo.php";
 
-$nivelMenuUsuario =  buscaUsuarioAplicativo($_SESSION['idUsuario'],'6'); //Impostos
+$nivelMenuLogin = buscaLoginAplicativo($_SESSION['idLogin'], 'Impostos');
 
-$configuracao = 1; 
+$configuracao = 1;
 
-$nivelMenu   =   $nivelMenuUsuario['nivelMenu'];
-
-
+$nivelMenu = $nivelMenuLogin['nivelMenu'];
 
 ?>
-
-<style>
-    .nav-link.active {
-        border-bottom: 3px solid #2E59D9;
-        border-radius: 3px 3px 0 0;
-        color: #1B4D60;
-        background-color: transparent;
-    }
-</style>
 
 <div class="container-fluid mt-1">
     <div class="row">
@@ -29,38 +18,45 @@ $nivelMenu   =   $nivelMenuUsuario['nivelMenu'];
 
 
                 <?php
-                    $tab = 'ncm';
+                $tab = '';
 
-                    if (isset($_GET['tab'])) {$tab = $_GET['tab'];}
-               
-                ?>    
+                if (isset($_GET['tab'])) {
+                    $tab = $_GET['tab'];
+                }
+
+                ?>
 
 
-            <?php if ($nivelMenu>=3) { ?>
-                <li class="nav-item ">
-                    <a class="nav-link <?php if ($tab=="ncm") {echo " active ";} ?>" 
-                        href="?tab=ncm" 
-                        role="tab"                        
-                        style="color:black">NCM/CEST </a>
-                </li>
-            <?php } if ($nivelMenu>=3) { ?>
-                <li class="nav-item ">
-                    <a class="nav-link <?php if ($tab=="operacoes") {echo " active ";} ?>" 
-                        href="?tab=operacoes" 
-                        role="tab"                        
-                        style="color:black">Operações</a>
-                </li>
-            <?php } if ($nivelMenu>=4) { ?>
-                <li class="nav-item ">
-                    <a class="nav-link <?php if ($tab=="configuracao") {echo " active ";} ?>" 
-                        href="?tab=configuracao" 
-                        role="tab"                        
-                        data-toggle="tooltip" data-placement="top" title="Configurações"                   
-                        style="color:black"><i class="bi bi-gear" style="font-size: 18px;"></i></a>
-                </li>
-            <?php } ?>
+                <?php if ($nivelMenu >= 1) {
+                    if ($tab == '') {
+                        $tab = 'ncm';
+                    } ?>
+                    <li class="nav-item mr-1">
+                        <a class="nav-link1 nav-link <?php if ($tab == "ncm") {
+                            echo " active ";
+                        } ?>" href="?tab=ncm"
+                            role="tab">NCM/CEST </a>
+                    </li>
+                <?php }
+                if ($nivelMenu >= 1) { ?>
+                    <li class="nav-item mr-1">
+                        <a class="nav-link1 nav-link <?php if ($tab == "operacoes") {
+                            echo " active ";
+                        } ?>"
+                            href="?tab=operacoes" role="tab">Operações</a>
+                    </li>
+                <?php }
+                if ($nivelMenu >= 4) { ?>
+                    <li class="nav-item mr-1">
+                        <a class="nav-link1 nav-link <?php if ($tab == "configuracao") {
+                            echo " active ";
+                        } ?>"
+                            href="?tab=configuracao" role="tab" data-toggle="tooltip" data-placement="top"
+                            title="Configurações"><i class="bi bi-gear"></i> Configurações</a>
+                    </li>
+                <?php } ?>
 
-                           
+
             </ul>
 
 
@@ -71,26 +67,31 @@ $nivelMenu   =   $nivelMenuUsuario['nivelMenu'];
 </div>
 
 <?php
-    $src="";
+$src = "";
 
-    if ($tab=="ncm") {$src="ncm/ncm_table.php";}
-    if ($tab=="operacoes") {$src="operacoes/fisoperacao.php";}
-    if ($tab=="configuracao") {
-            $src="configuracao/";
-            if (isset($_GET['stab'])) {
-                $src = $src . "?stab=".$_GET['stab'];
-            }
-
-            
+if ($tab == "ncm") {
+    $src = "ncm/ncm_table.php";
+}
+if ($tab == "operacoes") {
+    $src = "operacoes/fisoperacao.php";
+}
+if ($tab == "configuracao") {
+    $src = "configuracao/";
+    if (isset($_GET['stab'])) {
+        $src = $src . "?stab=" . $_GET['stab'];
     }
-    
-if ($src!=="") {
+
+
+}
+
+if ($src !== "") {
     //echo URLROOT ."/impostos/". $src;
-?>
-    <div class="diviFrame" style="overflow:hidden; height: 85vh">
-        <iframe class="iFrame container-fluid " id="iFrameTab" src="<?php echo URLROOT ?>/impostos/<?php echo $src ?>"></iframe>
+    ?>
+    <div class="diviFrame">
+        <iframe class="iFrame container-fluid " id="iFrameTab"
+            src="<?php echo URLROOT ?>/impostos/<?php echo $src ?>"></iframe>
     </div>
-<?php
+    <?php
 }
 ?>
 
