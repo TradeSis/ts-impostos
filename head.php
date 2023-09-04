@@ -13,7 +13,7 @@ if (!isset($_SESSION['LAST_ACTIVITY']) || !isset($_SESSION['usuario'])) {
         echo "<script>top.window.location = '" . URLROOT . "/sistema/login.php'</script>";
 }
 
-if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > (2 * 60 * 60))) { // 60segundos * MINUTOS * HORAS
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > ($_SESSION['timeSessao'] * 60 * 60))) { // 60segundos * MINUTOS * HORAS
         session_unset();
         session_destroy();
         echo "<script>top.window.location = '" . URLROOT . "/sistema/login.php'</script>";
@@ -27,8 +27,6 @@ $logado = $_SESSION['usuario'];
 ?>
 
 
-<!DOCTYPE html>
-<html>
 
 <?php
         include_once ROOT. "/vendor/vendor.php";
