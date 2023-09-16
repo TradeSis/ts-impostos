@@ -67,7 +67,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             <th>
                                 <form action="" method="post">
                                     <select class="form-control fonteSelect text-center" name="idAtividade"
-                                        id="FiltroAtividade" style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#12192C">
+                                        id="FiltroAtividade" style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#13216A">
                                         <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
                                         <?php
                                         foreach ($atividades as $atividade) {
@@ -84,7 +84,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             <th>
                                 <form action="" method="post">
                                     <select class="form-control text-center" name="idProcesso" id="FiltroProcesso"
-                                        style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#12192C">
+                                        style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#13216A">
                                         <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
                                         <?php
                                         foreach ($processos as $processo) {
@@ -101,7 +101,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             <th>
                                 <form action="" method="post">
                                     <select class="form-control text-center" name="idNatureza" id="FiltroNatureza"
-                                        style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#12192C">
+                                        style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#13216A">
                                         <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
                                         <?php
                                         foreach ($naturezas as $natureza) {
