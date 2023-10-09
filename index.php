@@ -31,7 +31,7 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
 
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-10 d-none d-md-none d-lg-block pr-0 pl-0" style="background-color: #13216A;">
+                <div class="col-lg-10 d-none d-md-none d-lg-block pr-0 pl-0 fundoAbas">
                     <ul class="nav a" id="myTabs">
 
                         <?php
