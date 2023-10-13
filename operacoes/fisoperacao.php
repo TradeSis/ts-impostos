@@ -1,6 +1,7 @@
 <?php
+//Lucas 13102023 novo padrao
 // gabriel 060623 15:06
-include_once(__DIR__ . '/../head.php');
+include_once(__DIR__ . '/../header.php');
 include_once(__DIR__ . '/../database/fisoperacao.php');
 include_once(__DIR__ . '/../database/fisatividade.php');
 include_once(__DIR__ . '/../database/fisnatureza.php');
@@ -27,9 +28,15 @@ if (isset($_SESSION['filtro_operacao'])) {
     $idProcesso = $filtroEntrada['idProcesso'];
     $idNatureza = $filtroEntrada['idNatureza'];
 }
-
-
 ?>
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+
+    <?php include_once ROOT . "/vendor/head_css.php"; ?>
+
+</head>
 
 <style>
     ul {
@@ -37,11 +44,45 @@ if (isset($_SESSION['filtro_operacao'])) {
     }
 </style>
 
-<body class="bg-transparent">
+<body>
 
-    <div class="container-fluid text-center mt-4">
+    <div class="container-fluid">
 
+    <div class="row">
+            <BR> <!-- MENSAGENS/ALERTAS -->
+        </div>
         <div class="row">
+            <BR> <!-- BOTOES AUXILIARES -->
+        </div>
+        <div class="row">
+            <div class="col-6 order-1 col-sm-6  col-md-6 order-md-1 col-lg-1 order-lg-1 mt-3">
+                <button type="button" class="ts-btnFiltros btn btn-sm"><span class="material-symbols-outlined">
+                        filter_alt
+                    </span></button>
+
+            </div>
+
+            <div class="col-12 col-sm-12 col-md-12 col-lg-2 order-lg-2 mt-4">
+                <h2 class="tituloTabela">Operações Fiscais</h2>
+            </div>
+
+            <div class="col-12 col-sm-12 col-md-12 col-lg-5 order-lg-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="buscanotas" placeholder="Buscar por id ou numero da nota">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary mt-2" id="buscar" type="button"><span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">
+                                search
+                            </span></button>
+                    </span>
+                </div>
+            </div>
+
+
+            <div class="col-6 order-2 col-sm-6 col-md-6 order-md-2 col-lg-4 order-lg-4 mt-3 text-end" style=" margin-left:-30px ">
+            <a href="fisoperacao_inserir.php" role="button" class="btn btn-success"><i class="bi bi-plus-square"></i>&nbsp Novo</a>            </div>
+        </div>
+
+        <!-- <div class="row">
             <div class=" btnAbre">
                 <span style="font-size: 25px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">
                     filter_alt
@@ -56,18 +97,17 @@ if (isset($_SESSION['filtro_operacao'])) {
             <div class="col-sm" style="text-align:right">
                 <a href="fisoperacao_inserir.php" role="button" class="btn btn-success"><i class="bi bi-plus-square"></i>&nbsp Novo</a>
             </div>
-        </div>
+        </div> -->
 
-        <div class="card mt-2" style="background-color: #EEEEEE">
-            <div class="table table-sm table-hover table-striped table-wrapper-scroll-y my-custom-scrollbar diviFrame">
-                <table class="table">
-                    <thead class="cabecalhoTabela">
+            <div class="table mt-2 ts-divTabela ts-tableFiltros">
+                <table class="table table-hover table-sm align-middle">
+                    <thead class="ts-headertabelafixo">
                         <tr>
                             <th>Operação</th>
-                            <th>
+                            <th >
                                 <form action="" method="post">
-                                    <select class="form-control fonteSelect text-center" name="idAtividade"
-                                        id="FiltroAtividade" style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#13216A">
+                                    <select class="form-control ts-selectFiltrosHeaderTabela1Linha" name="idAtividade"
+                                        id="FiltroAtividade">
                                         <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
                                         <?php
                                         foreach ($atividades as $atividade) {
@@ -83,8 +123,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             </th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control text-center" name="idProcesso" id="FiltroProcesso"
-                                        style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#13216A">
+                                    <select class="form-control ts-selectFiltrosHeaderTabela1Linha" name="idProcesso" id="FiltroProcesso">
                                         <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
                                         <?php
                                         foreach ($processos as $processo) {
@@ -100,8 +139,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             </th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control text-center" name="idNatureza" id="FiltroNatureza"
-                                        style="font-size: 14px;color:#fff; font-style:italic; margin-top:-10px; margin-bottom:-6px;background-color:#13216A">
+                                    <select class="form-control ts-selectFiltrosHeaderTabela1Linha" name="idNatureza" id="FiltroNatureza">
                                         <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
                                         <?php
                                         foreach ($naturezas as $natureza) {
@@ -127,9 +165,11 @@ if (isset($_SESSION['filtro_operacao'])) {
                     </tbody>
                 </table>
             </div>
-        </div>
     </div>
 
+       <!-- LOCAL PARA COLOCAR OS JS -->
+
+       <?php include_once ROOT . "/vendor/footer_js.php"; ?>
 
     <script>
         buscar(null, null, $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
@@ -206,12 +246,18 @@ if (isset($_SESSION['filtro_operacao'])) {
             });
         });
 
-        $('.btnAbre').click(function () {
+       /*  $('.btnAbre').click(function () {
             $('.menuFiltros').toggleClass('mostra');
             $('.diviFrame').toggleClass('mostra');
+        }); */
+        /* Novo script para menu filtros */
+        $('.ts-btnFiltros').click(function() {
+            $('.ts-menuFiltros').toggleClass('mostra');
+            $('.ts-tableFiltros').toggleClass('mostra');
         });
     </script>
 
+<!-- LOCAL PARA COLOCAR OS JS -FIM -->
 
 </body>
 

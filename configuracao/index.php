@@ -20,7 +20,7 @@ include_once(__DIR__ . '/../head.php');
   
 </style>
 <div class="container-fluid">
-  <div class="row">
+  <div class="row mt-2">
     <div class="col-md-2 mb-3">
       <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
         <?php
@@ -31,19 +31,19 @@ include_once(__DIR__ . '/../head.php');
         //echo "<HR>stab=" . $stab;
         ?>
         <li class="nav-item ">
-          <a class="nav-link <?php if ($stab == "fisatividade") {
+          <a class="nav-link ts-tabConfig <?php if ($stab == "fisatividade") {
             echo " active ";
           } ?>"
             href="?tab=configuracao&stab=fisatividade" role="tab">Atividade</a>
         </li>
         <li class="nav-item ">
-          <a class="nav-link <?php if ($stab == "fisnatureza") {
+          <a class="nav-link ts-tabConfig <?php if ($stab == "fisnatureza") {
             echo " active ";
           } ?>"
             href="?tab=configuracao&stab=fisnatureza" role="tab">Natureza</a>
         </li>
         <li class="nav-item ">
-          <a class="nav-link <?php if ($stab == "fisprocesso") {
+          <a class="nav-link ts-tabConfig <?php if ($stab == "fisprocesso") {
             echo " active ";
           } ?>"
             href="?tab=configuracao&stab=fisprocesso" role="tab">Processo</a>

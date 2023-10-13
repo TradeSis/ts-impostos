@@ -1,5 +1,6 @@
 <?php
-include_once(__DIR__ . '/../head.php');
+//Lucas 13102023 padrao novo
+include_once(__DIR__ . '/../header.php');
 include_once(__DIR__ . '/../database/ncm.php');
 
 $filtroEntrada = null;
@@ -12,9 +13,16 @@ if (isset($_SESSION['filtro_ncm'])) {
     $FiltroTipoNcm = $filtroEntrada['FiltroTipoNcm'];
     $dadosNcm = $filtroEntrada['dadosNcm'];
 }
-
-
 ?>
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+
+    <?php include_once ROOT . "/vendor/head_css.php"; ?>
+
+</head>
+
 <style>
     .nav-link.active:any-link {
         background-color: #567381;
@@ -29,7 +37,7 @@ if (isset($_SESSION['filtro_ncm'])) {
     }
 </style>
 
-<body class="bg-transparent">
+<body>
 
 
     <div class="container-fluid">
@@ -46,8 +54,18 @@ if (isset($_SESSION['filtro_ncm'])) {
                 </li>
             </ul>
             <div class="line"></div>
-            <div class="row justify-content-center" style="background-color: #EEEEEE">
-                <div class="col-sm-2 ml-4">
+            <div class="row">
+                <BR> <!-- MENSAGENS/ALERTAS -->
+            </div>
+            <div class="row">
+                <BR> <!-- BOTOES AUXILIARES -->
+            </div>
+            <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
+                <div class="col-3 text-start">
+                    <!-- TITULO -->
+                    <h2 class="tituloTabela">NCM</h2>
+                </div>
+                <div class="col-3">
                     <form class="d-flex" action="" method="post" style="text-align: right;">
                         <select class="form-control" name="FiltroTipoNcm" id="FiltroTipoNcm">
                             <option <?php if ($FiltroTipoNcm == "Descricao") {
@@ -59,8 +77,8 @@ if (isset($_SESSION['filtro_ncm'])) {
                         </select>
                     </form>
                 </div>
-
-                <div class="col-sm-3">
+                <div class="col-4">
+                    <!-- FILTROS -->
                     <div class="input-group">
                         <?php if (!empty($dadosNcm)) { ?>
                             <input type="text" class="form-control" id="dadosNcm" value="<?php echo $dadosNcm ?>">
@@ -72,14 +90,16 @@ if (isset($_SESSION['filtro_ncm'])) {
                             <span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">search</span>
                         </button>
                     </div>
-                    
                 </div>
 
+                <div class="col-2 text-end">
+                    <a href="aplicativo_inserir.php" role="button" class="btn btn-success"><i class="bi bi-plus-square"></i>&nbsp Novo</a>
+                </div>
             </div>
 
-            <div class="table table-sm table-bordered table-wrapper-scroll-y my-custom-scrollbar diviFrame mt-2">
-                <table class="table" id="myIframe">
-                    <thead class="cabecalhoTabela">
+            <div class="table mt-2 ts-divTabela">
+                <table class="table table-hover table-sm align-middle">
+                    <thead class="ts-headertabelafixo">
 
                         <tr>
                             <th>Código</th>
@@ -95,6 +115,10 @@ if (isset($_SESSION['filtro_ncm'])) {
             </div>
         </div>
     </div>
+
+    <!-- LOCAL PARA COLOCAR OS JS -->
+
+    <?php include_once ROOT . "/vendor/footer_js.php"; ?>
 
     <script>
         <?php if (!empty($dadosNcm)) { ?>
@@ -184,12 +208,7 @@ if (isset($_SESSION['filtro_ncm'])) {
         });
     </script>
 
-
-
-
-
-
-
+    <!-- LOCAL PARA COLOCAR OS JS -FIM -->
 
 </body>
 
