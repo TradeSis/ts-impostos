@@ -29,7 +29,7 @@ $atividade = buscaAtividade($_GET['idAtividade']);
         <div class="row"> <!-- LINHA SUPERIOR A TABLE -->
             <div class="col-3">
                 <!-- TITULO -->
-                <h2 class="tituloTabela">Excluir Atividade</h2>
+                <h2 class="ts-tituloPrincipal">Excluir Atividade</h2>
             </div>
             <div class="col-7">
                 <!-- FILTROS -->

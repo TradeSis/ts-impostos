@@ -28,7 +28,7 @@ $naturezas = buscaNatureza();
         <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
             <div class="col-3 text-start">
                 <!-- TITULO -->
-                <h2 class="tituloTabela">Naturezas Fiscais</h2>
+                <h2 class="ts-tituloPrincipal">Naturezas Fiscais</h2>
             </div>
             <div class="col-7">
                 <!-- FILTROS -->

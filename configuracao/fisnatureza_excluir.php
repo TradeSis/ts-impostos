@@ -30,7 +30,7 @@ $natureza = buscaNatureza($_GET['idNatureza']);
         <div class="row"> <!-- LINHA SUPERIOR A TABLE -->
             <div class="col-3">
                 <!-- TITULO -->
-                <h2 class="tituloTabela">Excluir Natureza</h2>
+                <h2 class="ts-tituloPrincipal">Excluir Natureza</h2>
             </div>
             <div class="col-7">
                 <!-- FILTROS -->

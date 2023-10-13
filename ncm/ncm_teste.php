@@ -19,7 +19,7 @@ include_once(__DIR__ . '/../database/ncm.php');
     <div class="container-fluid">
         <div class="mt-3">
             <div class="card mt-3">
-                <label class="tituloTabela pl-4 mt-3">Tabela NCM</label>
+                <label class="ts-tituloPrincipal pl-4 mt-3">Tabela NCM</label>
 
                 <div class="row justify-content-center">
                     <div class="col-sm-3">

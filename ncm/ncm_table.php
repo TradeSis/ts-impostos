@@ -63,7 +63,7 @@ if (isset($_SESSION['filtro_ncm'])) {
             <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
                 <div class="col-3 text-start">
                     <!-- TITULO -->
-                    <h2 class="tituloTabela">NCM</h2>
+                    <h2 class="ts-tituloPrincipal">NCM</h2>
                 </div>
                 <div class="col-3">
                     <form class="d-flex" action="" method="post" style="text-align: right;">

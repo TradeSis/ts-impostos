@@ -43,7 +43,7 @@ include_once(__DIR__ . '/../database/ncm.php');
         </div>
 
         <div class="" style="margin-left: 10vw; text-align:left">
-            <label class="tituloTabela pl-4">NCM</label>
+            <label class="ts-tituloPrincipal pl-4">NCM</label>
         </div>
 
     

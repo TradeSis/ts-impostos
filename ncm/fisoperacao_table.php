@@ -82,7 +82,7 @@ if (isset($_SESSION['filtro_operacao'])) {
             <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
                 <div class="col-3 text-start">
                     <!-- TITULO -->
-                    <h2 class="tituloTabela">Operação</h2>
+                    <h2 class="ts-tituloPrincipal">Operação</h2>
                 </div>
                 <div class="col-3">
                     <!-- FILTROS -->
@@ -131,7 +131,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             <th>Operação</th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control ts-selectFiltrosHeaderTabela1Linha" name="idAtividade" id="FiltroAtividade">
+                                    <select class="form-control selectFiltrosHeaderTabela" name="idAtividade" id="FiltroAtividade">
                                         <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
                                         <?php
                                         foreach ($atividades as $atividade) {
@@ -147,7 +147,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             </th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control ts-selectFiltrosHeaderTabela1Linha" name="idProcesso" id="FiltroProcesso">
+                                    <select class="form-control selectFiltrosHeaderTabela" name="idProcesso" id="FiltroProcesso">
                                         <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
                                         <?php
                                         foreach ($processos as $processo) {
@@ -163,7 +163,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             </th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control ts-selectFiltrosHeaderTabela1Linha" name="idNatureza" id="FiltroNatureza">
+                                    <select class="form-control selectFiltrosHeaderTabela" name="idNatureza" id="FiltroNatureza">
                                         <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
                                         <?php
                                         foreach ($naturezas as $natureza) {

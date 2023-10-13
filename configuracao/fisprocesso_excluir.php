@@ -29,7 +29,7 @@ $processos = buscaProcesso($_GET['idProcesso']);
         <div class="row"> <!-- LINHA SUPERIOR A TABLE -->
             <div class="col-3">
                 <!-- TITULO -->
-                <h2 class="tituloTabela">Excluir Processo</h2>
+                <h2 class="ts-tituloPrincipal">Excluir Processo</h2>
             </div>
             <div class="col-7">
                 <!-- FILTROS -->
