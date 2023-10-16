@@ -1,16 +1,25 @@
 <?php
-include_once(__DIR__ . '/../head.php');
+//Lucas 13102023 padrao novo
+include_once(__DIR__ . '/../header.php');
 include_once(__DIR__ . '/../database/ncm.php');
 
 ?>
+<!doctype html>
+<html lang="pt-BR">
 
-<body class="bg-transparent">
+<head>
+
+    <?php include_once ROOT . "/vendor/head_css.php"; ?>
+
+</head>
+
+<body>
 
 
     <div class="container-fluid">
         <div class="mt-3">
             <div class="card mt-3">
-                <label class="tituloTabela pl-4 mt-3">Tabela NCM</label>
+                <label class="ts-tituloPrincipal pl-4 mt-3">Tabela NCM</label>
 
                 <div class="row justify-content-center">
                     <div class="col-sm-3">
@@ -30,9 +39,9 @@ include_once(__DIR__ . '/../database/ncm.php');
                     </div>
                 </div>
 
-                <div class="table table-sm table-hover table-striped table-bordered table-wrapper-scroll-y my-custom-scrollbar diviFrame mt-2">
-                    <table class="table" id="myIframe">
-                        <thead class="thead-light">
+                <div class="table mt-2 ts-divTabela">
+                    <table class="table table-hover table-sm align-middle">
+                        <thead class="ts-headertabelafixo">
 
                             <tr>
                                 <th>Código</th>
@@ -50,6 +59,10 @@ include_once(__DIR__ . '/../database/ncm.php');
             </div>
         </div>
     </div>
+
+    <!-- LOCAL PARA COLOCAR OS JS -->
+
+    <?php include_once ROOT . "/vendor/footer_js.php"; ?>
 
     <script>
         function limpar() {
@@ -131,6 +144,7 @@ include_once(__DIR__ . '/../database/ncm.php');
         }
     </style>
 
+<!-- LOCAL PARA COLOCAR OS JS -FIM -->
 
 </body>
 
