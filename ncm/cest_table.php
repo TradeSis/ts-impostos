@@ -53,7 +53,7 @@ if (isset($_GET['codigoNcm'])) {
                     <a class="nav-link active" href="ncm_table.php">NCM</a>
                 </li>
                 <li class="nav-item mr-1">
-                    <a class="nav-link active" style="color: #1B4D60; background-color: #EEEEEE" href="#">Cest</a>
+                    <a class="nav-link active" style="color: #ffffff!important; background-color: #13216A!important" href="#">Cest</a>
                 </li>
                 <li class="nav-item mr-1">
                     <a class="nav-link active" href="fisoperacao_table.php">Operação</a>

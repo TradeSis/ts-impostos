@@ -69,7 +69,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                     <a class="nav-link active" href="cest_table.php">Cest</a>
                 </li>
                 <li class="nav-item mr-1">
-                    <a class="nav-link active" style="color: #1B4D60; background-color: #EEEEEE" href="#">Operação</a>
+                    <a class="nav-link active" style="color: #ffffff!important; background-color: #13216A!important" href="#">Operação</a>
                 </li>
             </ul>
             <div class="line"></div>
