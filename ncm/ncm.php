@@ -1,15 +1,23 @@
 <?php
-include_once(__DIR__ . '/../head.php');
+//Lucas 13102023 padrao novo
+include_once(__DIR__ . '/../header.php');
 include_once(__DIR__ . '/../database/ncm.php');
 
 ?>
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+
+    <?php include_once ROOT . "/vendor/head_css.php"; ?>
+
+</head>
 
 
+<body>
 
-<body class="bg-transparent">
 
-
-    <div class="container-flex text-center pt-2 mt-3" style="width: 90vw;">
+    <div class="container-fluid">
 
         <div class="row" style="margin-left: 10vw">
             <div class="col-sm-3 ml-2">
@@ -35,13 +43,13 @@ include_once(__DIR__ . '/../database/ncm.php');
         </div>
 
         <div class="" style="margin-left: 10vw; text-align:left">
-            <label class="tituloTabela pl-4">NCM</label>
+            <label class="ts-tituloPrincipal pl-4">NCM</label>
         </div>
 
-        <div class="card mt-2" style="margin-left: 10vw; text-align:left">
-            <div class="table table-sm table-hover table-striped table-wrapper-scroll-y my-custom-scrollbar diviFrame">
-                <table class="table" id="myIframe">
-                    <thead class="thead-light">
+    
+            <div class="table mt-2 ts-divTabela">
+                <table class="table table-hover table-sm align-middle">
+                    <thead class="ts-headertabelafixo">
 
                         <tr>
                             <th>Código</th>
@@ -61,8 +69,11 @@ include_once(__DIR__ . '/../database/ncm.php');
                 </table>
             </div>
 
-        </div>
     </div>
+
+    <!-- LOCAL PARA COLOCAR OS JS -->
+
+    <?php include_once ROOT . "/vendor/footer_js.php"; ?>
 
     <script>
         /* buscar($("#Descricao").val(), $("#Codigo").val()); */
@@ -152,6 +163,8 @@ include_once(__DIR__ . '/../database/ncm.php');
             $('.diviFrame').toggleClass('mostra');
         });
     </script>
+
+    <!-- LOCAL PARA COLOCAR OS JS -FIM -->
 </body>
 
 </html>
