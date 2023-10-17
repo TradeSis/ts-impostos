@@ -41,7 +41,7 @@ if (isset($_SESSION['filtro_ncm'])) {
 
 
     <div class="container-fluid">
-        <div class="mt-3 text-center">
+        <div class="pt-4 text-center">
             <ul class="nav nav-pills" id="myTab" role="tablist">
                 <li class="nav-item mr-1">
                     <a class="nav-link active" style="color: #ffffff!important; background-color: #13216A!important" href="#">NCM</a>
