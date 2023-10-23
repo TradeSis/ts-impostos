@@ -106,7 +106,7 @@ $notas = buscaXML();
                             </tr>
                         </thead>
                         <?php
-                        $dir = ROOT . "/xml/";
+                        $dir = "xmlnfe/xml/";
                         $files = scandir($dir);
                         foreach ($files as $file) {
                             if (!in_array($file, [".", ".."])) { ?>
