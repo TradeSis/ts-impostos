@@ -87,7 +87,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                 <div class="col-3">
                     <!-- FILTROS -->
                     <form class="d-flex" action="" method="post" style="text-align: right;">
-                        <select class="form-control" name="FiltroTipoOp" id="FiltroTipoOp">
+                        <select class="form-select ts-input" name="FiltroTipoOp" id="FiltroTipoOp">
                             <option <?php if ($FiltroTipoOp == "nomeOperacao") {
                                         echo "selected";
                                     } ?> value="nomeOperacao">Nome</option>
@@ -105,9 +105,9 @@ if (isset($_SESSION['filtro_operacao'])) {
                 <div class="col-4">
                     <div class="input-group">
                         <?php if (!empty($dadosOp)) { ?>
-                            <input type="text" class="form-control" id="dadosOp" value="<?php echo $dadosOp ?>">
+                            <input type="text" class="form-control ts-input" id="dadosOp" value="<?php echo $dadosOp ?>">
                         <?php } else { ?>
-                            <input type="text" class="form-control" id="dadosOp" placeholder="Operação">
+                            <input type="text" class="form-control ts-input" id="dadosOp" placeholder="Operação">
                         <?php } ?>
 
                         <button class="btn btn-primary" id="buscar" type="button" style="margin-top:10px;">
@@ -123,15 +123,14 @@ if (isset($_SESSION['filtro_operacao'])) {
             </div>
 
 
-            <div class="table mt-2 ts-divTabela">
-                <table class="table table-hover table-sm align-middle">
+            <div class="table ts-divTabela ts-tableFiltros table-striped table-hover">
+                <table class="table table-sm">
                     <thead class="ts-headertabelafixo">
-
                         <tr>
                             <th>Operação</th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idAtividade" id="FiltroAtividade">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idAtividade" id="FiltroAtividade">
                                         <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
                                         <?php
                                         foreach ($atividades as $atividade) {
@@ -147,7 +146,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             </th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idProcesso" id="FiltroProcesso">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idProcesso" id="FiltroProcesso">
                                         <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
                                         <?php
                                         foreach ($processos as $processo) {
@@ -163,7 +162,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             </th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idNatureza" id="FiltroNatureza">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idNatureza" id="FiltroNatureza">
                                         <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
                                         <?php
                                         foreach ($naturezas as $natureza) {

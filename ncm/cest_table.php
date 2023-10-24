@@ -73,7 +73,7 @@ if (isset($_GET['codigoNcm'])) {
                 </div>
                 <div class="col-3">
                     <form class="d-flex" action="" method="post" style="text-align: right;">
-                        <select class="form-control" name="FiltroTipoCest" id="FiltroTipoCest">
+                        <select class="form-select ts-input" name="FiltroTipoCest" id="FiltroTipoCest">
                             <option <?php if ($FiltroTipoCest == "nomeCest") {
                                         echo "selected";
                                     } ?> value="nomeCest">Nome Cest</option>
@@ -90,12 +90,12 @@ if (isset($_GET['codigoNcm'])) {
                     <!-- FILTROS -->
                     <div class="input-group">
                         <?php if (!empty($dadosCest)) { ?>
-                            <input type="text" class="form-control" id="dadosCest" value="<?php echo $dadosCest ?>">
+                            <input type="text" class="form-control ts-input" id="dadosCest" value="<?php echo $dadosCest ?>">
                         <?php } else { ?>
-                            <input type="text" class="form-control" id="dadosCest" placeholder="Codigo">
+                            <input type="text" class="form-control ts-input" id="dadosCest" placeholder="Codigo">
                         <?php } ?>
 
-                        <button class="btn btn-primary" id="buscar" type="button" style="margin-top:10px;">
+                        <button class="btn btn-primary" id="buscar" type="button">
                             <span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">search</span>
                         </button>
                     </div>
@@ -106,10 +106,9 @@ if (isset($_GET['codigoNcm'])) {
                 </div>
 
 
-                <div class="table mt-2 ts-divTabela">
-                    <table class="table table-hover table-sm align-middle">
+                <div class="table ts-divTabela ts-tableFiltros table-striped table-hover">
+                    <table class="table table-sm">
                         <thead class="ts-headertabelafixo">
-
                             <tr>
                                 <th>Código</th>
                                 <th>Nome</th>
