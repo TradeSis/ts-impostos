@@ -31,25 +31,30 @@ if (isset($_GET['operacao'])) {
 
 	if ($operacao == "inserir") {
 
-		$anexo = $_FILES['nomeAnexo'];
+		$anexo = $_POST["arquivo"];
 
+	
 		if ($anexo !== null) {
-			preg_match("/\.(png|jpg|jpeg|txt|xlsx|pdf|csv|doc|docx|xml){1}$/i", $anexo["name"], $ext);
+			$fileInfo = pathinfo($anexo);
+			$oldFileName = $fileInfo['filename']; 
+			$fileExtension = $fileInfo['extension']; 
 
-			if ($ext == true) {
+			if ($fileExtension === 'xml') {
 				$pasta = ROOT . "/xml/";
+				$newFileName = "carregado_" . $oldFileName . "." . $fileExtension;
+				
+				$pathAnexo = 'http://' . $_SERVER["HTTP_HOST"] . '/xml/' . $newFileName;
 
-				$anexo["name"];
-				$pathAnexo = 'http://' . $_SERVER["HTTP_HOST"] . '/xml/' . $anexo["name"];
-				move_uploaded_file($anexo['tmp_name'], $pasta . $anexo["name"]);
-
-
-			} else {
-				$anexo["name"] = " ";
+				$newFilePath = $pasta . $newFileName;
+				if (rename($anexo, $newFilePath)) {
+					if (file_exists($anexo)) {
+						unlink($anexo);
+					}
+				}
 			}
+		}
 
-		} 
-		$xml = simplexml_load_file($pathAnexo);
+		$xml = simplexml_load_file($newFilePath);
 		$NFe = $xml->NFe;
 
 		$xml = $NFe;
@@ -65,7 +70,7 @@ if (isset($_GET['operacao'])) {
 		$destinatarioEnd = (string) $xml->infNFe->dest->enderDest->xLgr . ' ' . $xml->infNFe->dest->enderDest->nro;
 
 		$apiEntrada = array(
-			'nomeXml' => $anexo["name"],
+			'nomeXml' => $newFileName,
 			'pathXml' => $pathAnexo,
 			'chaveNFe' => $chaveNFe,
 			'NF' => $NF,
@@ -77,94 +82,26 @@ if (isset($_GET['operacao'])) {
 		);
 
 		$apiEntrada2 = array(
-			'cnpj' => $emitente,
+			'cpfCnpj' => $emitente,
 			'nome' => $emitenteNome,
 			'endereco' => $emitenteEnd,
 			'idEmpresa' => $_SESSION['idEmpresa']
 		);
 
 		$apiEntrada3 = array(
-			'cnpj' => $destinatario,
+			'cpfCnpj' => $destinatario,
 			'nome' => $destinatarioNome,
 			'endereco' => $destinatarioEnd,
 			'idEmpresa' => $_SESSION['idEmpresa']
 		);
 
 		$xml = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
-		$pessoa1 = chamaAPI(null, '/impostos/fispessoa', json_encode($apiEntrada2), 'PUT');
-		$pessoa2 = chamaAPI(null, '/impostos/fispessoa', json_encode($apiEntrada3), 'PUT');
+		$pessoa1 = chamaAPI(null, '/impostos/pessoa', json_encode($apiEntrada2), 'PUT');
+		$pessoa2 = chamaAPI(null, '/impostos/pessoa', json_encode($apiEntrada3), 'PUT');
 		echo json_encode($xml);
 		return $xml;
 		
 	}
 
-	if ($operacao == "inserir2") {
-
-		$anexo = $_FILES['arquivo'];
-
-		if ($anexo !== null) {
-			preg_match("/\.(png|jpg|jpeg|txt|xlsx|pdf|csv|doc|docx|xml){1}$/i", $anexo["name"], $ext);
-
-			if ($ext == true) {
-				$pasta = ROOT . "/xml/";
-
-				$anexo["name"];
-				$pathAnexo = 'http://' . $_SERVER["HTTP_HOST"] . '/xml/' . $anexo["name"];
-				move_uploaded_file($anexo['tmp_name'], $pasta . $anexo["name"]);
-
-
-			} else {
-				$anexo["name"] = " ";
-			}
-
-		} 
-		$xml = simplexml_load_file($pathAnexo);
-		$NFe = $xml->NFe;
-
-		$xml = $NFe;
-		$chaveNFe = str_replace("NFe", "", $xml->infNFe['Id']);
-	 	$NF = (string) $xml->infNFe->ide->nNF;
-		$serie = (string) $xml->infNFe->ide->serie;
-		$dtEmissao = date('Y/m/d', strtotime($xml->infNFe->ide->dEmi));
-		$emitente = (string) $xml->infNFe->emit->CNPJ;
-		$emitenteNome = (string) $xml->infNFe->emit->xNome;
-		$emitenteEnd = (string) $xml->infNFe->emit->enderEmit->xLgr . ' ' . $xml->infNFe->emit->enderEmit->nro;
-		$destinatario = (string) $xml->infNFe->dest->CNPJ;
-		$destinatarioNome = (string) $xml->infNFe->dest->xNome;
-		$destinatarioEnd = (string) $xml->infNFe->dest->enderDest->xLgr . ' ' . $xml->infNFe->dest->enderDest->nro;
-
-		$apiEntrada = array(
-			'nomeXml' => $anexo["name"],
-			'pathXml' => $pathAnexo,
-			'chaveNFe' => $chaveNFe,
-			'NF' => $NF,
-			'serie' => $serie,
-			'dtEmissao' => $dtEmissao,
-			'emitente' => $emitente,
-			'destinatario' => $destinatario,
-			'idEmpresa' => $_SESSION['idEmpresa']
-		);
-
-		$apiEntrada2 = array(
-			'cnpj' => $emitente,
-			'nome' => $emitenteNome,
-			'endereco' => $emitenteEnd,
-			'idEmpresa' => $_SESSION['idEmpresa']
-		);
-
-		$apiEntrada3 = array(
-			'cnpj' => $destinatario,
-			'nome' => $destinatarioNome,
-			'endereco' => $destinatarioEnd,
-			'idEmpresa' => $_SESSION['idEmpresa']
-		);
-
-		$xml = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
-		$pessoa1 = chamaAPI(null, '/impostos/fispessoa', json_encode($apiEntrada2), 'PUT');
-		$pessoa2 = chamaAPI(null, '/impostos/fispessoa', json_encode($apiEntrada3), 'PUT');
-		echo json_encode($xml);
-		return $xml;
-		
-	}
 
 }

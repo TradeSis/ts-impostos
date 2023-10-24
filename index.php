@@ -31,7 +31,7 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
 
         <div class="container-fluid">
             <div class="row ">
-                <div class="col-lg-10 d-none d-md-none d-lg-block pr-0 pl-0 fundoAbas">
+                <div class="col-lg-10 d-none d-md-none d-lg-block pr-0 pl-0 ts-bgAplicativos">
                     <ul class="nav a" id="myTabs">
 
                         <?php
@@ -46,28 +46,28 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
                                 $tab = 'ncm';
                             } ?>
                             <li class="nav-item mr-1">
-                                <a class="nav-link1 nav-link 
+                                <a class="nav-link 
                                 <?php if ($tab == "ncm") {echo " active ";} ?>" 
                                 href="?tab=ncm" role="tab">NCM/CEST </a>
                             </li>
                         <?php }
                         if ($nivelMenu >= 1) { ?>
                             <li class="nav-item mr-1">
-                                <a class="nav-link1 nav-link 
+                                <a class="nav-link 
                                 <?php if ($tab == "operacoes") {echo " active ";} ?>" 
                                 href="?tab=operacoes" role="tab">Operações</a>
                             </li>
                         <?php }
                         if ($nivelMenu >= 1) { ?>
                             <li class="nav-item mr-1">
-                                <a class="nav-link1 nav-link 
-                                <?php if ($tab == "operacoes") {echo " active ";} ?>" 
+                                <a class="nav-link 
+                                <?php if ($tab == "nfe") {echo " active ";} ?>" 
                                 href="?tab=nfe" role="tab">NFE</a>
                             </li>
                         <?php }
                         if ($nivelMenu >= 4) { ?>
                             <li class="nav-item mr-1">
-                                <a class="nav-link1 nav-link 
+                                <a class="nav-link 
                                 <?php if ($tab == "configuracao") {echo " active ";} ?>" 
                                 href="?tab=configuracao" role="tab" data-toggle="tooltip" data-placement="top" title="Configurações"><i class="bi bi-gear"></i> Configurações</a>
                             </li>
@@ -119,8 +119,8 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
             }
 
             if ($src !== "") { ?>
-                <div class="container-fluid p-0 m-0" style="overflow: hidden;">
-                    <iframe class="row p-0 m-0" id="iFrameTab" style="width: 100%; height: 86vh; border:none" src="<?php echo URLROOT ?>/impostos/<?php echo $src ?>"></iframe>
+                <div class="container-fluid p-0 m-0">
+                    <iframe class="row p-0 m-0 ts-iframe" src="<?php echo URLROOT ?>/impostos/<?php echo $src ?>"></iframe>
                 </div>
             <?php } ?>
 

@@ -6,13 +6,13 @@ if (isset($jsonEntrada["idEmpresa"])) {
     $idEmpresa = $jsonEntrada["idEmpresa"];
 }
 $conexao = conectaMysql($idEmpresa);
-if (isset($jsonEntrada['cnpj'])) {
-    $cnpj = isset($jsonEntrada['cnpj']) && $jsonEntrada['cnpj'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['cnpj']) . "'" : "NULL";
+if (isset($jsonEntrada['cpfCnpj'])) {
+    $cpfCnpj = isset($jsonEntrada['cpfCnpj']) && $jsonEntrada['cpfCnpj'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['cpfCnpj']) . "'" : "NULL";
     $nome = isset($jsonEntrada['nome']) && $jsonEntrada['nome'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['nome']) . "'" : "NULL";
     $endereco = isset($jsonEntrada['endereco']) && $jsonEntrada['endereco'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['endereco']) . "'" : "NULL";
 
 
-    $sql = "INSERT INTO fispessoa(cnpj, nome, endereco) VALUES ($cnpj, $nome, $endereco)";
+    $sql = "INSERT INTO pessoa(cpfCnpj, nome, endereco) VALUES ($cpfCnpj, $nome, $endereco)";
     $atualizar = mysqli_query($conexao, $sql);
 
     if ($atualizar) {

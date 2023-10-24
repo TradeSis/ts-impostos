@@ -70,8 +70,8 @@ if ($metodo == "PUT") {
       include 'fisnota_inserir.php';
       break;
 
-    case "fispessoa":
-      include 'fispessoa_inserir.php';
+    case "pessoa":
+      include 'pessoa_inserir.php';
       break;
 
     default:

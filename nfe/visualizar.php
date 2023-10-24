@@ -29,38 +29,38 @@ $xml = $NFe;
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label class="labelForm">Chave de Acesso</label>
-                        <input type="text" class="data select form-control" value="<?php echo str_replace("NFe", "", $xml->infNFe['Id']) ?>">
+                        <label class="form-label ts-label">Chave de Acesso</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo str_replace("NFe", "", $xml->infNFe['Id']) ?>">
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label class="labelForm">Natureza da operação</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->ide->natOp ?>">
+                        <label class="form-label ts-label">Natureza da operação</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->ide->natOp ?>">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="labelForm">Modelo</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->ide->mod ?>">
+                        <label class="form-label ts-label">Modelo</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->ide->mod ?>">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="labelForm">Série</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->ide->serie ?>">
+                        <label class="form-label ts-label">Série</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->ide->serie ?>">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="labelForm">Nota Fiscal</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->ide->nNF ?>">
+                        <label class="form-label ts-label">Nota Fiscal</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->ide->nNF ?>">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="labelForm">Data de Emissão</label>
-                        <input type="text" class="data select form-control" value="<?php echo date('d/m/Y', strtotime($xml->infNFe->ide->dEmi)) ?>">
+                        <label class="form-label ts-label">Data de Emissão</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo date('d/m/Y', strtotime($xml->infNFe->ide->dEmi)) ?>">
                     </div>
                 </div>
             </div>
@@ -68,38 +68,38 @@ $xml = $NFe;
                 <h5>Emitente</h5>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">CNPJ</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->emit->CNPJ ?>">
+                        <label class="form-label ts-label">CNPJ</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->CNPJ ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">IE</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->emit->IE ?>">
+                        <label class="form-label ts-label">IE</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->IE ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">Razão Social</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->emit->xNome ?>">
+                        <label class="form-label ts-label">Razão Social</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->xNome ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">Municipio</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->emit->enderEmit->xMun ?>">
+                        <label class="form-label ts-label">Municipio</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->enderEmit->xMun ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">UF</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->emit->enderEmit->UF ?>">
+                        <label class="form-label ts-label">UF</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->enderEmit->UF ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">País</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->emit->enderEmit->xPais ?>">
+                        <label class="form-label ts-label">País</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->enderEmit->xPais ?>">
                     </div>
                 </div>
             </div>
@@ -107,38 +107,38 @@ $xml = $NFe;
                 <h5>Destinatário</h5>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">Doc</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->dest->CNPJ ?>">
+                        <label class="form-label ts-label">Doc</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->CNPJ ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">IE</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->dest->IE ?>">
+                        <label class="form-label ts-label">IE</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->IE ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">Nome</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->dest->xNome ?>">
+                        <label class="form-label ts-label">Nome</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->xNome ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">Municipio</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->dest->enderDest->xMun ?>">
+                        <label class="form-label ts-label">Municipio</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->enderDest->xMun ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">UF</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->dest->enderDest->UF ?>">
+                        <label class="form-label ts-label">UF</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->enderDest->UF ?>">
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label class="labelForm">País</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->dest->enderDest->xPais ?>">
+                        <label class="form-label ts-label">País</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->enderDest->xPais ?>">
                     </div>
                 </div>
             </div>
@@ -146,34 +146,34 @@ $xml = $NFe;
                 <h5>Valores</h5>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="labelForm">Base de Cálculo</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->total->ICMSTot->vBC ?>">
+                        <label class="form-label ts-label">Base de Cálculo</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->total->ICMSTot->vBC ?>">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="labelForm">Valor Produtos</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->total->ICMSTot->vProd ?>">
+                        <label class="form-label ts-label">Valor Produtos</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->total->ICMSTot->vProd ?>">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="labelForm">PIS</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->total->ICMSTot->vPIS ?>">
+                        <label class="form-label ts-label">PIS</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->total->ICMSTot->vPIS ?>">
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="labelForm">COFINS</label>
-                        <input type="text" class="data select form-control" value="<?php echo $xml->infNFe->total->ICMSTot->vCOFINS ?>">
+                        <label class="form-label ts-label">COFINS</label>
+                        <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->total->ICMSTot->vCOFINS ?>">
                     </div>
                 </div>
             </div>
-			<h5>Produtos</h5>
-			<div class="table mt-2 divtabela">
-				<table class="table table-hover table-sm align-middle">
-					<thead class="cabecalhoTabela">
-						<tr id="titulodetabelafixo">
+            <h5>Produtos</h5>
+			<div class="table ts-divTabela ts-tableFiltros table-striped table-hover">
+                <table class="table table-sm">
+                    <thead class="ts-headertabelafixo">
+                        <tr class="ts-headerTabelaLinhaCima">
 							<th>#</th>
 							<th>Código</th>
 							<th>Produto</th>
