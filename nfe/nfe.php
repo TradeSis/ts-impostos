@@ -27,7 +27,7 @@ $notas = buscaXML();
                     <table class="table table-sm">
                         <thead class="ts-headertabelafixo">
                             <tr class="ts-headerTabelaLinhaCima">
-                                <th>Arquivo</th>
+                                <th>Nota Fiscal</th>
                                 <th>Ação</th>
                             </tr>
                         </thead>
@@ -35,7 +35,7 @@ $notas = buscaXML();
                         foreach ($notas as $nota) { ?>
                             <tr>
                                 <td>
-                                    <?php echo $nota['nomeXml'] ?>
+                                    <?php echo $nota['chaveNFe'] ?>
                                 </td>
                                 <td>
                                     <a class="btn btn-info btn-sm"
