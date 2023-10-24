@@ -55,22 +55,22 @@ if (isset($_SESSION['filtro_operacao'])) {
             <BR> <!-- BOTOES AUXILIARES -->
         </div>
         <div class="row">
-            <div class="col-6 order-1 col-sm-6  col-md-6 order-md-1 col-lg-1 order-lg-1 mt-3">
+            <div class="col-6 order-1 col-sm-6  col-md-6 order-md-1 col-lg-1 order-lg-1">
                 <button type="button" class="ts-btnFiltros btn btn-sm"><span class="material-symbols-outlined">
                         filter_alt
                     </span></button>
 
             </div>
 
-            <div class="col-12 col-sm-12 col-md-12 col-lg-2 order-lg-2 mt-4">
+            <div class="col-12 col-sm-12 col-md-12 col-lg-2 order-lg-2">
                 <h2 class="ts-tituloPrincipal">Operações Fiscais</h2>
             </div>
 
             <div class="col-12 col-sm-12 col-md-12 col-lg-5 order-lg-3">
                 <div class="input-group">
-                    <input type="text" class="form-control" id="buscanotas" placeholder="Buscar por id ou numero da nota">
+                    <input type="text" class="form-control ts-input" id="buscanotas" placeholder="Buscar por id ou numero da nota">
                     <span class="input-group-btn">
-                        <button class="btn btn-primary mt-2" id="buscar" type="button"><span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">
+                        <button class="btn btn-primary" id="buscar" type="button"><span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">
                                 search
                             </span></button>
                     </span>
@@ -78,7 +78,7 @@ if (isset($_SESSION['filtro_operacao'])) {
             </div>
 
 
-            <div class="col-6 order-2 col-sm-6 col-md-6 order-md-2 col-lg-4 order-lg-4 mt-3 text-end" style=" margin-left:-30px ">
+            <div class="col-6 order-2 col-sm-6 col-md-6 order-md-2 col-lg-4 order-lg-4 text-end" style=" margin-left:-30px ">
             <a href="fisoperacao_inserir.php" role="button" class="btn btn-success"><i class="bi bi-plus-square"></i>&nbsp Novo</a>            </div>
         </div>
 
@@ -106,7 +106,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             <th>Operação</th>
                             <th >
                                 <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idAtividade"
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idAtividade"
                                         id="FiltroAtividade">
                                         <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
                                         <?php
@@ -123,7 +123,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             </th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idProcesso" id="FiltroProcesso">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idProcesso" id="FiltroProcesso">
                                         <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
                                         <?php
                                         foreach ($processos as $processo) {
@@ -139,7 +139,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             </th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idNatureza" id="FiltroNatureza">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idNatureza" id="FiltroNatureza">
                                         <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
                                         <?php
                                         foreach ($naturezas as $natureza) {
