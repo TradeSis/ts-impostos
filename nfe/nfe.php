@@ -11,73 +11,104 @@ $notas = buscaXML();
 <head>
 
     <?php include_once ROOT . "/vendor/head_css.php"; ?>
-    <link rel="stylesheet" href="<?php URLROOT ?>/services/css/tabs_visualizar.css">
 
 </head>
 
 <body>
-    <div class="container-fluid mt-2">
-        <div id="tabs">
+    <div class="container-fluid">
+        <div id="ts-tabs">
             <div class="tab whiteborder" id="tab-nfe">Carregados</div>
             <div class="tab" id="tab-xml">Arquivos Pasta</div>
             <div class="line"></div>
             <div class="tabContent">
-                <div class="table ts-divTabela ts-tableFiltros table-striped table-hover">
-                    <h4>XML Carregados</h4>
-                    <table class="table table-sm">
-                        <thead class="ts-headertabelafixo">
-                            <tr class="ts-headerTabelaLinhaCima">
-                                <th>Nota Fiscal</th>
-                                <th>Ação</th>
-                            </tr>
-                        </thead>
-                        <?php
-                        foreach ($notas as $nota) { ?>
-                            <tr>
-                                <td>
-                                    <?php echo $nota['chaveNFe'] ?>
-                                </td>
-                                <td>
-                                    <a class="btn btn-info btn-sm"
-                                        href="visualizar.php?arquivo=<?php echo $nota['pathXml'] ?>" role="button"><i
-                                            class="bi bi-eye-fill"></i></a>
-                                </td>
-                            </tr>
-                        <?php } ?>
-                    </table>
+                <div class="container-fluid">
+                    <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
+                        <div class="col-3 text-start">
+                            <!-- TITULO -->
+                            <h2 class="ts-tituloPrincipal">XML Carregados</h2>
+                        </div>
+                        <div class="col-7">
+                            <!-- FILTROS -->
+                        </div>
+
+                        <div class="col-2 text-end">
+                        </div>
+                    </div>
+                    <div class="table mt-2 ts-divTabela ts-tableFiltros">
+                        <table class="table table-hover table-sm">
+                            <thead class="ts-headertabelafixo">
+                                <tr>
+                                    <th>Nota Fiscal</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <?php
+                            foreach ($notas as $nota) { ?>
+                                <tr>
+                                    <td>
+                                        <?php echo $nota['chaveNFe'] ?>
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-info btn-sm"
+                                            href="visualizar.php?arquivo=<?php echo $nota['pathXml'] ?>" role="button"><i
+                                                class="bi bi-eye-fill"></i></a>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div class="tabContent">
-                <div class="table ts-divTabela ts-tableFiltros table-striped table-hover">
-                    <h4>Arquivos em /xml/</h4>
-                    <table class="table table-sm">
-                        <thead class="ts-headertabelafixo">
-                            <tr class="ts-headerTabelaLinhaCima">
-                                <th>Arquivo </th>
-                                <th>Ação</th>
-                            </tr>
-                        </thead>
-                        <?php
-                        $dir = ROOT . "/xml/";
-                        $files = scandir($dir);
-                        foreach ($files as $file) {
-                            if (!in_array($file, [".", ".."]) && strpos($file, "carregado_") !== 0) { ?>
-                                <tr>
-                                    <td>
-                                        <?php echo $file ?>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="uparButton btn btn-success btn-sm" data-file="<?php echo $dir . $file ?>"><i class="bi bi-arrow-up-circle"></i></button>
-                                    </td>
+                <div class="container-fluid">
+                    <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
+                        <div class="col-3 text-start">
+                            <!-- TITULO -->
+                            <h2 class="ts-tituloPrincipal">Arquivos em /xml/</h2>
+                        </div>
+                        <div class="col-7">
+                            <!-- FILTROS -->
+                        </div>
+
+                        <div class="col-2 text-end">
+                            <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
+                                <input type="file" id="myFile" class="custom-file-upload" name="file" style="color:#567381; display:none">
+                                <label for="myFile">
+                                    <a class="btn btn-primary">
+                                        <i class="bi bi-file-earmark-arrow-down-fill" style="color:#fff"></i>&#32;<h7 style="color: #fff;">Anexos</h7>
+                                    </a>
+                                </label>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="table mt-2 ts-divTabela ts-tableFiltros">
+                        <table class="table table-hover table-sm">
+                            <thead class="ts-headertabelafixo">
+                                    <th>Arquivo </th>
+                                    <th>Ação</th>
                                 </tr>
-                            <?php }
-                        } ?>
-                    </table>
+                            </thead>
+                            <?php
+                            $dir = ROOT . "/xml/";
+                            $files = scandir($dir);
+                            foreach ($files as $file) {
+                                if (!in_array($file, [".", ".."]) && strpos($file, "carregado") !== 0) { ?>
+                                    <tr>
+                                        <td>
+                                            <?php echo $file ?>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="uparButton btn btn-success btn-sm" data-file="<?php echo $dir . $file ?>"><i class="bi bi-arrow-up-circle"></i></button>
+                                        </td>
+                                    </tr>
+                                <?php }
+                            } ?>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <!-- LOCAL PARA COLOCAR OS JS -->
 
@@ -85,6 +116,26 @@ $notas = buscaXML();
 
     <script>
         $(document).ready(function () {
+            $('#myFile').on('change', function() {
+                var fileInput = document.getElementById('myFile');
+                var file = fileInput.files[0];
+
+                if (file) {
+                    var formData = new FormData();
+                    formData.append('file', file);
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "../database/fisnota.php?operacao=upload",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function(response) {
+                            refreshPage('xml');
+                        },
+                    });
+                }
+            });
 
             $('.uparButton').click(function () {
                 var arquivo = $(this).data('file');
@@ -98,16 +149,24 @@ $notas = buscaXML();
                     success: function (msg) {
                         var message = JSON.parse(msg);
                         if (message.retorno === "ok") {
-                            window.location.reload();
+                            refreshPage('xml');
                         }
                         if (message.status === 400) {
                             alert(message.retorno);
+                            refreshPage('xml');
                         }
                     }
                 });
             });
 
         });
+
+        function refreshPage(tab) {
+            window.location.reload();
+            var url = window.location.href.split('?')[0];
+            var newUrl = url + '?id=' + tab;
+            window.location.href = newUrl;
+        }
     </script>
     <script>
         var tab;
@@ -125,7 +184,7 @@ $notas = buscaXML();
             }
         }
 
-        document.getElementById('tabs').onclick = function (event) {
+        document.getElementById('ts-tabs').onclick = function (event) {
             var target = event.target;
             if (target.className == 'tab') {
                 for (var i = 0; i < tab.length; i++) {

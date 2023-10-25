@@ -47,9 +47,9 @@ $natureza = buscaNatureza($_GET['idNatureza']);
 
                 <label class='control-label' for='inputNormal'></label>
                 <div class="for-group">
-                    <input type="text" class="form-control" name="nomeNatureza" value="<?php echo $natureza['nomeNatureza'] ?>">
+                    <input type="text" class="form-control ts-input" name="nomeNatureza" value="<?php echo $natureza['nomeNatureza'] ?>">
                 </div>
-                <input type="text" class="form-control" name="idNatureza" value="<?php echo $natureza['idNatureza'] ?>" style="display: none">
+                <input type="text" class="form-control ts-input" name="idNatureza" value="<?php echo $natureza['idNatureza'] ?>" style="display: none">
             </div>
 
             <div class="text-end mt-4">

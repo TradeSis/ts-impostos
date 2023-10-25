@@ -40,10 +40,10 @@ if (isset($_GET['operacao'])) {
 			$fileExtension = $fileInfo['extension']; 
 
 			if ($fileExtension === 'xml') {
-				$pasta = ROOT . "/xml/";
+				$pasta = ROOT . "/xml/carregados/";
 				$newFileName = "carregado_" . $oldFileName . "." . $fileExtension;
 				
-				$pathAnexo = 'http://' . $_SERVER["HTTP_HOST"] . '/xml/' . $newFileName;
+				$pathAnexo = 'http://' . $_SERVER["HTTP_HOST"] . '/xml/carregados/' . $newFileName;
 
 				$newFilePath = $pasta . $newFileName;
 				if (rename($anexo, $newFilePath)) {
@@ -102,6 +102,21 @@ if (isset($_GET['operacao'])) {
 		return $xml;
 		
 	}
+	if ($operacao == "upload") {
+		$anexo = $_FILES['file'];
+	
+		if ($anexo !== null) {
+			$ext = pathinfo($anexo["name"], PATHINFO_EXTENSION);
+			
+			if (strtolower($ext) === "xml") {
+				$pasta = ROOT . "/xml/";
+				$pathAnexo = 'http://' . $_SERVER["HTTP_HOST"] . '/xml/' . $anexo["name"];
+				
+				move_uploaded_file($anexo['tmp_name'], $pasta . $anexo["name"]);
+			} 
+		} 
+	}
+
 
 
 }
