@@ -6,10 +6,10 @@ if (session_status() === PHP_SESSION_NONE) {
 
 include_once __DIR__ . "/../conexao.php";
 
-function buscaXML($idNota=null)
+function buscarNota($idNota=null)
 {
 
-	$xml = array();
+	$notas = array();
 
 	$idEmpresa = null;
 	if (isset($_SESSION['idEmpresa'])) {
@@ -20,7 +20,25 @@ function buscaXML($idNota=null)
 		'idNota' => $idNota,
 		'idEmpresa' => $idEmpresa
 	);
-	$xml = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'GET');
+	$notas = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'GET');
+	return $notas;
+}
+function buscarProdutos($idProduto=null, $chaveNFe=null)
+{
+
+	$xml = array();
+
+	$idEmpresa = null;
+	if (isset($_SESSION['idEmpresa'])) {
+		$idEmpresa = $_SESSION['idEmpresa'];
+	}
+
+	$apiEntrada = array(
+		'idProduto' => $idProduto,
+		'chaveNFe' => $chaveNFe,
+		'idEmpresa' => $idEmpresa
+	);
+	$xml = chamaAPI(null, '/impostos/fisproduto', json_encode($apiEntrada), 'GET');
 	return $xml;
 }
 
@@ -57,48 +75,104 @@ if (isset($_GET['operacao'])) {
 		$xml = simplexml_load_file($newFilePath);
 		$NFe = $xml->NFe;
 
+		//Nota fiscal
 		$xml = $NFe;
 		$chaveNFe = str_replace("NFe", "", $xml->infNFe['Id']);
 	 	$NF = (string) $xml->infNFe->ide->nNF;
 		$serie = (string) $xml->infNFe->ide->serie;
-		$dtEmissao = date('Y/m/d', strtotime($xml->infNFe->ide->dEmi));
+		$dtEmissao = date('Y-m-d', strtotime($xml->infNFe->ide->dhEmi));
+		$naturezaOp = (string) $xml->infNFe->ide->natOp;
+		$modelo = (string) $xml->infNFe->ide->mod;
+		$baseCalculo = (string) $xml->infNFe->total->ICMSTot->vBC;
+		$valorProdutos = (string) $xml->infNFe->total->ICMSTot->vProd;
+		$pis = (string) $xml->infNFe->total->ICMSTot->vPIS;
+		$cofins = (string) $xml->infNFe->total->ICMSTot->vCOFINS;
+		//Emitente
 		$emitente = (string) $xml->infNFe->emit->CNPJ;
 		$emitenteNome = (string) $xml->infNFe->emit->xNome;
 		$emitenteEnd = (string) $xml->infNFe->emit->enderEmit->xLgr . ' ' . $xml->infNFe->emit->enderEmit->nro;
+		$emitenteIE = (string) $xml->infNFe->emit->IE;
+		$emitenteMunicipio = (string) $xml->infNFe->emit->enderEmit->xMun;
+		$emitenteUF = (string) $xml->infNFe->emit->enderEmit->UF;
+		$emitentePais = (string) $xml->infNFe->emit->enderEmit->xPais;
+		//Destinatario
 		$destinatario = (string) $xml->infNFe->dest->CNPJ;
 		$destinatarioNome = (string) $xml->infNFe->dest->xNome;
 		$destinatarioEnd = (string) $xml->infNFe->dest->enderDest->xLgr . ' ' . $xml->infNFe->dest->enderDest->nro;
+		$destinatarioIE = (string) $xml->infNFe->dest->IE;
+		$destinatarioMunicipio = (string) $xml->infNFe->dest->enderDest->xMun;
+		$destinatarioUF = (string) $xml->infNFe->dest->enderDest->UF;
+		$destinatarioPais = (string) $xml->infNFe->dest->enderDest->xPais;
 
 		$apiEntrada = array(
 			'nomeXml' => $newFileName,
 			'pathXml' => $pathAnexo,
 			'chaveNFe' => $chaveNFe,
+			'naturezaOp' => $naturezaOp,
+			'modelo' => $modelo,
 			'NF' => $NF,
 			'serie' => $serie,
 			'dtEmissao' => $dtEmissao,
 			'emitente' => $emitente,
 			'destinatario' => $destinatario,
+			'baseCalculo' => $baseCalculo,
+			'valorProdutos' => $valorProdutos,
+			'pis' => $pis,
+			'cofins' => $cofins,
 			'idEmpresa' => $_SESSION['idEmpresa']
 		);
 
-		$apiEntrada2 = array(
+		$emitente = array(
 			'cpfCnpj' => $emitente,
 			'nome' => $emitenteNome,
-			'endereco' => $emitenteEnd,
-			'idEmpresa' => $_SESSION['idEmpresa']
+			'IE' => $emitenteIE,
+			'municipio' => $emitenteMunicipio,
+			'UF' => $emitenteUF,
+			'pais' => $emitentePais,
+			'endereco' => $emitenteEnd
 		);
-
-		$apiEntrada3 = array(
+		
+		$destinatario = array(
 			'cpfCnpj' => $destinatario,
 			'nome' => $destinatarioNome,
-			'endereco' => $destinatarioEnd,
-			'idEmpresa' => $_SESSION['idEmpresa']
+			'IE' => $destinatarioIE,
+			'municipio' => $destinatarioMunicipio,
+			'UF' => $destinatarioUF,
+			'pais' => $destinatarioPais,
+			'endereco' => $destinatarioEnd
+		);
+		
+		$arrayEntradaPessoa = array(
+			'idEmpresa' => $_SESSION['idEmpresa'],
+			$emitente,
+			$destinatario
 		);
 
+		//Produtos
+		$arrayEntradaProdutos = array(
+			'idEmpresa' => $_SESSION['idEmpresa'],
+			'produtos' => array(),
+		);
+		
+		foreach ($xml->infNFe->det as $item) {
+			$arrayEntradaProdutos['produtos'][] = array(
+				'codigoProduto' => (string)$item->prod->cProd,
+				'nomeProduto' => (string)$item->prod->xProd,
+				'quantidade' => (string)$item->prod->qCom, 
+				'unidCom' => (string)$item->prod->uCom,
+				'valorUnidade' => (string)$item->prod->vUnCom,
+				'valorTotal' => (string)$item->prod->vProd, 
+				'cfop' => (string)$item->prod->CFOP, 
+				'ncm' => (string)$item->prod->NCM,
+				'cest' => (string)$item->prod->CEST,
+				'chaveNFe' => $chaveNFe
+			);
+		}
+		
 		$xml = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
-		$pessoa1 = chamaAPI(null, '/impostos/pessoa', json_encode($apiEntrada2), 'PUT');
-		$pessoa2 = chamaAPI(null, '/impostos/pessoa', json_encode($apiEntrada3), 'PUT');
-		echo json_encode($xml);
+		$pessoas = chamaAPI(null, '/impostos/pessoa', json_encode($arrayEntradaPessoa), 'PUT');
+		$fisproduto = chamaAPI(null, '/impostos/fisproduto', json_encode($arrayEntradaProdutos), 'PUT');
+		echo json_encode($arrayEntradaProdutos);
 		return $xml;
 		
 	}

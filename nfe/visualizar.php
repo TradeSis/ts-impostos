@@ -1,10 +1,9 @@
 <?php
 include_once(__DIR__ . '/../header.php');
-// Transformando arquivo XML em Objeto
-$xml = simplexml_load_file($_GET['arquivo']);
-$NFe = $xml->NFe;
+include_once '../database/fisnota.php';
 
-$xml = $NFe;
+$notas = buscarNota($_GET['idNota']);
+$produtos = buscarProdutos(null,$notas['chaveNFe']);
 ?>
 <!doctype html>
 <html lang="pt-BR">
@@ -18,7 +17,7 @@ $xml = $NFe;
 <body>
     <div class="card container mt-2">
         <div class="container mt-3">
-			<div class="row">
+			<div class="row mt-3">
 				<div class="col-sm-10">
 					<h5>Informações da Nota Fiscal</h5>
 				</div>
@@ -26,107 +25,113 @@ $xml = $NFe;
 					<button onclick="history.back()" role="button" class="btn btn-primary"><i class="bi bi-arrow-left-square"></i></i>&#32;Voltar</button>
 				</div>
 			</div>
-            <div class="row">
+            <div class="row mt-3">
                 <div class="col-md-6">
                     <label class="form-label ts-label">Chave de Acesso</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo str_replace("NFe", "", $xml->infNFe['Id']) ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['chaveNFe'] ?>">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label ts-label">Natureza da operação</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->ide->natOp ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['naturezaOp'] ?>">
                 </div>
+            </div>
+            <div class="row mt-3">
                 <div class="col-md-3">
                     <label class="form-label ts-label">Modelo</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->ide->mod ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['modelo'] ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">Série</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->ide->serie ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['serie'] ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">Nota Fiscal</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->ide->nNF ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['NF'] ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">Data de Emissão</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo date('d/m/Y', strtotime($xml->infNFe->ide->dEmi)) ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo date('d/m/Y', strtotime($notas['dtEmissao'])) ?>">
                 </div>
             </div>
-            <div class="row">
+            <div class="row mt-3">
                 <h5>Emitente</h5>
                 <div class="col-md-4">
                     <label class="form-label ts-label">CNPJ</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->CNPJ ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_cpfCnpj'] ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">IE</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->IE ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_IE'] ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">Razão Social</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->xNome ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_nome'] ?>">
                 </div>
+            </div>
+            <div class="row mt-3">
                 <div class="col-md-4">
                     <label class="form-label ts-label">Municipio</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->enderEmit->xMun ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_municipio'] ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">UF</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->enderEmit->UF ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_UF'] ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">País</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->emit->enderEmit->xPais ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_pais'] ?>">
                 </div>
             </div>
-            <div class="row">
+            <div class="row mt-3">
                 <h5>Destinatário</h5>
                 <div class="col-md-4">
                     <label class="form-label ts-label">Doc</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->CNPJ ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_cpfCnpj'] ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">IE</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->IE ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_IE'] ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">Nome</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->xNome ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_nome'] ?>">
                 </div>
+            </div>
+            <div class="row mt-3">
                 <div class="col-md-4">
                     <label class="form-label ts-label">Municipio</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->enderDest->xMun ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_municipio'] ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">UF</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->enderDest->UF ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_UF'] ?>">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">País</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->dest->enderDest->xPais ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_pais'] ?>">
                 </div>
             </div>
-            <div class="row">
+            <div class="row mt-3">
                 <h5>Valores</h5>
                 <div class="col-md-3">
                     <label class="form-label ts-label">Base de Cálculo</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->total->ICMSTot->vBC ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['baseCalculo'], 2, ',', '.') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">Valor Produtos</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->total->ICMSTot->vProd ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['valorProdutos'], 2, ',', '.') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">PIS</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->total->ICMSTot->vPIS ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['pis'], 2, ',', '.') ?>">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">COFINS</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $xml->infNFe->total->ICMSTot->vCOFINS ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['cofins'], 2, ',', '.') ?>">
                 </div>
             </div>
-            <h5>Produtos</h5>
-			<div class="table ts-divTabela ts-tableFiltros table-striped table-hover">
+			<div class="table ts-divTabela ts-tableFiltros table-striped table-hover mt-3">
+                <h5>Produtos</h5>
                 <table class="table table-sm">
                     <thead class="ts-headertabelafixo">
                         <tr class="ts-headerTabelaLinhaCima">
@@ -143,20 +148,21 @@ $xml = $NFe;
 					</thead>
 
 					<?php
-					foreach($xml->infNFe->det as $item) { ?>
+                    $nItem = 1;
+					foreach($produtos as $produto) { ?>
 						<tr>
-							<td> <?php echo $item['nItem'] ?></td>
-							<td> <?php echo $item->prod->cProd ?></td>
-							<td> <?php echo $item->prod->xProd ?></td>
-							<td> <?php echo $item->prod->qCom ?></td>
-							<td> <?php echo $item->prod->vUnCom ?></td>
-							<td> <?php echo $item->prod->vProd ?></td>
-							<td> <?php echo $item->prod->CFOP ?></td>
-							<td> <?php echo $item->prod->NCM ?></td>
-							<td> <?php echo $item->prod->CEST ?></td>
+							<td> <?php echo $nItem ?></td>
+							<td> <?php echo $produto['codigoProduto'] ?></td>
+							<td> <?php echo $produto['nomeProduto'] ?></td>
+							<td> <?php echo number_format($produto['quantidade'], 0, ',', '.'); ?></td>
+							<td> <?php echo number_format($produto['valorUnidade'], 2, ',', '.'); ?></td>
+							<td> <?php echo number_format($produto['valorTotal'], 2, ',', '.'); ?></td>
+							<td> <?php echo $produto['cfop'] ?></td>
+							<td> <?php echo $produto['ncm'] ?></td>
+							<td> <?php echo $produto['cest'] ?></td>
 						</tr>
-					<?php } ?>
-
+					<?php $nItem++;
+                    } ?>
 				</table>
 			</div>
 		</div>

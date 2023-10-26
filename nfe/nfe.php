@@ -3,7 +3,7 @@ include_once(__DIR__ . '/../header.php');
 include_once '../database/fisnota.php';
 
 
-$notas = buscaXML();
+$notas = buscarNota();
 ?>
 <!doctype html>
 <html lang="pt-BR">
@@ -17,15 +17,15 @@ $notas = buscaXML();
 <body>
     <div class="container-fluid">
         <div id="ts-tabs">
-            <div class="tab whiteborder" id="tab-nfe">Carregados</div>
-            <div class="tab" id="tab-xml">Arquivos Pasta</div>
+            <div class="tab whiteborder" id="tab-nfe">NFe</div>
+            <div class="tab" id="tab-xml">Carga NFe</div>
             <div class="line"></div>
             <div class="tabContent">
                 <div class="container-fluid">
                     <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
                         <div class="col-3 text-start">
                             <!-- TITULO -->
-                            <h2 class="ts-tituloPrincipal">XML Carregados</h2>
+                            <h2 class="ts-tituloPrincipal">Notas Fiscais</h2>
                         </div>
                         <div class="col-7">
                             <!-- FILTROS -->
@@ -39,18 +39,22 @@ $notas = buscaXML();
                             <thead class="ts-headertabelafixo">
                                 <tr>
                                     <th>Nota Fiscal</th>
+                                    <th>Chave</th>
+                                    <th>Valor Total</th>
+                                    <th>Emissão</th>
                                     <th>Ação</th>
                                 </tr>
                             </thead>
                             <?php
                             foreach ($notas as $nota) { ?>
                                 <tr>
-                                    <td>
-                                        <?php echo $nota['chaveNFe'] ?>
-                                    </td>
+                                    <td> <?php echo $nota['NF'] ?> </td>
+                                    <td> <?php echo $nota['chaveNFe'] ?> </td>
+                                    <td> <?php echo number_format($nota['valorProdutos'], 2, ',', '.') ?> </td>
+                                    <td> <?php echo date('d/m/Y', strtotime($nota['dtEmissao']))  ?> </td>
                                     <td>
                                         <a class="btn btn-info btn-sm"
-                                            href="visualizar.php?arquivo=<?php echo $nota['pathXml'] ?>" role="button"><i
+                                            href="visualizar.php?idNota=<?php echo $nota['idNota'] ?>" role="button"><i
                                                 class="bi bi-eye-fill"></i></a>
                                     </td>
                                 </tr>
@@ -84,7 +88,7 @@ $notas = buscaXML();
                     <div class="table mt-2 ts-divTabela ts-tableFiltros">
                         <table class="table table-hover table-sm">
                             <thead class="ts-headertabelafixo">
-                                    <th>Arquivo </th>
+                                    <th>Arquivo</th>
                                     <th>Ação</th>
                                 </tr>
                             </thead>
@@ -147,6 +151,7 @@ $notas = buscaXML();
                         arquivo: arquivo
                     },
                     success: function (msg) {
+                        console.log(msg);
                         var message = JSON.parse(msg);
                         if (message.retorno === "ok") {
                             refreshPage('xml');
