@@ -23,24 +23,6 @@ function buscarNota($idNota=null)
 	$notas = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'GET');
 	return $notas;
 }
-function buscarProdutos($idProduto=null, $chaveNFe=null)
-{
-
-	$xml = array();
-
-	$idEmpresa = null;
-	if (isset($_SESSION['idEmpresa'])) {
-		$idEmpresa = $_SESSION['idEmpresa'];
-	}
-
-	$apiEntrada = array(
-		'idProduto' => $idProduto,
-		'chaveNFe' => $chaveNFe,
-		'idEmpresa' => $idEmpresa
-	);
-	$xml = chamaAPI(null, '/impostos/fisproduto', json_encode($apiEntrada), 'GET');
-	return $xml;
-}
 
 
 if (isset($_GET['operacao'])) {
@@ -170,9 +152,9 @@ if (isset($_GET['operacao'])) {
 		}
 		
 		$xml = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
-		$pessoas = chamaAPI(null, '/impostos/pessoa', json_encode($arrayEntradaPessoa), 'PUT');
-		$fisproduto = chamaAPI(null, '/impostos/fisproduto', json_encode($arrayEntradaProdutos), 'PUT');
-		echo json_encode($arrayEntradaProdutos);
+		$pessoas = chamaAPI(null, '/impostos/nfepessoa', json_encode($arrayEntradaPessoa), 'PUT');
+		$fisproduto = chamaAPI(null, '/impostos/nfefisproduto', json_encode($arrayEntradaProdutos), 'PUT');
+		echo json_encode($xml);
 		return $xml;
 		
 	}

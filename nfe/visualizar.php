@@ -2,6 +2,8 @@
 include_once(__DIR__ . '/../header.php');
 include_once '../database/fisnota.php';
 
+include_once(ROOT . '/cadastros/database/fisproduto.php');
+
 $notas = buscarNota($_GET['idNota']);
 $produtos = buscarProdutos(null,$notas['chaveNFe']);
 ?>
@@ -22,112 +24,112 @@ $produtos = buscarProdutos(null,$notas['chaveNFe']);
 					<h5>Informações da Nota Fiscal</h5>
 				</div>
 				<div class="col-sm-2">
-					<button onclick="history.back()" role="button" class="btn btn-primary"><i class="bi bi-arrow-left-square"></i></i>&#32;Voltar</button>
+                    <a href="nfe.php" role="button" class="btn btn-primary"><i class="bi bi-arrow-left-square"></i></i>&#32;Voltar</a>
 				</div>
 			</div>
             <div class="row mt-3">
                 <div class="col-md-6">
                     <label class="form-label ts-label">Chave de Acesso</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['chaveNFe'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['chaveNFe'] ?>" readonly>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label ts-label">Natureza da operação</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['naturezaOp'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['naturezaOp'] ?>" readonly>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-md-3">
                     <label class="form-label ts-label">Modelo</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['modelo'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['modelo'] ?>" readonly>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">Série</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['serie'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['serie'] ?>" readonly>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">Nota Fiscal</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['NF'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['NF'] ?>" readonly>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">Data de Emissão</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo date('d/m/Y', strtotime($notas['dtEmissao'])) ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo date('d/m/Y', strtotime($notas['dtEmissao'])) ?>" readonly>
                 </div>
             </div>
             <div class="row mt-3">
                 <h5>Emitente</h5>
                 <div class="col-md-4">
                     <label class="form-label ts-label">CNPJ</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_cpfCnpj'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_cpfCnpj'] ?>" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">IE</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_IE'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_IE'] ?>" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">Razão Social</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_nome'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_nome'] ?>" readonly>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-md-4">
                     <label class="form-label ts-label">Municipio</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_municipio'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_municipio'] ?>" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">UF</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_UF'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_UF'] ?>" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">País</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_pais'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_pais'] ?>" readonly>
                 </div>
             </div>
             <div class="row mt-3">
                 <h5>Destinatário</h5>
                 <div class="col-md-4">
                     <label class="form-label ts-label">Doc</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_cpfCnpj'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_cpfCnpj'] ?>" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">IE</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_IE'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_IE'] ?>" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">Nome</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_nome'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_nome'] ?>" readonly>
                 </div>
             </div>
             <div class="row mt-3">
                 <div class="col-md-4">
                     <label class="form-label ts-label">Municipio</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_municipio'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_municipio'] ?>" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">UF</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_UF'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_UF'] ?>" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">País</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_pais'] ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_pais'] ?>" readonly>
                 </div>
             </div>
             <div class="row mt-3">
                 <h5>Valores</h5>
                 <div class="col-md-3">
                     <label class="form-label ts-label">Base de Cálculo</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['baseCalculo'], 2, ',', '.') ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['baseCalculo'], 2, ',', '.') ?>" readonly>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">Valor Produtos</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['valorProdutos'], 2, ',', '.') ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['valorProdutos'], 2, ',', '.') ?>" readonly>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">PIS</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['pis'], 2, ',', '.') ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['pis'], 2, ',', '.') ?>" readonly>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label ts-label">COFINS</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['cofins'], 2, ',', '.') ?>">
+                    <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['cofins'], 2, ',', '.') ?>" readonly>
                 </div>
             </div>
 			<div class="table ts-divTabela ts-tableFiltros table-striped table-hover mt-3">

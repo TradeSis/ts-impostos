@@ -151,7 +151,6 @@ $notas = buscarNota();
                         arquivo: arquivo
                     },
                     success: function (msg) {
-                        console.log(msg);
                         var message = JSON.parse(msg);
                         if (message.retorno === "ok") {
                             refreshPage('xml');

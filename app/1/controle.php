@@ -36,14 +36,6 @@ if ($metodo == "GET") {
       include 'fisnota.php';
       break;
 
-    case "pessoa":
-      include 'pessoa.php';
-      break;
-      
-    case "fisproduto":
-      include 'fisproduto.php';
-      break;
-
     default:
       $jsonSaida = json_decode(json_encode(
         array(
@@ -78,12 +70,12 @@ if ($metodo == "PUT") {
       include 'fisnota_inserir.php';
       break;
 
-    case "pessoa":
-      include 'pessoa_inserir.php';
+    case "nfepessoa":
+      include 'nfepessoa_inserir.php';
       break;
 
-    case "fisproduto":
-      include 'fisproduto_inserir.php';
+    case "nfefisproduto":
+      include 'nfefisproduto_inserir.php';
       break;
 
     default:
