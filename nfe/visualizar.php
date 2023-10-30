@@ -2,10 +2,9 @@
 include_once(__DIR__ . '/../header.php');
 include_once '../database/fisnota.php';
 
-include_once(ROOT . '/cadastros/database/fisproduto.php');
 
 $notas = buscarNota($_GET['idNota']);
-$produtos = buscarProdutos(null,$notas['chaveNFe']);
+$produtos = buscarNotaProduto($_GET['idNota']);
 ?>
 <!doctype html>
 <html lang="pt-BR">
@@ -150,21 +149,19 @@ $produtos = buscarProdutos(null,$notas['chaveNFe']);
 					</thead>
 
 					<?php
-                    $nItem = 1;
 					foreach($produtos as $produto) { ?>
 						<tr>
-							<td> <?php echo $nItem ?></td>
-							<td> <?php echo $produto['codigoProduto'] ?></td>
+							<td> <?php echo $produto['nItem'] ?></td>
+							<td> <?php echo $produto['refProduto'] ?></td>
 							<td> <?php echo $produto['nomeProduto'] ?></td>
 							<td> <?php echo number_format($produto['quantidade'], 0, ',', '.'); ?></td>
 							<td> <?php echo number_format($produto['valorUnidade'], 2, ',', '.'); ?></td>
 							<td> <?php echo number_format($produto['valorTotal'], 2, ',', '.'); ?></td>
 							<td> <?php echo $produto['cfop'] ?></td>
-							<td> <?php echo $produto['ncm'] ?></td>
-							<td> <?php echo $produto['cest'] ?></td>
+							<td> <?php echo $produto['codigoNcm'] ?></td>
+							<td> <?php echo $produto['codigoCest'] ?></td>
 						</tr>
-					<?php $nItem++;
-                    } ?>
+					<?php } ?>
 				</table>
 			</div>
 		</div>

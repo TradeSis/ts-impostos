@@ -6,7 +6,7 @@ $idEmpresa = null;
     	$idEmpresa = $jsonEntrada["idEmpresa"];
 	}
 $conexao = conectaMysql($idEmpresa);
-if (isset($jsonEntrada['nomeXml'])) {
+if (isset($jsonEntrada['chaveNFe'])) {
     $chaveNFe = isset($jsonEntrada['chaveNFe']) && $jsonEntrada['chaveNFe'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['chaveNFe']) . "'" : "NULL";
     $sql2 = "SELECT chaveNFe FROM fisnota WHERE chaveNFe = $chaveNFe";
     $resultado = mysqli_query($conexao, $sql2);
@@ -22,24 +22,24 @@ if (isset($jsonEntrada['nomeXml'])) {
         $NF = isset($jsonEntrada['NF']) && $jsonEntrada['NF'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['NF']) . "'" : "NULL";
         $serie = isset($jsonEntrada['serie']) && $jsonEntrada['serie'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['serie']) . "'" : "NULL";
         $dtEmissao = isset($jsonEntrada['dtEmissao']) && $jsonEntrada['dtEmissao'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['dtEmissao']) . "'" : "NULL";
-        $emitente = isset($jsonEntrada['emitente']) && $jsonEntrada['emitente'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['emitente']) . "'" : "NULL";
-        $destinatario = isset($jsonEntrada['destinatario']) && $jsonEntrada['destinatario'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['destinatario']) . "'" : "NULL";
+        $idPessoaEmitente = isset($jsonEntrada['idPessoaEmitente']) && $jsonEntrada['idPessoaEmitente'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['idPessoaEmitente']) . "'" : "NULL";
+        $idPessoaDestinatario = isset($jsonEntrada['idPessoaDestinatario']) && $jsonEntrada['idPessoaDestinatario'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['idPessoaDestinatario']) . "'" : "NULL";
         $baseCalculo = isset($jsonEntrada['baseCalculo']) && $jsonEntrada['baseCalculo'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['baseCalculo']) . "'" : "NULL";
         $valorProdutos = isset($jsonEntrada['valorProdutos']) && $jsonEntrada['valorProdutos'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['valorProdutos']) . "'" : "NULL";
         $pis = isset($jsonEntrada['pis']) && $jsonEntrada['pis'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['pis']) . "'" : "NULL";
         $cofins = isset($jsonEntrada['cofins']) && $jsonEntrada['cofins'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['cofins']) . "'" : "NULL";
-        $pathXml = isset($jsonEntrada['pathXml']) && $jsonEntrada['pathXml'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['pathXml']) . "'" : "NULL";
-        $nomeXml = isset($jsonEntrada['nomeXml']) && $jsonEntrada['nomeXml'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['nomeXml']) . "'" : "NULL";
 
 
-        $sql = "INSERT INTO fisnota(chaveNFe, naturezaOp, modelo, NF, serie, dtEmissao, emitente, destinatario, baseCalculo, valorProdutos, pis, cofins, pathXml, nomeXml) VALUES 
-        ($chaveNFe, $naturezaOp, $modelo, $NF, $serie, $dtEmissao, $emitente, $destinatario, $baseCalculo, $valorProdutos, $pis, $cofins, $pathXml, $nomeXml)";
+        $sql = "INSERT INTO fisnota(chaveNFe, naturezaOp, modelo, NF, serie, dtEmissao, idPessoaEmitente, idPessoaDestinatario, baseCalculo, valorProdutos, pis, cofins) VALUES 
+        ($chaveNFe, $naturezaOp, $modelo, $NF, $serie, $dtEmissao, $idPessoaEmitente, $idPessoaDestinatario, $baseCalculo, $valorProdutos, $pis, $cofins)";
         $atualizar = mysqli_query($conexao, $sql);
 
+        $idNotaInserido = mysqli_insert_id($conexao);
         if ($atualizar) {
             $jsonSaida = array(
                 "status" => 200,
-                "retorno" => "ok"
+                "retorno" => "ok",
+                "idNotaInserido" => $idNotaInserido
             );
         } else {
             $jsonSaida = array(

@@ -23,6 +23,23 @@ function buscarNota($idNota=null)
 	$notas = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'GET');
 	return $notas;
 }
+function buscarNotaProduto($idNota=null)
+{
+
+	$notas = array();
+
+	$idEmpresa = null;
+	if (isset($_SESSION['idEmpresa'])) {
+		$idEmpresa = $_SESSION['idEmpresa'];
+	}
+
+	$apiEntrada = array(
+		'idNota' => $idNota,
+		'idEmpresa' => $idEmpresa
+	);
+	$notas = chamaAPI(null, '/impostos/fisnotaproduto', json_encode($apiEntrada), 'GET');
+	return $notas;
+}
 
 
 if (isset($_GET['operacao'])) {
@@ -56,11 +73,11 @@ if (isset($_GET['operacao'])) {
 
 		$xml = simplexml_load_file($newFilePath);
 		$NFe = $xml->NFe;
+		$xml = $NFe;
 
 		//Nota fiscal
-		$xml = $NFe;
 		$chaveNFe = str_replace("NFe", "", $xml->infNFe['Id']);
-	 	$NF = (string) $xml->infNFe->ide->nNF;
+		$NF = (string) $xml->infNFe->ide->nNF;
 		$serie = (string) $xml->infNFe->ide->serie;
 		$dtEmissao = date('Y-m-d', strtotime($xml->infNFe->ide->dhEmi));
 		$naturezaOp = (string) $xml->infNFe->ide->natOp;
@@ -86,24 +103,6 @@ if (isset($_GET['operacao'])) {
 		$destinatarioUF = (string) $xml->infNFe->dest->enderDest->UF;
 		$destinatarioPais = (string) $xml->infNFe->dest->enderDest->xPais;
 
-		$apiEntrada = array(
-			'nomeXml' => $newFileName,
-			'pathXml' => $pathAnexo,
-			'chaveNFe' => $chaveNFe,
-			'naturezaOp' => $naturezaOp,
-			'modelo' => $modelo,
-			'NF' => $NF,
-			'serie' => $serie,
-			'dtEmissao' => $dtEmissao,
-			'emitente' => $emitente,
-			'destinatario' => $destinatario,
-			'baseCalculo' => $baseCalculo,
-			'valorProdutos' => $valorProdutos,
-			'pis' => $pis,
-			'cofins' => $cofins,
-			'idEmpresa' => $_SESSION['idEmpresa']
-		);
-
 		$emitente = array(
 			'cpfCnpj' => $emitente,
 			'nome' => $emitenteNome,
@@ -113,7 +112,6 @@ if (isset($_GET['operacao'])) {
 			'pais' => $emitentePais,
 			'endereco' => $emitenteEnd
 		);
-		
 		$destinatario = array(
 			'cpfCnpj' => $destinatario,
 			'nome' => $destinatarioNome,
@@ -123,39 +121,70 @@ if (isset($_GET['operacao'])) {
 			'pais' => $destinatarioPais,
 			'endereco' => $destinatarioEnd
 		);
-		
-		$arrayEntradaPessoa = array(
+		$pessoaEntrada = array(
 			'idEmpresa' => $_SESSION['idEmpresa'],
 			$emitente,
 			$destinatario
 		);
+		//Inserir Pessoa
+		$pessoas = chamaAPI(null, '/impostos/nfepessoa', json_encode($pessoaEntrada), 'PUT');
+		foreach ($pessoas as $id => $pessoaResponse) {
+			if ($pessoaResponse["status"] === 200) {
+				$idPessoaInserido = $pessoaResponse["idPessoaInserido"];
+				if ($id == 0) {
+					$idPessoaEmitente = $idPessoaInserido;
+				} elseif ($id == 1) {
+					$idPessoaDestinatario = $idPessoaInserido;
+				}
+			}
+		}
+
+		$notaEntrada = array(
+			'chaveNFe' => $chaveNFe,
+			'naturezaOp' => $naturezaOp,
+			'modelo' => $modelo,
+			'NF' => $NF,
+			'serie' => $serie,
+			'dtEmissao' => $dtEmissao,
+			'idPessoaEmitente' => $idPessoaEmitente,
+			'idPessoaDestinatario' => $idPessoaDestinatario,
+			'baseCalculo' => $baseCalculo,
+			'valorProdutos' => $valorProdutos,
+			'pis' => $pis,
+			'cofins' => $cofins,
+			'idEmpresa' => $_SESSION['idEmpresa']
+		);
+		//Inserir Nota
+		$nfe = chamaAPI(null, '/impostos/fisnota', json_encode($notaEntrada), 'PUT');
+		$idNota = $nfe['idNotaInserido'];
 
 		//Produtos
-		$arrayEntradaProdutos = array(
+		$produtoEntrada = array(
 			'idEmpresa' => $_SESSION['idEmpresa'],
 			'produtos' => array(),
 		);
-		
 		foreach ($xml->infNFe->det as $item) {
-			$arrayEntradaProdutos['produtos'][] = array(
-				'codigoProduto' => (string)$item->prod->cProd,
+			$produtoEntrada['produtos'][] = array(
+				'idPessoaEmitente' => $idPessoaEmitente,
 				'nomeProduto' => (string)$item->prod->xProd,
+				'idNota' => $idNota,
+				'nItem' => (string)$item['nItem'],
+				'refProduto' => (string)$item->prod->cProd,
 				'quantidade' => (string)$item->prod->qCom, 
 				'unidCom' => (string)$item->prod->uCom,
 				'valorUnidade' => (string)$item->prod->vUnCom,
 				'valorTotal' => (string)$item->prod->vProd, 
 				'cfop' => (string)$item->prod->CFOP, 
-				'ncm' => (string)$item->prod->NCM,
-				'cest' => (string)$item->prod->CEST,
-				'chaveNFe' => $chaveNFe
+				'codigoNcm' => (string)$item->prod->NCM,
+				'codigoCest' => (string)$item->prod->CEST
 			);
 		}
-		
-		$xml = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
-		$pessoas = chamaAPI(null, '/impostos/nfepessoa', json_encode($arrayEntradaPessoa), 'PUT');
-		$fisproduto = chamaAPI(null, '/impostos/nfefisproduto', json_encode($arrayEntradaProdutos), 'PUT');
-		echo json_encode($xml);
-		return $xml;
+		//Inserir fisNotaProduto e Produto
+		$produtos = chamaAPI(null, '/impostos/nfeprodutos', json_encode($produtoEntrada), 'PUT');
+		$fisnotaproduto = chamaAPI(null, '/impostos/nfefisnotaproduto', json_encode($produtoEntrada), 'PUT');
+
+		echo json_encode($nfe);
+		return $nfe;
 		
 	}
 	if ($operacao == "upload") {
