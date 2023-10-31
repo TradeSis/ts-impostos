@@ -6,6 +6,10 @@ if (isset($jsonEntrada["idEmpresa"])) {
     $idEmpresa = $jsonEntrada["idEmpresa"];
 }
 $conexao = conectaMysql($idEmpresa);
+
+$ativoProduto = 1; //Ativo
+$propagandaProduto = 0; //Inativo
+
 foreach ($jsonEntrada['produtos'] as $data) {
     if (is_array($data) && isset($data['refProduto'])) {
         $idPessoaEmitente = isset($data['idPessoaEmitente']) && $data['idPessoaEmitente'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['idPessoaEmitente']) . "'" : "NULL";
@@ -16,7 +20,8 @@ foreach ($jsonEntrada['produtos'] as $data) {
         $codigoNcm = isset($data['codigoNcm']) && $data['codigoNcm'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['codigoNcm']) . "'" : "NULL";
         $codigoCest = isset($data['codigoCest']) && $data['codigoCest'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['codigoCest']) . "'" : "NULL";
 
-        $sql = "INSERT INTO produtos(idPessoaEmitente, refProduto, nomeProduto, valorCompra, codigoNcm, codigoCest) VALUES ($idPessoaEmitente, $refProduto, $nomeProduto, $valorCompra, $codigoNcm, $codigoCest)";
+        $sql = "INSERT INTO produtos(idPessoaEmitente, refProduto, nomeProduto, valorCompra, codigoNcm, codigoCest, ativoProduto, propagandaProduto) 
+                VALUES ($idPessoaEmitente, $refProduto, $nomeProduto, $valorCompra, $codigoNcm, $codigoCest, $ativoProduto, $propagandaProduto)";
         $atualizar = mysqli_query($conexao, $sql);
 
         if ($atualizar) {
