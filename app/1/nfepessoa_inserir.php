@@ -11,7 +11,7 @@ foreach ($jsonEntrada as $id => $data) {
     if ($id !== 'idEmpresa' && is_array($data) && isset($data['cpfCnpj'])) {
         $cpfCnpj = isset($data['cpfCnpj']) && $data['cpfCnpj'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['cpfCnpj']) . "'" : "NULL";
         
-        $sql2 = "SELECT * FROM pessoa WHERE cpfCnpj = $cpfCnpj";
+        $sql2 = "SELECT * FROM pessoas WHERE cpfCnpj = $cpfCnpj";
         $buscar = mysqli_query($conexao, $sql2);
         $row = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
         
@@ -31,7 +31,7 @@ foreach ($jsonEntrada as $id => $data) {
             $pais = isset($data['pais']) && $data['pais'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['pais']) . "'" : "NULL";
             $endereco = isset($data['endereco']) && $data['endereco'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['endereco']) . "'" : "NULL";
 
-            $sql = "INSERT INTO pessoa(cpfCnpj, nome, IE, municipio, UF, pais, endereco) VALUES ($cpfCnpj, $nome, $IE, $municipio, $UF, $pais, $endereco)";
+            $sql = "INSERT INTO pessoas(cpfCnpj, nome, IE, municipio, UF, pais, endereco) VALUES ($cpfCnpj, $nome, $IE, $municipio, $UF, $pais, $endereco)";
             $atualizar = mysqli_query($conexao, $sql);
 
             $idPessoaInserido = mysqli_insert_id($conexao);
