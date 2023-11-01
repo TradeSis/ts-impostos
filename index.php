@@ -103,7 +103,7 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
             $src = "";
 
             if ($tab == "ncm") {
-                $src = "ncm/ncm_table.php";
+                $src = "ncm/tabelas.php";
             }
             if ($tab == "operacoes") {
                 $src = "operacoes/fisoperacao.php";

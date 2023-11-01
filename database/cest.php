@@ -17,7 +17,7 @@ function buscaCest($nomeCest = null, $codigoCest = null, $codigoNcm = null)
 
 	);
 
-	$cest = chamaAPI(null, '/fiscal/cest', json_encode($apiEntrada), 'GET');
+	$cest = chamaAPI(null, '/impostos/cest', json_encode($apiEntrada), 'GET');
 
 	return $cest;
 }
@@ -47,7 +47,7 @@ if (isset($_GET['operacao'])) {
 		$_SESSION['filtro_cest'] = $apiEntrada;
 		//echo json_encode(($apiEntrada));
 		/* return; */
-		$cest = chamaAPI(null, '/fiscal/cest', json_encode($apiEntrada), 'GET');
+		$cest = chamaAPI(null, '/impostos/cest', json_encode($apiEntrada), 'GET');
 
 		echo json_encode($cest);
 		return $cest;

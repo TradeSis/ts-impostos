@@ -42,29 +42,29 @@ $operacao = buscaOperacao($_GET['idOperacao']);
 
         <form action="../database/fisoperacao.php?operacao=excluir" method="post">
 
-            <input type="hidden" class="form-control" name="idOperacao" value="<?php echo $operacao['idOperacao'] ?>">
+            <input type="hidden" class="form-control ts-input" name="idOperacao" value="<?php echo $operacao['idOperacao'] ?>">
 
-            <label class="labelForm">Nome da operação</label>
-            <input type="text" class="form-control" name="nomeOperacao" value="<?php echo $operacao['nomeOperacao'] ?>">
+            <label class="form-label ts-label">Nome da operação</label>
+            <input type="text" class="form-control ts-input" name="nomeOperacao" value="<?php echo $operacao['nomeOperacao'] ?>">
 
             <div class="row">
                 <div class="col-md form-group-select" style="margin-top: 37px;">
-                    <label class="labelForm">Atividade</label>
-                    <select class="select form-control" name="idAtividade">
+                    <label class="form-label ts-label">Atividade</label>
+                    <select class="form-select ts-input" name="idAtividade">
                         <option value="<?php echo $operacao['idAtividade'] ?>"><?php echo $operacao['nomeAtividade'] ?></option>
                     </select>
                 </div>
 
                 <div class="col-md form-group-select" style="margin-top: 37px;">
-                    <label class="labelForm">Processo</label>
-                    <select class="select form-control" name="idProcesso">
+                    <label class="form-label ts-label">Processo</label>
+                    <select class="form-select ts-input" name="idProcesso">
                         <option value="<?php echo $operacao['idProcesso'] ?>"><?php echo $operacao['nomeProcesso'] ?></option>
                     </select>
                 </div>
 
                 <div class="col-md form-group-select" style="margin-top: 37px;">
-                    <label class="labelForm">Natureza</label>
-                    <select class="select form-control" name="idNatureza">
+                    <label class="form-label ts-label">Natureza</label>
+                    <select class="form-select ts-input" name="idNatureza">
                         <option value="<?php echo $operacao['idNatureza'] ?>"><?php echo $operacao['nomeNatureza'] ?></option>
                     </select>
                 </div>
@@ -72,18 +72,18 @@ $operacao = buscaOperacao($_GET['idOperacao']);
 
             <div class="row">
                 <div class="col-md form-group" style="margin-top: 37px;">
-                    <label class="labelForm">idGrupoOper</label>
-                    <input type="text" class="form-control" name="idGrupoOper" value="<?php echo $operacao['idGrupoOper'] ?>">
+                    <label class="form-label ts-label">idGrupoOper</label>
+                    <input type="text" class="form-control ts-input" name="idGrupoOper" value="<?php echo $operacao['idGrupoOper'] ?>">
                 </div>
 
                 <div class="col-md form-group" style="margin-top: 37px;">
-                    <label class="labelForm">idEntSai</label>
-                    <input type="text" class="form-control" name="idEntSai" value="<?php echo $operacao['idEntSai'] ?>">
+                    <label class="form-label ts-label">idEntSai</label>
+                    <input type="text" class="form-control ts-input" name="idEntSai" value="<?php echo $operacao['idEntSai'] ?>">
                 </div>
 
                 <div class="col-md form-group" style="margin-top: 37px;">
-                    <label class="labelForm">xfop</label>
-                    <input type="text" class="form-control" name="xfop" value="<?php echo $operacao['xfop'] ?>">
+                    <label class="form-label ts-label">xfop</label>
+                    <input type="text" class="form-control ts-input" name="xfop" value="<?php echo $operacao['xfop'] ?>">
                 </div>
             </div>
 

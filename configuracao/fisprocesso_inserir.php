@@ -45,7 +45,7 @@ include_once('../header.php');
             <div class="col-md-12 form-group">
                 <label class='control-label' for='inputNormal' style="margin-top: -20px;">Nome Processo</label>
                 <div class="for-group">
-                    <input type="text" class="form-control" name="nomeProcesso" autocomplete="off" required>
+                    <input type="text" class="form-control ts-input" name="nomeProcesso" autocomplete="off" required>
                 </div>
             </div>
 
