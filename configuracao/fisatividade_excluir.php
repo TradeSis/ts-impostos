@@ -45,9 +45,9 @@ $atividade = buscaAtividade($_GET['idAtividade']);
 
                 <label class='control-label' for='inputNormal'></label>
                 <div class="for-group">
-                    <input type="text" class="form-control" name="nomeAtividade" value="<?php echo $atividade['nomeAtividade'] ?>">
+                    <input type="text" class="form-control ts-input" name="nomeAtividade" value="<?php echo $atividade['nomeAtividade'] ?>">
                 </div>
-                <input type="hidden" class="form-control" name="idAtividade" value="<?php echo $atividade['idAtividade'] ?>">
+                <input type="hidden" class="form-control ts-input" name="idAtividade" value="<?php echo $atividade['idAtividade'] ?>">
             </div>
 
             <div class="text-end mt-4">

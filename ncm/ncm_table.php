@@ -1,72 +1,19 @@
 <?php
-//Lucas 13102023 padrao novo
 include_once(__DIR__ . '/../header.php');
-include_once(__DIR__ . '/../database/ncm.php');
-
-$filtroEntrada = null;
-$dadosNcm = null;
-$FiltroTipoNcm = null;
-
-
-if (isset($_SESSION['filtro_ncm'])) {
-    $filtroEntrada = $_SESSION['filtro_ncm'];
-    $FiltroTipoNcm = $filtroEntrada['FiltroTipoNcm'];
-    $dadosNcm = $filtroEntrada['dadosNcm'];
-}
 ?>
-<!doctype html>
-<html lang="pt-BR">
-
-<head>
-
-    <?php include_once ROOT . "/vendor/head_css.php"; ?>
-
-</head>
-
-<style>
-    .nav-link.active:any-link {
-        background-color: #567381;
-        border: 1px solid #DFDFDF;
-        border-radius: 5px 5px 0px 0px;
-        color: #fff;
-    }
-
-    .line {
-        width: 100%;
-        border-bottom: 1px solid #707070;
-    }
-</style>
 
 <body>
 
 
-    <div class="container-fluid">
-        <div class="pt-4 text-center">
-            <ul class="nav nav-pills" id="myTab" role="tablist">
-                <li class="nav-item mr-1">
-                    <a class="nav-link active" style="color: #ffffff!important; background-color: #13216A!important" href="#">NCM</a>
-                </li>
-                <li class="nav-item mr-1">
-                    <a class="nav-link active" href="cest_table.php">Cest</a>
-                </li>
-                <li class="nav-item mr-1">
-                    <a class="nav-link active" href="fisoperacao_table.php">Operação</a>
-                </li>
-            </ul>
-            <div class="line"></div>
-            <div class="row">
-                <BR> <!-- MENSAGENS/ALERTAS -->
-            </div>
-            <div class="row">
-                <BR> <!-- BOTOES AUXILIARES -->
-            </div>
+        <div class="container-fluid">
             <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
                 <div class="col-3 text-start">
                     <!-- TITULO -->
                     <h2 class="ts-tituloPrincipal">NCM</h2>
                 </div>
                 <div class="col-3">
-                    <form class="d-flex" action="" method="post" style="text-align: right;">
+                    <!-- FILTROS -->
+                    <form method="post">
                         <select class="form-select ts-input" name="FiltroTipoNcm" id="FiltroTipoNcm">
                             <option <?php if ($FiltroTipoNcm == "Descricao") {
                                         echo "selected";
@@ -86,7 +33,7 @@ if (isset($_SESSION['filtro_ncm'])) {
                             <input type="text" class="form-control ts-input" id="dadosNcm" placeholder="Codigo">
                         <?php } ?>
 
-                        <button class="btn btn-primary" id="buscar" type="button">
+                        <button class="btn btn-primary" id="buscarNcm" type="button">
                             <span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">search</span>
                         </button>
                     </div>
@@ -96,8 +43,8 @@ if (isset($_SESSION['filtro_ncm'])) {
                 </div>
             </div>
 
-            <div class="table ts-divTabela ts-tableFiltros table-striped table-hover">
-                <table class="table table-sm">
+            <div class="table mt-2 ts-divTabela ts-tableFiltros">
+                <table class="table table-hover table-sm">
                     <thead class="ts-headertabelafixo">
                         <tr>
                             <th>Código</th>
@@ -107,34 +54,32 @@ if (isset($_SESSION['filtro_ncm'])) {
                             <th>CEST</th>
                         </tr>
                     </thead>
-                    <tbody id='dados' class="fonteCorpo">
+                    <tbody id='dadosNcmTable' class="fonteCorpo">
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
 
     <!-- LOCAL PARA COLOCAR OS JS -->
-
     <?php include_once ROOT . "/vendor/footer_js.php"; ?>
 
     <script>
         <?php if (!empty($dadosNcm)) { ?>
-            buscar($("#FiltroTipoNcm").val(), $("#dadosNcm").val());
+            buscarNcm($("#FiltroTipoNcm").val(), $("#dadosNcm").val());
         <?php } ?>
 
         function limpar() {
-            buscar(null, null);
+            buscarNcm(null, null);
             window.location.reload();
         }
 
-        function buscar(FiltroTipoNcm, dadosNcm) {
+        function buscarNcm(FiltroTipoNcm, dadosNcm) {
             $.ajax({
                 type: 'POST',
                 dataType: 'html',
                 url: '../database/ncm.php?operacao=filtrar',
                 beforeSend: function() {
-                    $("#dados").html("Carregando...");
+                    $("#dadosNcmTable").html("Carregando...");
                 },
                 data: {
                     FiltroTipoNcm: FiltroTipoNcm,
@@ -171,9 +116,9 @@ if (isset($_SESSION['filtro_ncm'])) {
                         if (object.codigoCest) {
                             var codigoCestArray = object.codigoCest.split(',');
                             if (codigoCestArray.length > 1) {
-                                linha += "<td><a href='cest_table.php?codigoNcm=" + object.codigoNcm + "'>CEST</a></td>";
+                                linha += "<td><a href='javascript:void(0);' onclick='refreshPage(\"cest\", \"" + object.codigoNcm + "\");'>CEST</a></td>";
                             } else {
-                                linha += "<td><a href='cest_table.php?codigoNcm=" + object.codigoNcm + "'>" + codigoCestArray[0] + "</a></td>";
+                                linha += "<td><a href='javascript:void(0);' onclick='refreshPage(\"cest\", \"" + object.codigoNcm + "\");'>" + codigoCestArray[0] + "</a></td>";
                             }
                         } else {
                             linha += "<td></td>";
@@ -181,7 +126,7 @@ if (isset($_SESSION['filtro_ncm'])) {
                         linha += "</tr>";
                     }
 
-                    $("#dados").html(linha);
+                    $("#dadosNcmTable").html(linha);
                 },
                 error: function(e) {
                     alert('Erro: ' + JSON.stringify(e));
@@ -190,23 +135,23 @@ if (isset($_SESSION['filtro_ncm'])) {
         }
 
         $(document).ready(function() {
-            $("#buscar").click(function() {
+            $("#buscarNcm").click(function() {
                 if ($("#dadosNcm").val() === "") {
                     alert("Campo Codigo vazio!");
                 } else {
-                    buscar($("#FiltroTipoNcm").val(), $("#dadosNcm").val());
+                    buscarNcm($("#FiltroTipoNcm").val(), $("#dadosNcm").val());
                 }
             });
 
             $(document).keypress(function(e) {
                 if (e.key === "Enter") {
-                    buscar($("#FiltroTipoNcm").val(), $("#dadosNcm").val());
+                    buscarNcm($("#FiltroTipoNcm").val(), $("#dadosNcm").val());
                 }
             });
         });
     </script>
-
     <!-- LOCAL PARA COLOCAR OS JS -FIM -->
+
 
 </body>
 

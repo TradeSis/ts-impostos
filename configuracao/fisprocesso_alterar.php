@@ -46,9 +46,9 @@ $processos = buscaProcesso($_GET['idProcesso']);
 
                 <label class='control-label' for='inputNormal'></label>
                 <div class="for-group">
-                    <input type="text" class="form-control" name="nomeProcesso" value="<?php echo $processos['nomeProcesso'] ?>">
+                    <input type="text" class="form-control ts-input" name="nomeProcesso" value="<?php echo $processos['nomeProcesso'] ?>">
                 </div>
-                <input type="text" class="form-control" name="idProcesso" value="<?php echo $processos['idProcesso'] ?>" style="display: none">
+                <input type="text" class="form-control ts-input" name="idProcesso" value="<?php echo $processos['idProcesso'] ?>" style="display: none">
             </div>
 
             <div class="text-end mt-4">
