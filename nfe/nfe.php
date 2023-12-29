@@ -53,10 +53,10 @@ $notas = buscarNota();
                                     <td> <?php echo number_format($nota['valorProdutos'], 2, ',', '.') ?> </td>
                                     <td> <?php echo date('d/m/Y', strtotime($nota['dtEmissao']))  ?> </td>
                                     <td>
-                                        <a class="btn btn-info btn-sm"
-                                            href="visualizar.php?idNota=<?php echo $nota['idNota'] ?>" role="button"><i
-                                                class="bi bi-eye-fill"></i></a>
+                                        <a class="btn btn-info btn-sm" href="visualizar.php?idNota=<?php echo $nota['idNota'] ?>" role="button"><i class="bi bi-eye-fill"></i></a>
+                                        <button type="button" class="btn btn-success btn-sm" id="baixar" data-idNota="<?php echo $nota['idNota'] ?>" title="Baixar XML"><i class="bi bi-download"></i></button>
                                     </td>
+
                                 </tr>
                             <?php } ?>
                         </table>
@@ -76,8 +76,8 @@ $notas = buscarNota();
 
                         <div class="col-2 text-end">
                             <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
-                                <input type="file" id="myFile" class="custom-file-upload" name="file" style="color:#567381; display:none">
-                                <label for="myFile">
+                                <input type="file" id="arquivo" class="custom-file-upload" name="file" style="color:#567381; display:none">
+                                <label for="arquivo">
                                     <a class="btn btn-primary">
                                         <i class="bi bi-file-earmark-arrow-down-fill" style="color:#fff"></i>&#32;<h7 style="color: #fff;">Anexos</h7>
                                     </a>
@@ -102,7 +102,7 @@ $notas = buscarNota();
                                             <?php echo $file ?>
                                         </td>
                                         <td>
-                                            <button type="button" class="uparButton btn btn-success btn-sm" data-file="<?php echo $dir . $file ?>"><i class="bi bi-arrow-up-circle"></i></button>
+                                            <button type="button" class="btn btn-success btn-sm" id="upar" data-file="<?php echo $dir . $file ?>"><i class="bi bi-arrow-up-circle"></i></button>
                                         </td>
                                     </tr>
                                 <?php }
@@ -120,8 +120,8 @@ $notas = buscarNota();
 
     <script>
         $(document).ready(function () {
-            $('#myFile').on('change', function() {
-                var fileInput = document.getElementById('myFile');
+            $('#arquivo').on('change', function() {
+                var fileInput = document.getElementById('arquivo');
                 var file = fileInput.files[0];
 
                 if (file) {
@@ -141,7 +141,7 @@ $notas = buscarNota();
                 }
             });
 
-            $('.uparButton').click(function () {
+            $('#upar').click(function () {
                 var arquivo = $(this).data('file');
                 console.log(arquivo);
                 $.ajax({
@@ -160,6 +160,27 @@ $notas = buscarNota();
                             alert(message.retorno);
                             refreshPage('xml');
                         }
+                    }
+                });
+            });
+
+            $('#baixar').click(function () {
+                var idNota = $(this).attr("data-idNota");
+                $.ajax({
+                    method: "POST",
+                    dataType: 'json',
+                    url: "../database/fisnota.php?operacao=buscar",
+                    data: { 
+                        idNota: idNota
+                    },
+                    success: function (msg) {
+                        var xmlContent = msg.XML;
+                        var blob = new Blob([xmlContent], { type: 'application/xml' }); 
+                        var filename = msg.chaveNFe;
+                        var link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = filename;
+                        link.click();
                     }
                 });
             });

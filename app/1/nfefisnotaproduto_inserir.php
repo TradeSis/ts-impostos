@@ -1,33 +1,67 @@
 <?php
-//echo "-ENTRADA->".json_encode($jsonEntrada)."\n";
+
+//LOG
+$LOG_CAMINHO = defineCaminhoLog();
+if (isset($LOG_CAMINHO)) {
+    $LOG_NIVEL = defineNivelLog();
+    $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "nfe_notaproduto_inserir";
+    if (isset($LOG_NIVEL)) {
+        if ($LOG_NIVEL >= 1) {
+            $arquivo = fopen(defineCaminhoLog() . "fisnota_" . date("dmY") . ".log", "a");
+        }
+    }
+}
+if (isset($LOG_NIVEL)) {
+    if ($LOG_NIVEL == 1) {
+        fwrite($arquivo, $identificacao . "\n");
+    }
+    if ($LOG_NIVEL >= 2) {
+        fwrite($arquivo, $identificacao . "-ENTRADA->" . json_encode($jsonEntrada) . "\n");
+    }
+}
+//LOG
 
 $idEmpresa = null;
 if (isset($jsonEntrada["idEmpresa"])) {
     $idEmpresa = $jsonEntrada["idEmpresa"];
 }
 $conexao = conectaMysql($idEmpresa);
-foreach ($jsonEntrada['produtos'] as $data) {
-    if (is_array($data) && isset($data['idNota'])) {
-        $refProduto = isset($data['refProduto']) && $data['refProduto'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['refProduto']) . "'" : "NULL";
+
+if (isset($jsonEntrada['xml'])) {
+
+    $xml = simplexml_load_string($jsonEntrada['xml']);
+    $infNFe = $xml->infNFe;
+
+    foreach ($infNFe->det as $item) {
+        $refProduto = "'" . (string) $item->prod->cProd . "'";
 
         $sql2 = "SELECT * FROM produtos WHERE refProduto = $refProduto";
         $buscar = mysqli_query($conexao, $sql2);
         $row = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
         $idProduto = $row["idProduto"];
 
-        
-        $idNota = isset($data['idNota']) && $data['idNota'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['idNota']) . "'" : "NULL";
-        $nItem = isset($data['nItem']) && $data['nItem'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['nItem']) . "'" : "NULL";
-        $quantidade = isset($data['quantidade']) && $data['quantidade'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['quantidade']) . "'" : "NULL";
-        $unidCom = isset($data['unidCom']) && $data['unidCom'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['unidCom']) . "'" : "NULL";
-        $valorUnidade = isset($data['valorUnidade']) && $data['valorUnidade'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['valorUnidade']) . "'" : "NULL";
-        $valorTotal = isset($data['valorTotal']) && $data['valorTotal'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['valorTotal']) . "'" : "NULL";
-        $cfop = isset($data['cfop']) && $data['cfop'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['cfop']) . "'" : "NULL";
-        $codigoNcm = isset($data['codigoNcm']) && $data['codigoNcm'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['codigoNcm']) . "'" : "NULL";
-        $codigoCest = isset($data['codigoCest']) && $data['codigoCest'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['codigoCest']) . "'" : "NULL";
 
-        $sql = "INSERT INTO fisnotaproduto(idNota, nItem, idProduto, quantidade, unidCom, valorUnidade, valorTotal, cfop, codigoNcm, codigoCest) VALUES ($idNota, $nItem, $idProduto, $quantidade, $unidCom, $valorUnidade, $valorTotal, $cfop, $codigoNcm, $codigoCest)";
+        $idNota = "'" . $jsonEntrada['idNota'] . "'";
+        $nItem = "'" . (string) $item['nItem'] . "'";
+        $quantidade = "'" . (string) $item->prod->qCom . "'";
+        $unidCom = "'" . (string) $item->prod->uCom . "'";
+        $valorUnidade = "'" . (string) $item->prod->vUnCom . "'";
+        $valorTotal = "'" . (string) $item->prod->vProd . "'";
+        $cfop = "'" . (string) $item->prod->CFOP . "'";
+        $codigoNcm = "'" . (string) $item->prod->NCM . "'";
+        $codigoCest = "'" . (string) $item->prod->CEST . "'";
+
+        $sql = "INSERT INTO fisnotaproduto(idNota,nItem,idProduto,quantidade,unidCom,valorUnidade,valorTotal,cfop,codigoNcm,codigoCest)
+                VALUES($idNota,$nItem,$idProduto,$quantidade,$unidCom,$valorUnidade,$valorTotal,$cfop,$codigoNcm,$codigoCest)";
         $atualizar = mysqli_query($conexao, $sql);
+
+        //LOG
+        if (isset($LOG_NIVEL)) {
+            if ($LOG_NIVEL >= 3) {
+                fwrite($arquivo, $identificacao . "-SQL->" . $sql . "\n");
+            }
+        }
+        //LOG
 
         if ($atualizar) {
             $jsonSaida = array(
@@ -40,11 +74,18 @@ foreach ($jsonEntrada['produtos'] as $data) {
                 "retorno" => "erro no mysql"
             );
         }
-    } else {
-        $jsonSaida = array(
-            "status" => 400,
-            "retorno" => "Faltaram parâmetros"
-        );
+    }
+} else {
+    $jsonSaida = array(
+        "status" => 400,
+        "retorno" => "Faltaram parâmetros"
+    );
+}
+
+//LOG
+if (isset($LOG_NIVEL)) {
+    if ($LOG_NIVEL >= 2) {
+        fwrite($arquivo, $identificacao . "-SAIDA->" . json_encode($jsonSaida) . "\n\n");
     }
 }
-unset($jsonSaida['idEmpresa']);
+//LOG
