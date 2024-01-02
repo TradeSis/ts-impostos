@@ -33,14 +33,26 @@ if (isset($jsonEntrada['xml'])) {
     $infNFe = $xml->infNFe;
 
     foreach ($infNFe->det as $item) {
+        $eanProduto = "'" . (string) $item->prod->cEAN . "'";
         $refProduto = "'" . (string) $item->prod->cProd . "'";
 
-        $sql2 = "SELECT * FROM produtos WHERE refProduto = $refProduto";
+        if($refProduto == $eanProduto) {
+            $refProduto = "NULL";
+        }
+        if($eanProduto == "'SEM GTIN'") {
+            $eanProduto = "NULL";
+        }
+        
+        if ($eanProduto === "NULL") {
+            $sql2 = "SELECT * FROM produtos WHERE eanProduto is NULL AND refProduto = $refProduto";
+        } else {
+            $sql2 = "SELECT * FROM produtos WHERE eanProduto = $eanProduto";
+        }
         $buscar = mysqli_query($conexao, $sql2);
         $row = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
         $idProduto = $row["idProduto"];
-
-
+        
+        
         $idNota = "'" . $jsonEntrada['idNota'] . "'";
         $nItem = "'" . (string) $item['nItem'] . "'";
         $quantidade = "'" . (string) $item->prod->qCom . "'";

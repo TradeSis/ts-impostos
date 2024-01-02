@@ -25,6 +25,13 @@ if (isset($jsonEntrada['xml'])) {
         $idPessoaFornecedor = "'" . $jsonEntrada['idPessoaEmitente'] . "'";
         $refProduto = "'" . (string) $item->prod->cProd . "'";
 
+        if($refProduto == $eanProduto) {
+            $refProduto = "NULL";
+        }
+        if($eanProduto == "'SEM GTIN'") {
+            $eanProduto = "NULL";
+        }
+
         $sql = "INSERT INTO produtos(eanProduto,nomeProduto,valorCompra,precoProduto,codigoNcm,codigoCest,ativoProduto,propagandaProduto,idPessoaFornecedor,refProduto)
                 VALUES($eanProduto,$nomeProduto,$valorCompra,$precoProduto,$codigoNcm,$codigoCest,$ativoProduto,$propagandaProduto,$idPessoaFornecedor,$refProduto)";
 

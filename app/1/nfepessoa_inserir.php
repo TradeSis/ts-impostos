@@ -34,6 +34,7 @@ if (isset($jsonEntrada['xml'])) {
     
     // Emitente
     $emitente = (string) $infNFe->emit->CNPJ;
+    $emitenteTipoPessoa = 'J'; //Emitente sempre CNPJ
     $emitenteNomePessoa = (string) $infNFe->emit->xNome;
     $emitenteIE = (string) $infNFe->emit->IE;
     $emitenteMunicipio = (string) $infNFe->emit->enderEmit->xMun;
@@ -48,7 +49,13 @@ if (isset($jsonEntrada['xml'])) {
     $emitenteCRT = (string) $infNFe->emit->CRT;
     
     // Destinatario
-    $destinatario = (string) $infNFe->dest->CNPJ;
+    if (isset($infNFe->dest->CNPJ)) {
+        $destinatario = $infNFe->dest->CNPJ;
+        $destinatarioTipoPessoa = 'J'; 
+    } else {
+        $destinatario = $infNFe->dest->CPF;
+        $destinatarioTipoPessoa = 'F'; 
+    }
     $destinatarioNomePessoa = (string) $infNFe->dest->xNome;
     $destinatarioIE = (string) $infNFe->dest->IE;
     $destinatarioMunicipio = (string) $infNFe->dest->enderDest->xMun;
@@ -64,6 +71,7 @@ if (isset($jsonEntrada['xml'])) {
 
     $emitente = array(
         'cpfCnpj' => $emitente,
+        'tipoPessoa' => $emitenteTipoPessoa,
         'nomePessoa' => $emitenteNomePessoa,
         'IE' => $emitenteIE,
         'municipio' => $emitenteMunicipio,
@@ -79,6 +87,7 @@ if (isset($jsonEntrada['xml'])) {
     );
     $destinatario = array(
         'cpfCnpj' => $destinatario,
+        'tipoPessoa' => $destinatarioTipoPessoa,
         'nomePessoa' => $destinatarioNomePessoa,
         'IE' => $destinatarioIE,
         'municipio' => $destinatarioMunicipio,
@@ -115,6 +124,7 @@ if (isset($jsonEntrada['xml'])) {
                 );
             } else {
                 $nomePessoa = isset($data['nomePessoa']) && $data['nomePessoa'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['nomePessoa']) . "'" : "NULL";
+                $tipoPessoa = isset($data['tipoPessoa']) && $data['tipoPessoa'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['tipoPessoa']) . "'" : "NULL";
                 $IE = isset($data['IE']) && $data['IE'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['IE']) . "'" : "NULL";
                 $municipio = isset($data['municipio']) && $data['municipio'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['municipio']) . "'" : "NULL";
                 $codigoCidade = isset($data['codigoCidade']) && $data['codigoCidade'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['codigoCidade']) . "'" : "NULL";
@@ -127,8 +137,8 @@ if (isset($jsonEntrada['xml'])) {
                 $telefone = isset($data['telefone']) && $data['telefone'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['telefone']) . "'" : "NULL";
                 $CRT = isset($data['CRT']) && $data['CRT'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['CRT']) . "'" : "NULL";
 
-                $sql = "INSERT INTO pessoas(cpfCnpj,nomePessoa,IE,municipio,codigoCidade,codigoEstado,pais,bairro,endereco,endNumero,CEP,telefone,CRT)
-                        VALUES($cpfCnpj,$nomePessoa,$IE,$municipio,$codigoCidade,$codigoEstado,$pais,$bairro,$endereco,$endNumero,$CEP,$telefone,$CRT)";
+                $sql = "INSERT INTO pessoas(cpfCnpj,tipoPessoa,nomePessoa,IE,municipio,codigoCidade,codigoEstado,pais,bairro,endereco,endNumero,CEP,telefone,CRT)
+                        VALUES($cpfCnpj,$tipoPessoa,$nomePessoa,$IE,$municipio,$codigoCidade,$codigoEstado,$pais,$bairro,$endereco,$endNumero,$CEP,$telefone,$CRT)";
                 $atualizar = mysqli_query($conexao, $sql);
 
                 //LOG
