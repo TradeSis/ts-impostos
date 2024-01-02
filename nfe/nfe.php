@@ -18,7 +18,6 @@ $notas = buscarNota();
     <div class="container-fluid">
         <div id="ts-tabs">
             <div class="tab whiteborder" id="tab-nfe">NFe</div>
-            <div class="tab" id="tab-xml">Carga NFe</div>
             <div class="line"></div>
             <div class="tabContent">
                 <div class="container-fluid">
@@ -32,6 +31,14 @@ $notas = buscarNota();
                         </div>
 
                         <div class="col-2 text-end">
+                            <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
+                                <input type="file" id="arquivo" class="custom-file-upload" name="file" style="color:#567381; display:none">
+                                <label for="arquivo">
+                                    <a class="btn btn-primary">
+                                        <i class="bi bi-file-earmark-arrow-down-fill" style="color:#fff"></i>&#32;<h7 style="color: #fff;">Arquivo</h7>
+                                    </a>
+                                </label>
+                            </form>
                         </div>
                     </div>
                     <div class="table mt-2 ts-divTabela ts-tableFiltros">
@@ -63,54 +70,6 @@ $notas = buscarNota();
                     </div>
                 </div>
             </div>
-            <div class="tabContent">
-                <div class="container-fluid">
-                    <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
-                        <div class="col-3 text-start">
-                            <!-- TITULO -->
-                            <h2 class="ts-tituloPrincipal">Arquivos em /xml/</h2>
-                        </div>
-                        <div class="col-7">
-                            <!-- FILTROS -->
-                        </div>
-
-                        <div class="col-2 text-end">
-                            <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
-                                <input type="file" id="arquivo" class="custom-file-upload" name="file" style="color:#567381; display:none">
-                                <label for="arquivo">
-                                    <a class="btn btn-primary">
-                                        <i class="bi bi-file-earmark-arrow-down-fill" style="color:#fff"></i>&#32;<h7 style="color: #fff;">Anexos</h7>
-                                    </a>
-                                </label>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="table mt-2 ts-divTabela ts-tableFiltros">
-                        <table class="table table-hover table-sm">
-                            <thead class="ts-headertabelafixo">
-                                    <th>Arquivo</th>
-                                    <th>Ação</th>
-                                </tr>
-                            </thead>
-                            <?php
-                            $dir = ROOT . "/xml/";
-                            $files = scandir($dir);
-                            foreach ($files as $file) {
-                                if (!in_array($file, [".", ".."]) && strpos($file, "carregado") !== 0) { ?>
-                                    <tr>
-                                        <td>
-                                            <?php echo $file ?>
-                                        </td>
-                                        <td>
-                                            <button type="button" class="btn btn-success btn-sm" id="upar" data-file="<?php echo $dir . $file ?>"><i class="bi bi-arrow-up-circle"></i></button>
-                                        </td>
-                                    </tr>
-                                <?php }
-                            } ?>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -130,38 +89,23 @@ $notas = buscarNota();
 
                     $.ajax({
                         type: 'POST',
-                        url: "../database/fisnota.php?operacao=upload",
+                        url: "../database/fisnota.php?operacao=inserir",
                         data: formData,
                         processData: false,
                         contentType: false,
-                        success: function(response) {
-                            refreshPage('xml');
-                        },
+                        success: function (msg) {
+                            console.log(msg);
+                            var message = JSON.parse(msg);
+                            if (message.retorno === "ok") {
+                                refreshPage('xml');
+                            }
+                            if (message.status === 400) {
+                                alert(message.retorno);
+                                refreshPage('xml');
+                            }
+                        }
                     });
                 }
-            });
-
-            $('#upar').click(function () {
-                var arquivo = $(this).data('file');
-                console.log(arquivo);
-                $.ajax({
-                    url: "../database/fisnota.php?operacao=inserir",
-                    method: "POST",
-                    data: { 
-                        arquivo: arquivo
-                    },
-                    success: function (msg) {
-                        console.log(msg);
-                        var message = JSON.parse(msg);
-                        if (message.retorno === "ok") {
-                            refreshPage('xml');
-                        }
-                        if (message.status === 400) {
-                            alert(message.retorno);
-                            refreshPage('xml');
-                        }
-                    }
-                });
             });
 
             $('#baixar').click(function () {
