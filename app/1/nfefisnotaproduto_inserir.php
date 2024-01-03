@@ -39,7 +39,7 @@ if (isset($jsonEntrada['xml'])) {
         if($refProduto == $eanProduto) {
             $refProduto = "NULL";
         }
-        if($eanProduto == "'SEM GTIN'") {
+        if($eanProduto == "'SEM GTIN'" || $eanProduto == "''") {
             $eanProduto = "NULL";
         }
         

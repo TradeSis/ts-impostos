@@ -28,7 +28,7 @@ if (isset($jsonEntrada['xml'])) {
         if($refProduto == $eanProduto) {
             $refProduto = "NULL";
         }
-        if($eanProduto == "'SEM GTIN'") {
+        if($eanProduto == "'SEM GTIN'" || $eanProduto == "''") {
             $eanProduto = "NULL";
         }
 
@@ -52,7 +52,6 @@ if (isset($jsonEntrada['xml'])) {
 
             $sql = "INSERT INTO produtos(eanProduto,nomeProduto,valorCompra,precoProduto,codigoNcm,codigoCest,ativoProduto,propagandaProduto,idPessoaFornecedor,refProduto)
                 VALUES($eanProduto,$nomeProduto,$valorCompra,$precoProduto,$codigoNcm,$codigoCest,$ativoProduto,$propagandaProduto,$idPessoaFornecedor,$refProduto)";
-
             $atualizar = mysqli_query($conexao, $sql);
 
             //LOG

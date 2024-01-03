@@ -86,6 +86,10 @@ if ($metodo == "PUT") {
       include 'nfeprodutos_inserir.php';
       break;
 
+    case "fisnotaproduimposto":
+      include 'fisnotaproduimposto_inserir.php';
+      break;
+
     default:
       $jsonSaida = json_decode(json_encode(
         array(
