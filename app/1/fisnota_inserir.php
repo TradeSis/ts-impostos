@@ -56,8 +56,8 @@ if (isset($jsonEntrada['xml'])) {
         $cofins = "'" . (string) $infNFe->total->ICMSTot->vCOFINS . "'";
         $XMLentrada = "'" . $jsonEntrada['xml'] . "'";
         
-        $idPessoaEmitente = isset($jsonEntrada['idPessoaEmitente']) && $jsonEntrada['idPessoaEmitente'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['idPessoaEmitente']) . "'" : "NULL";
-        $idPessoaDestinatario = isset($jsonEntrada['idPessoaDestinatario']) && $jsonEntrada['idPessoaDestinatario'] !== "" ? "'" . mysqli_real_escape_string($conexao, $jsonEntrada['idPessoaDestinatario']) . "'" : "NULL";
+        $idPessoaEmitente = isset($jsonEntrada['idPessoaEmitente']) && $jsonEntrada['idPessoaEmitente'] !== "" ? "'" . $jsonEntrada['idPessoaEmitente'] . "'" : "NULL";
+        $idPessoaDestinatario = isset($jsonEntrada['idPessoaDestinatario']) && $jsonEntrada['idPessoaDestinatario'] !== "" ? "'" . $jsonEntrada['idPessoaDestinatario'] . "'" : "NULL";
 
 
         $sql = "INSERT INTO fisnota(chaveNFe,naturezaOp,modelo,XML,serie,NF,dtEmissao,idPessoaEmitente,idPessoaDestinatario,baseCalculo,valorProdutos,pis,cofins) VALUES 

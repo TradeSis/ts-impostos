@@ -108,7 +108,7 @@ if (isset($jsonEntrada['xml'])) {
 
     foreach ($pessoaEntrada as $id => $data) {
         if ($id !== 'idEmpresa' && is_array($data) && isset($data['cpfCnpj'])) {
-            $cpfCnpj = isset($data['cpfCnpj']) && $data['cpfCnpj'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['cpfCnpj']) . "'" : "NULL";
+            $cpfCnpj = isset($data['cpfCnpj']) && $data['cpfCnpj'] !== "" ? "'" . $data['cpfCnpj'] . "'" : "NULL";
 
             $sql2 = "SELECT * FROM pessoas WHERE cpfCnpj = $cpfCnpj";
             $buscar = mysqli_query($conexao, $sql2);
@@ -123,19 +123,20 @@ if (isset($jsonEntrada['xml'])) {
                     "idPessoaInserido" => $idPessoa
                 );
             } else {
-                $nomePessoa = isset($data['nomePessoa']) && $data['nomePessoa'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['nomePessoa']) . "'" : "NULL";
-                $tipoPessoa = isset($data['tipoPessoa']) && $data['tipoPessoa'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['tipoPessoa']) . "'" : "NULL";
-                $IE = isset($data['IE']) && $data['IE'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['IE']) . "'" : "NULL";
-                $municipio = isset($data['municipio']) && $data['municipio'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['municipio']) . "'" : "NULL";
-                $codigoCidade = isset($data['codigoCidade']) && $data['codigoCidade'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['codigoCidade']) . "'" : "NULL";
-                $codigoEstado = isset($data['codigoEstado']) && $data['codigoEstado'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['codigoEstado']) . "'" : "NULL";
-                $pais = isset($data['pais']) && $data['pais'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['pais']) . "'" : "NULL";
-                $bairro = isset($data['bairro']) && $data['bairro'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['bairro']) . "'" : "NULL";
-                $endereco = isset($data['endereco']) && $data['endereco'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['endereco']) . "'" : "NULL";
-                $endNumero = isset($data['endNumero']) && $data['endNumero'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['endNumero']) . "'" : "NULL";
-                $CEP = isset($data['CEP']) && $data['CEP'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['CEP']) . "'" : "NULL";
-                $telefone = isset($data['telefone']) && $data['telefone'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['telefone']) . "'" : "NULL";
-                $CRT = isset($data['CRT']) && $data['CRT'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['CRT']) . "'" : "NULL";
+
+                $nomePessoa = isset($data['nomePessoa']) && $data['nomePessoa'] !== "" ? "'" . $data['nomePessoa'] . "'" : "NULL";
+                $tipoPessoa = isset($data['tipoPessoa']) && $data['tipoPessoa'] !== "" ? "'" . $data['tipoPessoa'] . "'" : "NULL";
+                $IE = isset($data['IE']) && $data['IE'] !== "" ? "'" . $data['IE'] . "'" : "NULL";
+                $municipio = isset($data['municipio']) && $data['municipio'] !== "" ? "'" . $data['municipio'] . "'" : "NULL";
+                $codigoCidade = isset($data['codigoCidade']) && $data['codigoCidade'] !== "" ? "'" . $data['codigoCidade'] . "'" : "NULL";
+                $codigoEstado = isset($data['codigoEstado']) && $data['codigoEstado'] !== "" ? "'" . $data['codigoEstado'] . "'" : "NULL";
+                $pais = isset($data['pais']) && $data['pais'] !== "" ? "'" . $data['pais'] . "'" : "NULL";
+                $bairro = isset($data['bairro']) && $data['bairro'] !== "" ? "'" . $data['bairro'] . "'" : "NULL";
+                $endereco = isset($data['endereco']) && $data['endereco'] !== "" ? "'" . $data['endereco'] . "'" : "NULL";
+                $endNumero = isset($data['endNumero']) && $data['endNumero'] !== "" ? "'" . $data['endNumero'] . "'" : "NULL";
+                $CEP = isset($data['CEP']) && $data['CEP'] !== "" ? "'" . $data['CEP'] . "'" : "NULL";
+                $telefone = isset($data['telefone']) && $data['telefone'] !== "" ? "'" . $data['telefone'] . "'" : "NULL";
+                $CRT = isset($data['CRT']) && $data['CRT'] !== "" ? "'" . $data['CRT'] . "'" : "NULL";
 
                 $sql = "INSERT INTO pessoas(cpfCnpj,tipoPessoa,nomePessoa,IE,municipio,codigoCidade,codigoEstado,pais,bairro,endereco,endNumero,CEP,telefone,CRT)
                         VALUES($cpfCnpj,$tipoPessoa,$nomePessoa,$IE,$municipio,$codigoCidade,$codigoEstado,$pais,$bairro,$endereco,$endNumero,$CEP,$telefone,$CRT)";

@@ -16,14 +16,14 @@ if (isset($jsonEntrada['xml'])) {
     $infNFe = $xml->infNFe;
 
     foreach ($infNFe->det as $item) {
-        $eanProduto = "'" . (string) $item->prod->cEAN . "'";
-        $nomeProduto = "'" . (string) $item->prod->xProd . "'";
-        $valorCompra = "'" . (string) $item->prod->vUnCom . "'";
-        $precoProduto = "'" . (string) $item->prod->uCom . "'";
-        $codigoNcm = "'" . (string) $item->prod->NCM . "'";
-        $codigoCest = "'" . (string) $item->prod->CEST . "'";
-        $idPessoaFornecedor = "'" . $jsonEntrada['idPessoaEmitente'] . "'";
-        $refProduto = "'" . (string) $item->prod->cProd . "'";
+        $eanProduto = isset($item->prod->cEAN) && $item->prod->cEAN !== "" && $item->prod->cEAN !== "" ? "'" .  (string) $item->prod->cEAN . "'" : "null";
+        $nomeProduto = isset($item->prod->xProd) && $item->prod->xProd !== "" && $item->prod->xProd !== "" ? "'" .  (string) $item->prod->xProd . "'" : "null";
+        $valorCompra = isset($item->prod->vUnCom) && $item->prod->vUnCom !== "" && $item->prod->vUnCom !== "" ? "'" .  (string) $item->prod->vUnCom . "'" : "null";
+        $precoProduto = isset($item->prod->uCom) && $item->prod->uCom !== "" && $item->prod->uCom !== "" ? "'" .  (string) $item->prod->uCom . "'" : "null";
+        $codigoNcm = isset($item->prod->NCM) && $item->prod->NCM !== "" && $item->prod->NCM !== "" ? "'" .  (string) $item->prod->NCM . "'" : "null";
+        $codigoCest = isset($item->prod->CEST) && $item->prod->CEST !== "" && $item->prod->CEST !== "" ? "'" .  (string) $item->prod->CEST . "'" : "null";
+        $idPessoaFornecedor = isset($jsonEntrada['idPessoaEmitente']) && $jsonEntrada['idPessoaEmitente'] !== "" && $jsonEntrada['idPessoaEmitente'] !== "" ? "'" .  $jsonEntrada['idPessoaEmitente'] . "'" : "null";
+        $refProduto = isset($item->prod->cProd) && $item->prod->cProd !== "" && $item->prod->cProd !== "" ? "'" .  (string) $item->prod->cProd . "'" : "null";
 
         if($refProduto == $eanProduto) {
             $refProduto = "NULL";

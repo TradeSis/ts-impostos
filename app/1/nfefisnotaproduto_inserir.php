@@ -33,8 +33,8 @@ if (isset($jsonEntrada['xml'])) {
     $infNFe = $xml->infNFe;
 
     foreach ($infNFe->det as $item) {
-        $eanProduto = "'" . (string) $item->prod->cEAN . "'";
-        $refProduto = "'" . (string) $item->prod->cProd . "'";
+        $eanProduto = isset($item->prod->cEAN) && $item->prod->cEAN !== "" && $item->prod->cEAN !== "" ? "'" .  (string) $item->prod->cEAN . "'" : "null";
+        $refProduto = isset($item->prod->cProd) && $item->prod->cProd !== "" && $item->prod->cProd !== "" ? "'" .  (string) $item->prod->cProd . "'" : "null";
 
         if($refProduto == $eanProduto) {
             $refProduto = "NULL";
@@ -53,15 +53,16 @@ if (isset($jsonEntrada['xml'])) {
         $idProduto = $row["idProduto"];
         
         
-        $idNota = "'" . $jsonEntrada['idNota'] . "'";
-        $nItem = "'" . (string) $item['nItem'] . "'";
-        $quantidade = "'" . (string) $item->prod->qCom . "'";
-        $unidCom = "'" . (string) $item->prod->uCom . "'";
-        $valorUnidade = "'" . (string) $item->prod->vUnCom . "'";
-        $valorTotal = "'" . (string) $item->prod->vProd . "'";
-        $cfop = "'" . (string) $item->prod->CFOP . "'";
-        $codigoNcm = "'" . (string) $item->prod->NCM . "'";
-        $codigoCest = "'" . (string) $item->prod->CEST . "'";
+        $idNota = isset($jsonEntrada['idNota']) && $jsonEntrada['idNota'] !== "" && $jsonEntrada['idNota'] !== "" ? "'" .  $jsonEntrada['idNota'] . "'" : "null";
+        $nItem = isset($item['nItem']) && $item['nItem'] !== "" && $item['nItem'] !== "" ? "'" .  (string) $item['nItem'] . "'" : "null";
+        $quantidade = isset($item->prod->qCom) && $item->prod->qCom !== "" && $item->prod->qCom !== "" ? "'" .  (string) $item->prod->qCom . "'" : "null";
+        $unidCom = isset($item->prod->uCom) && $item->prod->uCom !== "" && $item->prod->uCom !== "" ? "'" .  (string) $item->prod->uCom . "'" : "null";
+        $valorUnidade = isset($item->prod->vUnCom) && $item->prod->vUnCom !== "" && $item->prod->vUnCom !== "" ? "'" .  (string) $item->prod->vUnCom . "'" : "null";
+        $valorTotal = isset($item->prod->vProd) && $item->prod->vProd !== "" && $item->prod->vProd !== "" ? "'" .  (string) $item->prod->vProd . "'" : "null";
+        $cfop = isset($item->prod->CFOP) && $item->prod->CFOP !== "" && $item->prod->CFOP !== "" ? "'" .  (string) $item->prod->CFOP . "'" : "null";
+        $codigoNcm = isset($item->prod->NCM) && $item->prod->NCM !== "" && $item->prod->NCM !== "" ? "'" .  (string) $item->prod->NCM . "'" : "null";
+        $codigoCest = isset($item->prod->CEST) && $item->prod->CEST !== "" && $item->prod->CEST !== "" ? "'" .  (string) $item->prod->CEST . "'" : "null";
+
 
         $sql = "INSERT INTO fisnotaproduto(idNota,nItem,idProduto,quantidade,unidCom,valorUnidade,valorTotal,cfop,codigoNcm,codigoCest)
                 VALUES($idNota,$nItem,$idProduto,$quantidade,$unidCom,$valorUnidade,$valorTotal,$cfop,$codigoNcm,$codigoCest)";
