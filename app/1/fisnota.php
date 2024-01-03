@@ -10,8 +10,8 @@ $conexao = conectaMysql($idEmpresa);
 $notas = array();
 
 $sql = "SELECT fisnota.*, 
-        emitente.cpfCnpj AS emitente_cpfCnpj, emitente.nome AS emitente_nome, emitente.IE AS emitente_IE, emitente.municipio AS emitente_municipio, emitente.UF AS emitente_UF, emitente.pais AS emitente_pais, 
-        destinatario.cpfCnpj AS destinatario_cpfCnpj, destinatario.nome AS destinatario_nome, destinatario.IE AS destinatario_IE, destinatario.municipio AS destinatario_municipio, destinatario.UF AS destinatario_UF, destinatario.pais AS destinatario_pais FROM fisnota
+        emitente.cpfCnpj AS emitente_cpfCnpj, emitente.nomePessoa AS emitente_nomePessoa, emitente.IE AS emitente_IE, emitente.municipio AS emitente_municipio, emitente.codigoEstado AS emitente_codigoEstado, emitente.pais AS emitente_pais, 
+        destinatario.cpfCnpj AS destinatario_cpfCnpj, destinatario.nomePessoa AS destinatario_nomePessoa, destinatario.IE AS destinatario_IE, destinatario.municipio AS destinatario_municipio, destinatario.codigoEstado AS destinatario_codigoEstado, destinatario.pais AS destinatario_pais FROM fisnota
         LEFT JOIN pessoas AS emitente ON fisnota.idPessoaEmitente = emitente.idPessoa
         LEFT JOIN pessoas AS destinatario ON fisnota.idPessoaDestinatario = destinatario.idPessoa ";
 $where = " where ";
