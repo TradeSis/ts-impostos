@@ -63,29 +63,39 @@ if (isset($jsonEntrada['xml'])) {
         $codigoNcm = isset($item->prod->NCM) && $item->prod->NCM !== "" && $item->prod->NCM !== "" ? "'" .  (string) $item->prod->NCM . "'" : "null";
         $codigoCest = isset($item->prod->CEST) && $item->prod->CEST !== "" && $item->prod->CEST !== "" ? "'" .  (string) $item->prod->CEST . "'" : "null";
 
+        $sql2 = "SELECT * FROM fisnotaproduto WHERE idNota = $idNota AND nItem = $nItem";
+        $buscar = mysqli_query($conexao, $sql2);
+        $produto = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
 
-        $sql = "INSERT INTO fisnotaproduto(idNota,nItem,idProduto,quantidade,unidCom,valorUnidade,valorTotal,cfop,codigoNcm,codigoCest)
-                VALUES($idNota,$nItem,$idProduto,$quantidade,$unidCom,$valorUnidade,$valorTotal,$cfop,$codigoNcm,$codigoCest)";
-        $atualizar = mysqli_query($conexao, $sql);
-
-        //LOG
-        if (isset($LOG_NIVEL)) {
-            if ($LOG_NIVEL >= 3) {
-                fwrite($arquivo, $identificacao . "-SQL->" . $sql . "\n");
-            }
-        }
-        //LOG
-
-        if ($atualizar) {
-            $jsonSaida = array(
+        if (mysqli_num_rows($buscar) == 1) {
+            $jsonSaida[] = array(
                 "status" => 200,
-                "retorno" => "ok"
+                "retorno" => "NotaProduto existente"
             );
         } else {
-            $jsonSaida = array(
-                "status" => 500,
-                "retorno" => "erro no mysql"
-            );
+            $sql = "INSERT INTO fisnotaproduto(idNota,nItem,idProduto,quantidade,unidCom,valorUnidade,valorTotal,cfop,codigoNcm,codigoCest)
+                VALUES($idNota,$nItem,$idProduto,$quantidade,$unidCom,$valorUnidade,$valorTotal,$cfop,$codigoNcm,$codigoCest)";
+            $atualizar = mysqli_query($conexao, $sql);
+
+            //LOG
+            if (isset($LOG_NIVEL)) {
+                if ($LOG_NIVEL >= 3) {
+                    fwrite($arquivo, $identificacao . "-SQL->" . $sql . "\n");
+                }
+            }
+            //LOG
+
+            if ($atualizar) {
+                $jsonSaida[]  = array(
+                    "status" => 200,
+                    "retorno" => "ok"
+                );
+            } else {
+                $jsonSaida[]  = array(
+                    "status" => 500,
+                    "retorno" => "erro no mysql"
+                );
+            }
         }
     }
 } else {

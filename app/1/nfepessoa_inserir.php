@@ -120,7 +120,7 @@ if (isset($jsonEntrada['xml'])) {
                 $jsonSaida[$id] = array(
                     "status" => 200,
                     "retorno" => "cpfCnpj existente",
-                    "idPessoaInserido" => $idPessoa
+                    "idPessoa" => $idPessoa
                 );
             } else {
 
@@ -156,7 +156,7 @@ if (isset($jsonEntrada['xml'])) {
                     $jsonSaida[$id] = array(
                         "status" => 200,
                         "retorno" => "ok",
-                        "idPessoaInserido" => $idPessoaInserido
+                        "idPessoa" => $idPessoaInserido
                     );
                 } else {
                     $jsonSaida[$id] = array(

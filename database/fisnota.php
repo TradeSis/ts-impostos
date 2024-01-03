@@ -66,11 +66,11 @@ if (isset($_GET['operacao'])) {
 		$pessoas = chamaAPI(null, '/impostos/nfepessoa', json_encode($apiEntrada), 'PUT');
 		foreach ($pessoas as $id => $pessoaResponse) {
 			if ($pessoaResponse["status"] === 200) {
-				$idPessoaInserido = $pessoaResponse["idPessoaInserido"];
+				$idPessoa = $pessoaResponse["idPessoa"];
 				if ($id == 0) {
-					$apiEntrada['idPessoaEmitente'] = $idPessoaInserido;
+					$apiEntrada['idPessoaEmitente'] = $idPessoa;
 				} elseif ($id == 1) {
-					$apiEntrada['idPessoaDestinatario'] = $idPessoaInserido;
+					$apiEntrada['idPessoaDestinatario'] = $idPessoa;
 				}
 			}
 		}
@@ -78,7 +78,7 @@ if (isset($_GET['operacao'])) {
 		//Inserir Nota
 		$nfe = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
 		if ($nfe["status"] === 200) {
-			$idNota = $nfe['idNotaInserido'];
+			$idNota = $nfe['idNota'];
 			$apiEntrada['idNota'] = $idNota;
 
 		//Inserir fisNotaProduto e Produto

@@ -78,7 +78,7 @@ if (isset($jsonEntrada['xml'])) {
             $jsonSaida = array(
                 "status" => 200,
                 "retorno" => "ok",
-                "idNotaInserido" => $idNotaInserido
+                "idNota" => $idNotaInserido
             );
         } else {
             $jsonSaida = array(

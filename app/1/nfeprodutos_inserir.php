@@ -32,29 +32,49 @@ if (isset($jsonEntrada['xml'])) {
             $eanProduto = "NULL";
         }
 
-        $sql = "INSERT INTO produtos(eanProduto,nomeProduto,valorCompra,precoProduto,codigoNcm,codigoCest,ativoProduto,propagandaProduto,idPessoaFornecedor,refProduto)
-                VALUES($eanProduto,$nomeProduto,$valorCompra,$precoProduto,$codigoNcm,$codigoCest,$ativoProduto,$propagandaProduto,$idPessoaFornecedor,$refProduto)";
-
-        $atualizar = mysqli_query($conexao, $sql);
-
-        //LOG
-        if (isset($LOG_NIVEL)) {
-            if ($LOG_NIVEL >= 3) {
-                fwrite($arquivo, $identificacao . "-SQL->" . $sql . "\n");
-            }
+        if ($eanProduto === "NULL") {
+            $sql2 = "SELECT * FROM produtos WHERE idPessoaFornecedor = $idPessoaFornecedor AND refProduto = $refProduto";
+        } else {
+            $sql2 = "SELECT * FROM produtos WHERE eanProduto = $eanProduto";
         }
-        //LOG
+        $buscar = mysqli_query($conexao, $sql2);
+        $produto = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
 
-        if ($atualizar) {
-            $jsonSaida = array(
+        if (mysqli_num_rows($buscar) == 1) {
+            $idProduto = $produto["idProduto"];
+
+            $jsonSaida[] = array(
                 "status" => 200,
-                "retorno" => "ok"
+                "retorno" => "Produto existente",
+                "idProduto" => $idProduto
             );
         } else {
-            $jsonSaida = array(
-                "status" => 500,
-                "retorno" => "erro no mysql"
-            );
+
+            $sql = "INSERT INTO produtos(eanProduto,nomeProduto,valorCompra,precoProduto,codigoNcm,codigoCest,ativoProduto,propagandaProduto,idPessoaFornecedor,refProduto)
+                VALUES($eanProduto,$nomeProduto,$valorCompra,$precoProduto,$codigoNcm,$codigoCest,$ativoProduto,$propagandaProduto,$idPessoaFornecedor,$refProduto)";
+
+            $atualizar = mysqli_query($conexao, $sql);
+
+            //LOG
+            if (isset($LOG_NIVEL)) {
+                if ($LOG_NIVEL >= 3) {
+                    fwrite($arquivo, $identificacao . "-SQL->" . $sql . "\n");
+                }
+            }
+            //LOG
+
+
+            if ($atualizar) {
+                $jsonSaida[] = array(
+                    "status" => 200,
+                    "retorno" => "ok"
+                );
+            } else {
+                $jsonSaida[] = array(
+                    "status" => 500,
+                    "retorno" => "erro no mysql"
+                );
+            }
         }
     }
 } else {
