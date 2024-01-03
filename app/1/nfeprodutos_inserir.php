@@ -7,22 +7,43 @@ if (isset($jsonEntrada["idEmpresa"])) {
 }
 $conexao = conectaMysql($idEmpresa);
 
-$ativoProduto = 1; //Ativo
-$propagandaProduto = 0; //Inativo
 
-foreach ($jsonEntrada['produtos'] as $data) {
-    if (is_array($data) && isset($data['refProduto'])) {
-        $idPessoaEmitente = isset($data['idPessoaEmitente']) && $data['idPessoaEmitente'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['idPessoaEmitente']) . "'" : "NULL";
-        $refProduto = isset($data['refProduto']) && $data['refProduto'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['refProduto']) . "'" : "NULL";
-        $nomeProduto = isset($data['nomeProduto']) && $data['nomeProduto'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['nomeProduto']) . "'" : "NULL";
-        $valorCompra = isset($data['valorUnidade']) && $data['valorUnidade'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['valorUnidade']) . "'" : "NULL";
-        $valorTotal = isset($data['valorTotal']) && $data['valorTotal'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['valorTotal']) . "'" : "NULL";
-        $codigoNcm = isset($data['codigoNcm']) && $data['codigoNcm'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['codigoNcm']) . "'" : "NULL";
-        $codigoCest = isset($data['codigoCest']) && $data['codigoCest'] !== "" ? "'" . mysqli_real_escape_string($conexao, $data['codigoCest']) . "'" : "NULL";
+if (isset($jsonEntrada['xml'])) {
 
-        $sql = "INSERT INTO produtos(idPessoaEmitente, refProduto, nomeProduto, valorCompra, codigoNcm, codigoCest, ativoProduto, propagandaProduto) 
-                VALUES ($idPessoaEmitente, $refProduto, $nomeProduto, $valorCompra, $codigoNcm, $codigoCest, $ativoProduto, $propagandaProduto)";
+    $ativoProduto = 1; //Ativo
+    $propagandaProduto = 0; //Inativo
+    $xml = simplexml_load_string($jsonEntrada['xml']);
+    $infNFe = $xml->infNFe;
+
+    foreach ($infNFe->det as $item) {
+        $eanProduto = "'" . (string) $item->prod->cEAN . "'";
+        $nomeProduto = "'" . (string) $item->prod->xProd . "'";
+        $valorCompra = "'" . (string) $item->prod->vUnCom . "'";
+        $precoProduto = "'" . (string) $item->prod->uCom . "'";
+        $codigoNcm = "'" . (string) $item->prod->NCM . "'";
+        $codigoCest = "'" . (string) $item->prod->CEST . "'";
+        $idPessoaFornecedor = "'" . $jsonEntrada['idPessoaEmitente'] . "'";
+        $refProduto = "'" . (string) $item->prod->cProd . "'";
+
+        if($refProduto == $eanProduto) {
+            $refProduto = "NULL";
+        }
+        if($eanProduto == "'SEM GTIN'") {
+            $eanProduto = "NULL";
+        }
+
+        $sql = "INSERT INTO produtos(eanProduto,nomeProduto,valorCompra,precoProduto,codigoNcm,codigoCest,ativoProduto,propagandaProduto,idPessoaFornecedor,refProduto)
+                VALUES($eanProduto,$nomeProduto,$valorCompra,$precoProduto,$codigoNcm,$codigoCest,$ativoProduto,$propagandaProduto,$idPessoaFornecedor,$refProduto)";
+
         $atualizar = mysqli_query($conexao, $sql);
+
+        //LOG
+        if (isset($LOG_NIVEL)) {
+            if ($LOG_NIVEL >= 3) {
+                fwrite($arquivo, $identificacao . "-SQL->" . $sql . "\n");
+            }
+        }
+        //LOG
 
         if ($atualizar) {
             $jsonSaida = array(
@@ -35,11 +56,18 @@ foreach ($jsonEntrada['produtos'] as $data) {
                 "retorno" => "erro no mysql"
             );
         }
-    } else {
-        $jsonSaida = array(
-            "status" => 400,
-            "retorno" => "Faltaram parâmetros"
-        );
+    }
+} else {
+    $jsonSaida = array(
+        "status" => 400,
+        "retorno" => "Faltaram parâmetros"
+    );
+}
+
+//LOG
+if (isset($LOG_NIVEL)) {
+    if ($LOG_NIVEL >= 2) {
+        fwrite($arquivo, $identificacao . "-SAIDA->" . json_encode($jsonSaida) . "\n\n");
     }
 }
-unset($jsonSaida['idEmpresa']);
+//LOG

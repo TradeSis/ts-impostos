@@ -66,7 +66,7 @@ $produtos = buscarNotaProduto($_GET['idNota']);
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">Razão Social</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_nome'] ?>" readonly>
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_nomePessoa'] ?>" readonly>
                 </div>
             </div>
             <div class="row mt-3">
@@ -76,7 +76,7 @@ $produtos = buscarNotaProduto($_GET['idNota']);
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">UF</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_UF'] ?>" readonly>
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['emitente_codigoEstado'] ?>" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">País</label>
@@ -95,7 +95,7 @@ $produtos = buscarNotaProduto($_GET['idNota']);
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">Nome</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_nome'] ?>" readonly>
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_nomePessoa'] ?>" readonly>
                 </div>
             </div>
             <div class="row mt-3">
@@ -105,7 +105,7 @@ $produtos = buscarNotaProduto($_GET['idNota']);
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">UF</label>
-                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_UF'] ?>" readonly>
+                    <input type="text" class="form-control ts-input" value="<?php echo $notas['destinatario_codigoEstado'] ?>" readonly>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label ts-label">País</label>
