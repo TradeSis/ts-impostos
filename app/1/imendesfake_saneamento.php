@@ -47,8 +47,8 @@ $JSONFAKE = "{
   },
   \"Grupos\": [
       {
-          \"codigo\": \"1945\",
-          \"descricao\": \"ACESSORIOS HIDRAULICOS JUNTAS, COTOVELOS, FLANGES, UNIOES,LUVAS DE PLASTICOS\",
+          \"codigo\": \"1963\",
+          \"descricao\": \"TESTE 18\",
           \"nCM\": \"39174090\",
           \"cEST\": \"10.006.00\",
           \"dtVigIni\": \"01/01/1900\",
@@ -173,18 +173,91 @@ $JSONFAKE = "{
   \"BaixaSimilaridade\": []
 }";
 
-$retornoImendes = json_decode($JSONFAKE,true);
+$retornoImendes = json_decode($JSONFAKE, true);
 
-//var_dump($retornoImendes);
+foreach ($retornoImendes['Grupos'] as $grupo) {
+  if (is_array($grupo) && isset($grupo['codigo'])) {
+
+    $codigoGrupo = $grupo['codigo'];
+    //Verifica se já tem codigoGrupo
+    $sql_consulta = "SELECT * FROM grupoproduto WHERE codigoGrupo = $codigoGrupo ";
+    $buscar_consulta = mysqli_query($conexao, $sql_consulta);
+    $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
+    $codigoGrupo = isset($row_consulta["codigoGrupo"]) && $row_consulta["codigoGrupo"] !== "null"    ? "'" . $row_consulta["codigoGrupo"] . "'" : "null";
+
+    if ($codigoGrupo != "null") {
+
+      $jsonSaida = array(
+        "status" => 200,
+        "retorno" => "codigo do Grupo existente",
+        "codigoGrupo" => $codigoGrupo
+      );
+    } else {
+      $codigoGrupo = isset($grupo['codigo']) && $grupo['codigo'] !== "null"    ? "'" . $grupo['codigo'] . "'" : "null";
+      $nomeGrupo = isset($grupo['descricao']) && $grupo['descricao'] !== "null"    ? "'" . $grupo['descricao'] . "'" : "null";
+      $codigoNcm = isset($grupo['nCM']) && $grupo['nCM'] !== ""    ? "'" . $grupo['nCM'] . "'" : "null";
+      $codigoCest = isset($grupo['cEST']) && $grupo['cEST'] !== ""    ? "'" . $grupo['cEST'] . "'" : "null";
+      $impostoImportacao = isset($grupo['impostoImportacao']) && $grupo['impostoImportacao'] !== ""    ? "'" . $grupo['impostoImportacao'] . "'" : "null";
+      $piscofinscstEnt = isset($grupo['pisCofins']['cstEnt']) && $grupo['pisCofins']['cstEnt'] !== ""    ? "'" . $grupo['pisCofins']['cstEnt'] . "'" : "null";
+      $piscofinscstSai = isset($grupo['pisCofins']['cstSai']) && $grupo['pisCofins']['cstSai'] !== ""    ? "'" . $grupo['pisCofins']['cstSai'] . "'" : "null";
+      $aliqPis = isset($grupo['pisCofins']['aliqPis']) && $grupo['pisCofins']['aliqPis'] !== ""    ? "'" . $grupo['pisCofins']['aliqPis'] . "'" : "null";
+      $aliqCofins = isset($grupo['pisCofins']['aliqCofins']) && $grupo['pisCofins']['aliqCofins'] !== ""    ? "'" . $grupo['pisCofins']['aliqCofins'] . "'" : "null";
+      $nri = isset($grupo['pisCofins']['nri']) && $grupo['pisCofins']['nri'] !== ""    ? "'" . $grupo['pisCofins']['nri'] . "'" : "null";
+      $ampLegal = isset($grupo['pisCofins']['ampLegal']) && $grupo['pisCofins']['ampLegal'] !== ""    ? "'" . $grupo['pisCofins']['ampLegal'] . "'" : "null";
+      $redPIS = isset($grupo['pisCofins']['redPis']) && $grupo['pisCofins']['redPis'] !== ""    ? "'" . $grupo['pisCofins']['redPis'] . "'" : "null";
+      $redCofins = isset($grupo['pisCofins']['redCofins']) && $grupo['pisCofins']['redCofins'] !== ""    ? "'" . $grupo['pisCofins']['redCofins'] . "'" : "null";
+      $ipicstEnt = isset($grupo['pisCofins']['cstEnt']) && $grupo['pisCofins']['cstEnt'] !== ""    ? "'" . $grupo['pisCofins']['cstEnt'] . "'" : "null";
+      $ipicstSai = isset($grupo['pisCofins']['cstSai']) && $grupo['pisCofins']['cstSai'] !== ""    ? "'" . $grupo['pisCofins']['cstSai'] . "'" : "null";
+      $aliqipi = isset($grupo['pisCofins']['aliqipi']) && $grupo['pisCofins']['aliqipi'] !== ""    ? "'" . $grupo['pisCofins']['aliqipi'] . "'" : "null";
+      $codenq = isset($grupo['pisCofins']['codenq']) && $grupo['pisCofins']['codenq'] !== ""    ? "'" . $grupo['pisCofins']['codenq'] . "'" : "null";
+      $ipiex = isset($grupo['pisCofins']['ex']) && $grupo['pisCofins']['ex'] !== ""    ? "'" . $grupo['pisCofins']['ex'] . "'" : "null";
 
 
+      $sql = "INSERT INTO grupoproduto (codigoGrupo, nomeGrupo, codigoNcm, codigoCest, impostoImportacao, piscofinscstEnt, piscofinscstSai, 
+      aliqPis, aliqCofins, nri, ampLegal, redPIS, redCofins, ipicstEnt, ipicstSai, aliqipi, codenq, ipiex) 
+      VALUES ($codigoGrupo, $nomeGrupo, $codigoNcm, $codigoCest, $impostoImportacao, $piscofinscstEnt, $piscofinscstSai, 
+      $aliqPis, $aliqCofins, $nri, $ampLegal, $redPIS, $redCofins, $ipicstEnt, $ipicstSai, $aliqipi, $codenq, $ipiex)";
 
-$jsonSaida = array(
-  "status" => 200,
-  "retorno" => "ok"
-);
+      //LOG
+      if (isset($LOG_NIVEL)) {
+        if ($LOG_NIVEL >= 3) {
+          fwrite($arquivo, $identificacao . "-SQL->" . $sql . "\n");
+        }
+      }
+      //LOG
 
-//echo "-SAIDA->".json_encode($jsonSaida)."\n";
+      //TRY-CATCH
+      try {
+
+        $atualizar = mysqli_query($conexao, $sql);
+        if (!$atualizar)
+          throw new Exception(mysqli_error($conexao));
+
+        $jsonSaida = array(
+          "status" => 200,
+          "retorno" => "ok"
+        );
+      } catch (Exception $e) {
+        $jsonSaida = array(
+          "status" => 500,
+          "retorno" => $e->getMessage()
+        );
+        if ($LOG_NIVEL >= 1) {
+          fwrite($arquivo, $identificacao . "-ERRO->" . $e->getMessage() . "\n");
+        }
+      } finally {
+        // ACAO EM CASO DE ERRO (CATCH), que mesmo assim precise
+      }
+      //TRY-CATCH
+    }
+  } else {
+    $jsonSaida = array(
+      "status" => 400,
+      "retorno" => "Faltaram parametros"
+    );
+  }
+}
+
 
 //LOG
 if (isset($LOG_NIVEL)) {
@@ -193,7 +266,3 @@ if (isset($LOG_NIVEL)) {
   }
 }
 //LOG
-
-
-
-?>

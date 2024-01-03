@@ -6,11 +6,6 @@
 
 if ($metodo == "GET") {
 
-  if ($funcao == "imendesfake" && $parametro == "saneamento") {
-    $funcao = "imendesfake/saneamento";
-    $parametro = null;
-  }
-
   switch ($funcao) {
 
       case "fisatividade":
@@ -44,10 +39,6 @@ if ($metodo == "GET") {
     case "fisnotaproduto":
       include 'fisnotaproduto.php';
       break;
-
-    case "imendesfake/saneamento":
-        include 'imendesfake_saneamento.php';
-        break;
   
     default:
       $jsonSaida = json_decode(json_encode(
@@ -107,6 +98,10 @@ if ($metodo == "PUT") {
 }
 
 if ($metodo == "POST") {
+  if ($funcao == "imendesfake" && $parametro == "saneamento") {
+    $funcao = "imendesfake/saneamento";
+    $parametro = null;
+  }
 
   switch ($funcao) {
 
@@ -124,6 +119,10 @@ if ($metodo == "POST") {
 
     case "fisoperacao":
       include 'fisoperacao_alterar.php';
+      break;
+
+    case "imendesfake/saneamento":
+      include 'imendesfake_saneamento.php';
       break;
 
     default:
