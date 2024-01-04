@@ -47,8 +47,8 @@ $JSONFAKE = "{
   },
   \"Grupos\": [
       {
-          \"codigo\": \"1945\",
-          \"descricao\": \"ACESSORIOS HIDRAULICOS JUNTAS, COTOVELOS, FLANGES, UNIOES,LUVAS DE PLASTICOS\",
+          \"codigo\": \"1995\",
+          \"descricao\": \"TESTE11\",
           \"nCM\": \"39174090\",
           \"cEST\": \"10.006.00\",
           \"dtVigIni\": \"01/01/1900\",
@@ -164,6 +164,7 @@ $JSONFAKE = "{
               }
           ],
           \"prodEan\": [
+              \"7899830001153\",
               \"07891960708166\"
           ],
           \"Mensagem\": \"OK\"
@@ -173,67 +174,83 @@ $JSONFAKE = "{
   \"BaixaSimilaridade\": []
 }";
 
+function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo)
+{
+  //Atualiza Produto
+  $sql_consulta = "SELECT * FROM produtos WHERE eanProduto = $eanProduto ";
+  $buscar_consulta = mysqli_query($conexao, $sql_consulta);
+  $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
+  $idProduto = $row_consulta["idProduto"];
+
+  $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest, codigoGrupo=$codigoGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
+    WHERE idProduto = $idProduto";
+
+  $atualizar = mysqli_query($conexao, $update_produtos);
+  return $atualizar;
+}
+
 $retornoImendes = json_decode($JSONFAKE, true);
 
 foreach ($retornoImendes['Grupos'] as $grupo) {
   if (is_array($grupo) && isset($grupo['codigo'])) {
 
     $codigoGrupo = $grupo['codigo'];
+    $eanProdutos = $grupo['prodEan'];
+
     //Verifica se já tem codigoGrupo
     $sql_consulta = "SELECT * FROM grupoproduto WHERE codigoGrupo = $codigoGrupo ";
     $buscar_consulta = mysqli_query($conexao, $sql_consulta);
     $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
     $codigoGrupo = isset($row_consulta["codigoGrupo"]) && $row_consulta["codigoGrupo"] !== "null"    ? "'" . $row_consulta["codigoGrupo"] . "'" : "null";
+    $codigoNcm = isset($row_consulta["codigoNcm"]) && $row_consulta["codigoNcm"] !== "null"    ? "'" . $row_consulta["codigoNcm"] . "'" : "null";
+    $codigoCest = isset($row_consulta["codigoCest"]) && $row_consulta["codigoCest"] !== "null"    ? "'" . $row_consulta["codigoCest"] . "'" : "null";
+
 
     if ($codigoGrupo != "null") {
-
+      foreach ($eanProdutos as $eanProduto) {
+        $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo);
+      }
       $jsonSaida = array(
         "status" => 200,
         "retorno" => "codigo do Grupo existente",
         "codigoGrupo" => $codigoGrupo
       );
     } else {
-      //echo json_encode($grupo['iPI']);
-      $codigoGrupo = isset($grupo['codigo']) && $grupo['codigo'] !== "null"    ? "'" . $grupo['codigo'] . "'" : "null";
-      $nomeGrupo = isset($grupo['descricao']) && $grupo['descricao'] !== "null"    ? "'" . $grupo['descricao'] . "'" : "null";
-      $codigoNcm = isset($grupo['nCM']) && $grupo['nCM'] !== ""    ? "'" . $grupo['nCM'] . "'" : "null";
-      $codigoCest = isset($grupo['cEST']) && $grupo['cEST'] !== ""    ? "'" . $grupo['cEST'] . "'" : "null";
-      $impostoImportacao = isset($grupo['impostoImportacao']) && $grupo['impostoImportacao'] !== ""    ? "'" . $grupo['impostoImportacao'] . "'" : "null";
-      $piscofinscstEnt = isset($grupo['pisCofins']['cstEnt']) && $grupo['pisCofins']['cstEnt'] !== ""    ? "'" . $grupo['pisCofins']['cstEnt'] . "'" : "null";
-      $piscofinscstSai = isset($grupo['pisCofins']['cstSai']) && $grupo['pisCofins']['cstSai'] !== ""    ? "'" . $grupo['pisCofins']['cstSai'] . "'" : "null";
-      $aliqPis = isset($grupo['pisCofins']['aliqPis']) && $grupo['pisCofins']['aliqPis'] !== ""    ? "'" . $grupo['pisCofins']['aliqPis'] . "'" : "null";
-      $aliqCofins = isset($grupo['pisCofins']['aliqCofins']) && $grupo['pisCofins']['aliqCofins'] !== ""    ? "'" . $grupo['pisCofins']['aliqCofins'] . "'" : "null";
-      $nri = isset($grupo['pisCofins']['nri']) && $grupo['pisCofins']['nri'] !== ""    ? "'" . $grupo['pisCofins']['nri'] . "'" : "null";
-      $ampLegal = isset($grupo['pisCofins']['ampLegal']) && $grupo['pisCofins']['ampLegal'] !== ""    ? "'" . $grupo['pisCofins']['ampLegal'] . "'" : "null";
-      $redPIS = isset($grupo['pisCofins']['redPis']) && $grupo['pisCofins']['redPis'] !== ""    ? "'" . $grupo['pisCofins']['redPis'] . "'" : "null";
-      $redCofins = isset($grupo['pisCofins']['redCofins']) && $grupo['pisCofins']['redCofins'] !== ""    ? "'" . $grupo['pisCofins']['redCofins'] . "'" : "null";
-      $ipicstEnt = isset($grupo['iPI']['cstEnt']) && $grupo['iPI']['cstEnt'] !== ""    ? "'" . $grupo['iPI']['cstEnt'] . "'" : "null";
-      $ipicstSai = isset($grupo['iPI']['cstSai']) && $grupo['iPI']['cstSai'] !== ""    ? "'" . $grupo['iPI']['cstSai'] . "'" : "null";
-      $aliqipi = isset($grupo['iPI']['aliqipi']) && $grupo['iPI']['aliqipi'] !== ""    ? "'" . $grupo['iPI']['aliqipi'] . "'" : "null";
-      $codenq = isset($grupo['iPI']['codenq']) && $grupo['iPI']['codenq'] !== ""    ? "'" . $grupo['iPI']['codenq'] . "'" : "null";
-      $ipiex = isset($grupo['iPI']['ex']) && $grupo['iPI']['ex'] !== ""    ? "'" . $grupo['iPI']['ex'] . "'" : "null";
+      $codigoGrupo = "'" . $grupo['codigo'] . "'";
+      $codigoCest = "'" . $grupo['cEST'] .  "'";
+      $codigoNcm = "'" . $grupo['nCM'] . "'";
 
-
-      $sql = "INSERT INTO grupoproduto (codigoGrupo, nomeGrupo, codigoNcm, codigoCest, impostoImportacao, piscofinscstEnt, piscofinscstSai, 
-      aliqPis, aliqCofins, nri, ampLegal, redPIS, redCofins, ipicstEnt, ipicstSai, aliqipi, codenq, ipiex) 
-      VALUES ($codigoGrupo, $nomeGrupo, $codigoNcm, $codigoCest, $impostoImportacao, $piscofinscstEnt, $piscofinscstSai, 
-      $aliqPis, $aliqCofins, $nri, $ampLegal, $redPIS, $redCofins, $ipicstEnt, $ipicstSai, $aliqipi, $codenq, $ipiex)";
-
-      //LOG
-      if (isset($LOG_NIVEL)) {
-        if ($LOG_NIVEL >= 3) {
-          fwrite($arquivo, $identificacao . "-SQL->" . $sql . "\n");
-        }
+      foreach ($eanProdutos as $eanProduto) {
+        $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo);
       }
-      //LOG
+
+      $apiEntrada = array(
+        'idEmpresa' => $idEmpresa,
+        'codigoGrupo' => $grupo['codigo'],
+        'nomeGrupo' => $grupo['descricao'],
+        'codigoNcm' => $grupo['nCM'],
+        'codigoCest' => $grupo['cEST'],
+        'impostoImportacao' => $grupo['impostoImportacao'],
+        'piscofinscstEnt' => $grupo['pisCofins']['cstEnt'],
+        'piscofinscstSai' => $grupo['pisCofins']['cstSai'],
+        'aliqPis' => $grupo['pisCofins']['aliqPis'],
+        'aliqCofins' => $grupo['pisCofins']['aliqCofins'],
+        'nri' => $grupo['pisCofins']['nri'],
+        'ampLegal' => $grupo['pisCofins']['ampLegal'],
+        'redPIS' => $grupo['pisCofins']['redPis'],
+        'redCofins' => $grupo['pisCofins']['redCofins'],
+        'ipicstEnt' => $grupo['iPI']['cstEnt'],
+        'ipicstSai' => $grupo['iPI']['cstSai'],
+        'aliqipi' => $grupo['iPI']['aliqipi'],
+        'codenq' => $grupo['iPI']['codenq'],
+        'ipiex' => $grupo['iPI']['ex']
+      );
+
+      $inserirGrupo = chamaAPI(null, '/cadastros/grupoproduto', json_encode($apiEntrada), 'PUT');
+
 
       //TRY-CATCH
       try {
-
-        $atualizar = mysqli_query($conexao, $sql);
-        if (!$atualizar)
-          throw new Exception(mysqli_error($conexao));
-
         $jsonSaida = array(
           "status" => 200,
           "retorno" => "ok"
