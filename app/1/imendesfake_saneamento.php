@@ -47,8 +47,8 @@ $JSONFAKE = "{
   },
   \"Grupos\": [
       {
-          \"codigo\": \"1963\",
-          \"descricao\": \"TESTE 18\",
+          \"codigo\": \"1945\",
+          \"descricao\": \"ACESSORIOS HIDRAULICOS JUNTAS, COTOVELOS, FLANGES, UNIOES,LUVAS DE PLASTICOS\",
           \"nCM\": \"39174090\",
           \"cEST\": \"10.006.00\",
           \"dtVigIni\": \"01/01/1900\",
@@ -193,6 +193,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
         "codigoGrupo" => $codigoGrupo
       );
     } else {
+      //echo json_encode($grupo['iPI']);
       $codigoGrupo = isset($grupo['codigo']) && $grupo['codigo'] !== "null"    ? "'" . $grupo['codigo'] . "'" : "null";
       $nomeGrupo = isset($grupo['descricao']) && $grupo['descricao'] !== "null"    ? "'" . $grupo['descricao'] . "'" : "null";
       $codigoNcm = isset($grupo['nCM']) && $grupo['nCM'] !== ""    ? "'" . $grupo['nCM'] . "'" : "null";
@@ -206,11 +207,11 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       $ampLegal = isset($grupo['pisCofins']['ampLegal']) && $grupo['pisCofins']['ampLegal'] !== ""    ? "'" . $grupo['pisCofins']['ampLegal'] . "'" : "null";
       $redPIS = isset($grupo['pisCofins']['redPis']) && $grupo['pisCofins']['redPis'] !== ""    ? "'" . $grupo['pisCofins']['redPis'] . "'" : "null";
       $redCofins = isset($grupo['pisCofins']['redCofins']) && $grupo['pisCofins']['redCofins'] !== ""    ? "'" . $grupo['pisCofins']['redCofins'] . "'" : "null";
-      $ipicstEnt = isset($grupo['pisCofins']['cstEnt']) && $grupo['pisCofins']['cstEnt'] !== ""    ? "'" . $grupo['pisCofins']['cstEnt'] . "'" : "null";
-      $ipicstSai = isset($grupo['pisCofins']['cstSai']) && $grupo['pisCofins']['cstSai'] !== ""    ? "'" . $grupo['pisCofins']['cstSai'] . "'" : "null";
-      $aliqipi = isset($grupo['pisCofins']['aliqipi']) && $grupo['pisCofins']['aliqipi'] !== ""    ? "'" . $grupo['pisCofins']['aliqipi'] . "'" : "null";
-      $codenq = isset($grupo['pisCofins']['codenq']) && $grupo['pisCofins']['codenq'] !== ""    ? "'" . $grupo['pisCofins']['codenq'] . "'" : "null";
-      $ipiex = isset($grupo['pisCofins']['ex']) && $grupo['pisCofins']['ex'] !== ""    ? "'" . $grupo['pisCofins']['ex'] . "'" : "null";
+      $ipicstEnt = isset($grupo['iPI']['cstEnt']) && $grupo['iPI']['cstEnt'] !== ""    ? "'" . $grupo['iPI']['cstEnt'] . "'" : "null";
+      $ipicstSai = isset($grupo['iPI']['cstSai']) && $grupo['iPI']['cstSai'] !== ""    ? "'" . $grupo['iPI']['cstSai'] . "'" : "null";
+      $aliqipi = isset($grupo['iPI']['aliqipi']) && $grupo['iPI']['aliqipi'] !== ""    ? "'" . $grupo['iPI']['aliqipi'] . "'" : "null";
+      $codenq = isset($grupo['iPI']['codenq']) && $grupo['iPI']['codenq'] !== ""    ? "'" . $grupo['iPI']['codenq'] . "'" : "null";
+      $ipiex = isset($grupo['iPI']['ex']) && $grupo['iPI']['ex'] !== ""    ? "'" . $grupo['iPI']['ex'] . "'" : "null";
 
 
       $sql = "INSERT INTO grupoproduto (codigoGrupo, nomeGrupo, codigoNcm, codigoCest, impostoImportacao, piscofinscstEnt, piscofinscstSai, 
