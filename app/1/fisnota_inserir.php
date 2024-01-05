@@ -35,14 +35,69 @@ if (isset($jsonEntrada['xml'])) {
 
 //********************************************PESSOAS
 
-    $apiEntrada = array(
-        'xml' => $jsonEntrada['xml'],
-        'idEmpresa' => $jsonEntrada['idEmpresa'],
-        'acao' => 'NFE'
-    );
-    $pessoasRetorno = chamaAPI(null, '/cadastros/pessoas', json_encode($apiEntrada), 'PUT');
-    $idPessoaEmitente = $pessoasRetorno['emit']["idPessoa"];
-    $idPessoaDestinatario = isset($pessoasRetorno['dest']) ? $pessoasRetorno['dest']["idPessoa"] : null;
+    foreach ($infNFe->children() as $id => $dados) {
+        $campos = $dados->getName();
+        if ($campos == "emit" || $campos == "dest") {
+            if (isset($dados->CNPJ)) {
+                $cpfCnpj = isset($dados->CNPJ) && $dados->CNPJ !== "" ? (string) $dados->CNPJ : "null";
+                $tipoPessoa = "J";
+            } else {
+                $cpfCnpj = isset($dados->CPF) && $dados->CPF !== "" ? (string) $dados->CPF : "null";
+                $tipoPessoa = "F";
+            }
+            $buscaPessoa = "SELECT * FROM pessoas WHERE cpfCnpj = $cpfCnpj";
+            $buscar = mysqli_query($conexao, $buscaPessoa);
+            $dadosPessoa = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
+            if (mysqli_num_rows($buscar) == 1) {
+                if ($campos == "emit") {
+                    $idPessoaEmitente = $dadosPessoa["idPessoa"];
+                } elseif ($campos == "dest") {
+                    $idPessoaDestinatario = $dadosPessoa["idPessoa"];
+                }
+            } else {
+
+                $nomePessoa = isset($dados->xNome) && $dados->xNome !== "" ? (string) $dados->xNome : "null";
+                $IE = isset($dados->IE) && $dados->IE !== "" ? (string) $dados->IE : "null";
+                $CRT = isset($dados->CRT) && $dados->CRT !== "" ? (string) $dados->CRT : "null";
+                $dadosEnder = ($campos == "emit") ? $dados->enderEmit : $dados->enderDest;
+                $municipio = isset($dadosEnder->xMun) && $dadosEnder->xMun !== "" ? (string) $dadosEnder->xMun : "null";
+                $codigoCidade = isset($dadosEnder->cMun) && $dadosEnder->cMun !== "" ? (string) $dadosEnder->cMun : "null";
+                $codigoEstado = isset($dadosEnder->UF) && $dadosEnder->UF !== "" ? (string) $dadosEnder->UF : "null";
+                $pais = isset($dadosEnder->xPais) && $dadosEnder->xPais !== "" ? (string) $dadosEnder->xPais : "null";
+                $bairro = isset($dadosEnder->xBairro) && $dadosEnder->xBairro !== "" ? (string) $dadosEnder->xBairro : "null";
+                $endereco = isset($dadosEnder->xLgr) && $dadosEnder->xLgr !== "" ? (string) $dadosEnder->xLgr : "null";
+                $endNumero = isset($dadosEnder->nro) && $dadosEnder->nro !== "" ? (string) $dadosEnder->nro : "null";
+                $CEP = isset($dadosEnder->CEP) && $dadosEnder->CEP !== "" ? (string) $dadosEnder->CEP : "null";
+                $telefone = isset($dadosEnder->fone) && $dadosEnder->fone !== "" ? (string) $dadosEnder->fone : "null";
+
+                $pessoasEntrada = array(
+                    'idEmpresa' => $idEmpresa,
+                    'cpfCnpj' => $cpfCnpj,
+                    'tipoPessoa' => $tipoPessoa,
+                    'nomePessoa' => $nomePessoa,
+                    'IE' => $IE,
+                    'municipio' => $municipio,
+                    'codigoCidade' => $codigoCidade,
+                    'codigoEstado' => $codigoEstado,
+                    'pais' => $pais,
+                    'bairro' => $bairro,
+                    'endereco' => $endereco,
+                    'endNumero' => $endNumero,
+                    'CEP' => $CEP,
+                    'telefone' => $telefone,
+                    'CRT' => $CRT
+                );
+                
+                $pessoasRetorno = chamaAPI(null, '/cadastros/pessoas', json_encode($pessoasEntrada), 'PUT');
+                if ($campos == "emit") {
+                    $idPessoaEmitente = $pessoasRetorno["idPessoa"];
+                } elseif ($campos == "dest") {
+                    $idPessoaDestinatario = $pessoasRetorno["idPessoa"];
+                }
+
+            }
+        }
+    }
 
 //********************************************NOTA FISCAL
 
@@ -73,7 +128,6 @@ if (isset($jsonEntrada['xml'])) {
 
         $sqlNota = "INSERT INTO fisnota(chaveNFe,naturezaOp,modelo,XML,serie,NF,dtEmissao,idPessoaEmitente,idPessoaDestinatario,baseCalculo,valorProdutos,pis,cofins) 
                     VALUES ($chaveNFe,$naturezaOp,$modelo,$XMLentrada,$serie,$NF,$dtEmissao,$idPessoaEmitente,$idPessoaDestinatario,$baseCalculo,$valorProdutos,$pis,$cofins)";
-        $atualizarNota = mysqli_query($conexao, $sqlNota);
 
         //LOG
         if (isset($LOG_NIVEL)) {
@@ -82,6 +136,8 @@ if (isset($jsonEntrada['xml'])) {
             }
         }
         //LOG
+
+        $atualizarNota = mysqli_query($conexao, $sqlNota);
 
         $idNotaInserido = mysqli_insert_id($conexao);
 
@@ -95,29 +151,18 @@ if (isset($jsonEntrada['xml'])) {
                 "status" => 500,
                 "retorno" => "erro no mysql"
             );
-        }
+        } 
 
-//********************************************PRODUTOS
-
-        $produRetorno = chamaAPI(null, '/cadastros/produtos', json_encode($apiEntrada), 'PUT');
 
 //********************************************FISNOTAPRODUTOS
 
         include 'fisnotaproduto_inserir.php';
 
-//********************************************FISNOTAPRODUTOSIMPOSTO
-
-        include 'fisnotaproduimposto_inserir.php';
-       
 
         if ($atualizarNota) {
             $jsonSaida = array(
                 "status" => 200,
-                "retorno" => "ok",
-                "NFE" => $jsonSaidaNFE,
-                "Pessoa" => $pessoasRetorno,
-                "Produto" => $produRetorno,
-                "NotaProduto" => $jsonSaidaNotaProdu
+                "retorno" => "ok"
             );
         } else {
             $jsonSaida = array(
@@ -125,13 +170,13 @@ if (isset($jsonEntrada['xml'])) {
                 "retorno" => "erro no mysql"
             );
         }
-    }
+    } 
 } else {
     $jsonSaida = array(
         "status" => 400,
         "retorno" => "Faltaram parâmetros"
     );
-}
+} 
 
 //LOG
 if (isset($LOG_NIVEL)) {
