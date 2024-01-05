@@ -57,35 +57,9 @@ if (isset($_GET['operacao'])) {
 		$apiEntrada = array(
 			'xml' => $xmlContent,
 			'idEmpresa' => $_SESSION['idEmpresa'],
-			'idPessoaEmitente' => null,
-			'idPessoaDestinatario' => null,
-			'idNota' => null
 		);
 
-		//Inserir Pessoa
-		$pessoas = chamaAPI(null, '/impostos/nfepessoa', json_encode($apiEntrada), 'PUT');
-		foreach ($pessoas as $id => $pessoaResponse) {
-			if ($pessoaResponse["status"] === 200) {
-				$idPessoa = $pessoaResponse["idPessoa"];
-				if ($id == 0) {
-					$apiEntrada['idPessoaEmitente'] = $idPessoa;
-				} elseif ($id == 1) {
-					$apiEntrada['idPessoaDestinatario'] = $idPessoa;
-				}
-			}
-		}
-		
-		//Inserir Nota
 		$nfe = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
-		if ($nfe["status"] === 200) {
-			$idNota = $nfe['idNota'];
-			$apiEntrada['idNota'] = $idNota;
-
-		//Inserir fisNotaProduto e Produto
-		$produtos = chamaAPI(null, '/impostos/nfeprodutos', json_encode($apiEntrada), 'PUT');
-		$fisnotaproduto = chamaAPI(null, '/impostos/nfefisnotaproduto', json_encode($apiEntrada), 'PUT');
-
-		}
 		
 		echo json_encode($nfe);
 		return $nfe;
