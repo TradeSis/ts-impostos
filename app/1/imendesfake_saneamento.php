@@ -47,8 +47,8 @@ $JSONFAKE = "{
   },
   \"Grupos\": [
       {
-          \"codigo\": \"1995\",
-          \"descricao\": \"TESTE11\",
+          \"codigo\": \"1996\",
+          \"descricao\": \"TESTE112\",
           \"nCM\": \"39174090\",
           \"cEST\": \"10.006.00\",
           \"dtVigIni\": \"01/01/1900\",
@@ -189,7 +189,34 @@ function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigo
   return $atualizar;
 }
 
+function adicionaHistorico($conexao, $retornoImendes)
+{
+  $sugestao = isset($retornoImendes['Cabecalho']['sugestao']) && $retornoImendes['Cabecalho']['sugestao'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['sugestao'] . "'" : "null";
+  $amb = isset($retornoImendes['Cabecalho']['amb']) && $retornoImendes['Cabecalho']['amb'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['amb'] . "'" : "null";
+  $cnpj = isset($retornoImendes['Cabecalho']['cnpj']) && $retornoImendes['Cabecalho']['cnpj'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['cnpj'] . "'" : "null";
+  $dthr = isset($retornoImendes['Cabecalho']['dthr']) && $retornoImendes['Cabecalho']['dthr'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['dthr'] . "'" : "null";
+  $transacao = isset($retornoImendes['Cabecalho']['transacao']) && $retornoImendes['Cabecalho']['transacao'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['transacao'] . "'" : "null";
+  $mensagem = isset($retornoImendes['Cabecalho']['mensagem']) && $retornoImendes['Cabecalho']['mensagem'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['mensagem'] . "'" : "null";
+  $prodEnv = isset($retornoImendes['Cabecalho']['prodEnv']) && $retornoImendes['Cabecalho']['prodEnv'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['prodEnv'] . "'" : "null";
+  $prodRet = isset($retornoImendes['Cabecalho']['prodRet']) && $retornoImendes['Cabecalho']['prodRet'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['prodRet'] . "'" : "null";
+  $prodNaoRet = isset($retornoImendes['Cabecalho']['prodNaoRet']) && $retornoImendes['Cabecalho']['prodNaoRet'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['prodNaoRet'] . "'" : "null";
+  $comportamentosParceiro = isset($retornoImendes['Cabecalho']['comportamentosParceiro']) && $retornoImendes['Cabecalho']['comportamentosParceiro'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['comportamentosParceiro'] . "'" : "null";
+  $comportamentosCliente = isset($retornoImendes['Cabecalho']['comportamentosCliente']) && $retornoImendes['Cabecalho']['comportamentosCliente'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['comportamentosCliente'] . "'" : "null";
+  $versao = isset($retornoImendes['Cabecalho']['versao']) && $retornoImendes['Cabecalho']['versao'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['versao'] . "'" : "null";
+  $duracao = isset($retornoImendes['Cabecalho']['duracao']) && $retornoImendes['Cabecalho']['duracao'] !== "null"    ? "'" . $retornoImendes['Cabecalho']['duracao'] . "'" : "null";
+
+  $inseirHistorico = " INSERT INTO apifiscal_historico (sugestao, amb, cnpj, dthr, transacao, mensagem, prodEnv, prodRet, prodNaoRet, comportamentosParceiro, 
+  comportamentosCliente, versao, duracao) 
+  VALUES ($sugestao, $amb , $cnpj, $dthr, $transacao, $mensagem, $prodEnv, $prodRet, $prodNaoRet, $comportamentosParceiro, 
+  $comportamentosCliente, $versao, $duracao) " ;
+
+  $inserirHistorico = mysqli_query($conexao, $inseirHistorico);
+
+  return $inserirHistorico;
+}
+
 $retornoImendes = json_decode($JSONFAKE, true);
+
 
 foreach ($retornoImendes['Grupos'] as $grupo) {
   if (is_array($grupo) && isset($grupo['codigo'])) {
@@ -210,6 +237,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       foreach ($eanProdutos as $eanProduto) {
         $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo);
       }
+      $historico = adicionaHistorico($conexao, $retornoImendes);
       $jsonSaida = array(
         "status" => 200,
         "retorno" => "codigo do Grupo existente",
@@ -223,7 +251,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       foreach ($eanProdutos as $eanProduto) {
         $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo);
       }
-
+      $historico = adicionaHistorico($conexao, $retornoImendes);
       $apiEntrada = array(
         'idEmpresa' => $idEmpresa,
         'codigoGrupo' => $grupo['codigo'],
