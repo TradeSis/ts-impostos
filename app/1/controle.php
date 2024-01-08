@@ -103,6 +103,11 @@ if ($metodo == "POST") {
     $parametro = null;
   }
 
+  if ($funcao == "imendes" && $parametro == "saneamento") {
+    $funcao = "imendes/saneamento";
+    $parametro = null;
+  }
+
   switch ($funcao) {
 
     case "fisatividade":
@@ -123,6 +128,10 @@ if ($metodo == "POST") {
 
     case "imendesfake/saneamento":
       include 'imendesfake_saneamento.php';
+      break;
+
+    case "imendes/saneamento":
+      include 'imendes_saneamento.php';
       break;
 
     default:
