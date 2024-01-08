@@ -47,8 +47,8 @@ $JSONFAKE = "{
   },
   \"Grupos\": [
       {
-          \"codigo\": \"2005\",
-          \"descricao\": \"TESTE113\",
+          \"codigo\": \"2013\",
+          \"descricao\": \"TESTEx5\",
           \"nCM\": \"39174090\",
           \"cEST\": \"10.006.00\",
           \"dtVigIni\": \"01/01/1900\",
@@ -79,7 +79,7 @@ $JSONFAKE = "{
               {
                   \"uFs\": [
                       {
-                          \"uF\": \"SC\",
+                          \"uF\": \"RS\",
                           \"CFOP\": {
                               \"cFOP\": \"2101\",
                               \"CaracTrib\": [
@@ -120,7 +120,7 @@ $JSONFAKE = "{
                           \"mensagem\": \"OK\"
                       },
                       {
-                          \"uF\": \"RS\",
+                          \"uF\": \"PR\",
                           \"CFOP\": {
                               \"cFOP\": \"1101\",
                               \"CaracTrib\": [
@@ -180,12 +180,17 @@ function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigo
   $sql_consulta = "SELECT * FROM produtos WHERE eanProduto = $eanProduto ";
   $buscar_consulta = mysqli_query($conexao, $sql_consulta);
   $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
-  $idProduto = $row_consulta["idProduto"];
 
-  $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest, codigoGrupo=$codigoGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
+  if($row_consulta !== null){
+    $idProduto = $row_consulta["idProduto"];
+    $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest, codigoGrupo=$codigoGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
     WHERE idProduto = $idProduto";
 
-  $atualizar = mysqli_query($conexao, $update_produtos);
+    $atualizar = mysqli_query($conexao, $update_produtos);
+  }else{
+    $atualizar = " Produto não encontrado ";
+  }
+
   return $atualizar;
 }
 
@@ -226,7 +231,7 @@ function adicionaRegraFiscal($conexao, $regras, $codigoGrupo){
         $cFOP = isset($dadosCFOP['CFOP']['cFOP']) && $dadosCFOP['CFOP']['cFOP'] !== "null"    ? "'" . $dadosCFOP['CFOP']['cFOP'] . "'" : "null";
 
         foreach ($dadosCFOP['CFOP']['CaracTrib'] as $CaracTrib) {
-         
+
           $codigoCaracTrib = isset($CaracTrib['codigo']) && $CaracTrib['codigo'] !== "null"    ? "'" . $CaracTrib['codigo'] . "'" : "null";
           $finalidade = isset($CaracTrib['finalidade']) && $CaracTrib['finalidade'] !== "null"    ? "'" . $CaracTrib['finalidade'] . "'" : "null";
           $codRegra = isset($CaracTrib['codRegra']) && $CaracTrib['codRegra'] !== "null"    ? "'" . $CaracTrib['codRegra'] . "'" : "null";
@@ -259,17 +264,25 @@ function adicionaRegraFiscal($conexao, $regras, $codigoGrupo){
           //$Convenio = isset($CaracTrib['Convenio']) && $CaracTrib['Convenio'] !== "null"    ? "'" . $CaracTrib['Convenio'] . "'" : "null";
           $regraGeral = isset($CaracTrib['regraGeral']) && $CaracTrib['regraGeral'] !== "null"    ? "'" . $CaracTrib['regraGeral'] . "'" : "null";
 
+          //Verifica se tem regra
+          $sql_consulta = "SELECT * FROM regrafiscal WHERE codigoGrupo = $codigoGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib" ;
+          $buscar_consulta = mysqli_query($conexao, $sql_consulta);
+          $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
+  
+          if($row_consulta == null){
+            $sql = " INSERT INTO regrafiscal (codigoGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, codRegra, codExcecao, dtVigIni,
+            dtVigFin, cFOPCaracTrib, cST, cSOSN, aliqIcmsInterna, aliqIcmsInterestadual, reducaoBcIcms, reducaoBcIcmsSt, redBcICMsInterestadual,
+            aliqIcmsSt, iVA, iVAAjust, fCP, codBenef, pDifer, pIsencao, antecipado, desonerado, pICMSDeson, isento, tpCalcDifal, ampLegal,
+            Protocolo, Convenio, regraGeral) 
+            VALUES ($codigoGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $codRegra, $codExcecao, $dtVigIni,
+            $dtVigFin , $cFOPCaracTrib, $cST, $cSOSN, $aliqIcmsInterna, $aliqIcmsInterestadual, $reducaoBcIcms, $reducaoBcIcmsSt, $redBcICMsInterestadual,
+            $aliqIcmsSt, $iVA, $iVAAjust, $fCP, $codBenef, $pDifer, $pIsencao, $antecipado, $desonerado, $pICMSDeson, $isento, $tpCalcDifal, $ampLegal_formatada,
+            null, null, $regraGeral) ";
 
-          $sql = " INSERT INTO regrafiscal (codigoGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, codRegra, codExcecao, dtVigIni,
-          dtVigFin, cFOPCaracTrib, cST, cSOSN, aliqIcmsInterna, aliqIcmsInterestadual, reducaoBcIcms, reducaoBcIcmsSt, redBcICMsInterestadual,
-          aliqIcmsSt, iVA, iVAAjust, fCP, codBenef, pDifer, pIsencao, antecipado, desonerado, pICMSDeson, isento, tpCalcDifal, ampLegal,
-          Protocolo, Convenio, regraGeral) 
-          VALUES ($codigoGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $codRegra, $codExcecao, $dtVigIni,
-          $dtVigFin , $cFOPCaracTrib, $cST, $cSOSN, $aliqIcmsInterna, $aliqIcmsInterestadual, $reducaoBcIcms, $reducaoBcIcmsSt, $redBcICMsInterestadual,
-          $aliqIcmsSt, $iVA, $iVAAjust, $fCP, $codBenef, $pDifer, $pIsencao, $antecipado, $desonerado, $pICMSDeson, $isento, $tpCalcDifal, $ampLegal_formatada,
-          null, null, $regraGeral) ";
-
-          $adicionaregraFiscal = mysqli_query($conexao, $sql);
+            $adicionaregraFiscal = mysqli_query($conexao, $sql);
+          }else{
+            $adicionaregraFiscal = " Regra existente ";
+          }
         }
       }
     }
@@ -302,7 +315,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       foreach ($eanProdutos as $eanProduto) {
         $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo);
       }
-
+      $regrafiscal = adicionaRegraFiscal($conexao, $grupo['Regras'], $grupo['codigo']);
       $jsonSaida = array(
         "status" => 200,
         "retorno" => "codigo do Grupo existente",
