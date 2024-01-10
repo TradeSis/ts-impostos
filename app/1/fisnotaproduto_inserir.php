@@ -38,9 +38,7 @@ foreach ($infNFe->det as $item) {
             'precoProduto' => (string) $item->prod->uCom,
             'codigoNcm' => (string) $item->prod->NCM,
             'codigoCest' => (string) $item->prod->CEST,
-            'ativoProduto' => "1", //Ativo
-            'propagandaProduto' => "0", //Inativo
-            'idPessoaFornecedor' => str_replace("'", "", $idPessoaEmitente),
+            'idPessoaFornecedor' => $idPessoaEmitente,
             'refProduto' => str_replace("'", "", $refProduto)
         );
         $produRetorno = chamaAPI(null, '/cadastros/produtos', json_encode($produEntrada), 'PUT');
@@ -66,9 +64,9 @@ foreach ($infNFe->det as $item) {
 
     $atualizarNotaProduto = mysqli_query($conexao, $sqlNotaProduto);
 
-//********************************************FISNOTAPRODUTOSIMPOSTO
+    //********************************************FISNOTAPRODUTOSIMPOSTO
     if (isset($item->imposto)) {
-        $vTotTrib = isset($item->imposto->vTotTrib) && $item->imposto->vTotTrib !== "" ? "'" . (string) $item->imposto->vTotTrib . "'" : "null";
+        $vTotTribIMPOSTO = isset($item->imposto->vTotTrib) && $item->imposto->vTotTrib !== "" ? "'" . (string) $item->imposto->vTotTrib . "'" : "null";
         foreach ($item->imposto->children() as $filho) {
             $imposto = "'" . $filho->getName() . "'";
             $nomeImposto = $filho->children()->count() > 0 ? $filho->children()->getName() : null;
@@ -81,11 +79,29 @@ foreach ($infNFe->det as $item) {
             $pMVAST = isset($campos->pMVAST) ? "'" . (string) $campos->pMVAST . "'" : "null";
             $vBCST = isset($campos->vBCST) ? "'" . (string) $campos->vBCST . "'" : "null";
             $pICMSST = isset($campos->pICMSST) ? "'" . (string) $campos->pICMSST . "'" : "null";
+            $CST = isset($campos->CST) ? "'" . (string) $campos->CST . "'" : "null";
+            $modBC = isset($campos->modBC) ? "'" . (string) $campos->modBC . "'" : "null";
+            $vBC = isset($campos->vBC) ? "'" . (string) $campos->vBC . "'" : "null";
+            $pICMS = isset($campos->pICMS) ? "'" . (string) $campos->pICMS . "'" : "null";
+            $vICMS = isset($campos->vICMS) ? "'" . (string) $campos->vICMS . "'" : "null";
+            $pFCP = isset($campos->pFCP) ? "'" . (string) $campos->pFCP . "'" : "null";
+            $vFCP = isset($campos->vFCP) ? "'" . (string) $campos->vFCP . "'" : "null";
+            $qBCMono = isset($campos->qBCMono) ? "'" . (string) $campos->qBCMono . "'" : "null";
+            $vICMSMono = isset($campos->vICMSMono) ? "'" . (string) $campos->vICMSMono . "'" : "null";
+            $vBCFCP = isset($campos->vBCFCP) ? "'" . (string) $campos->vBCFCP . "'" : "null";
+            $pRedBCST = isset($campos->pRedBCST) ? "'" . (string) $campos->pRedBCST . "'" : "null";
             $vICMSST = isset($campos->vICMSST) ? "'" . (string) $campos->vICMSST . "'" : "null";
+            $vBCFCPST = isset($campos->vBCFCPST) ? "'" . (string) $campos->vBCFCPST . "'" : "null";
+            $pFCPST = isset($campos->pFCPST) ? "'" . (string) $campos->pFCPST . "'" : "null";
+            $vFCPST = isset($campos->vFCPST) ? "'" . (string) $campos->vFCPST . "'" : "null";
+            $vICMSSTDeson = isset($campos->vICMSSTDeson) ? "'" . (string) $campos->vICMSSTDeson . "'" : "null";
+            $pRedBC = isset($campos->pRedBC) ? "'" . (string) $campos->pRedBC . "'" : "null";
+            $vICMSDeson = isset($campos->vICMSDeson) ? "'" . (string) $campos->vICMSDeson . "'" : "null";
+            $motDesICMS = isset($campos->motDesICMS) ? "'" . (string) $campos->motDesICMS . "'" : "null";
             $nomeImposto = "'" . $nomeImposto . "'";
 
-            $sqlImposto = "INSERT INTO fisnotaproduimposto(idNota,nItem,imposto,nomeImposto,vTotTrib,orig,CSOSN,modBCST,pMVAST,vBCST,pICMSST,vICMSST) 
-                        VALUES ($idNota,$nItem,$imposto,$nomeImposto,$vTotTrib,$orig,$CSOSN,$modBCST,$pMVAST,$vBCST,$pICMSST,$vICMSST)";
+            $sqlImposto = "INSERT INTO fisnotaproduimposto(idNota,nItem,imposto,nomeImposto,vTotTrib,orig,CSOSN,modBCST,pMVAST,vBCST,pICMSST,vICMSST,CST,modBC,vBC,pICMS,vICMS,pFCP,vFCP,qBCMono,vICMSMono,vBCFCP,pRedBCST,vBCFCPST,pFCPST,vFCPST,vICMSSTDeson,pRedBC,vICMSDeson,motDesICMS) 
+                           VALUES ($idNota,$nItem,$imposto,$nomeImposto,$vTotTribIMPOSTO,$orig,$CSOSN,$modBCST,$pMVAST,$vBCST,$pICMSST,$vICMSST,$CST,$modBC,$vBC,$pICMS,$vICMS,$pFCP,$vFCP,$qBCMono,$vICMSMono,$vBCFCP,$pRedBCST,$vBCFCPST,$pFCPST,$vFCPST,$vICMSSTDeson,$pRedBC,$vICMSDeson,$motDesICMS) ";
 
             //LOG
             if (isset($LOG_NIVEL)) {

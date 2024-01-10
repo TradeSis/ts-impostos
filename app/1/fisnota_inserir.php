@@ -56,36 +56,24 @@ if (isset($jsonEntrada['xml'])) {
                 }
             } else {
 
-                $nomePessoa = isset($dados->xNome) && $dados->xNome !== "" ? (string) $dados->xNome : "null";
-                $IE = isset($dados->IE) && $dados->IE !== "" ? (string) $dados->IE : "null";
-                $CRT = isset($dados->CRT) && $dados->CRT !== "" ? (string) $dados->CRT : "null";
                 $dadosEnder = ($campos == "emit") ? $dados->enderEmit : $dados->enderDest;
-                $municipio = isset($dadosEnder->xMun) && $dadosEnder->xMun !== "" ? (string) $dadosEnder->xMun : "null";
-                $codigoCidade = isset($dadosEnder->cMun) && $dadosEnder->cMun !== "" ? (string) $dadosEnder->cMun : "null";
-                $codigoEstado = isset($dadosEnder->UF) && $dadosEnder->UF !== "" ? (string) $dadosEnder->UF : "null";
-                $pais = isset($dadosEnder->xPais) && $dadosEnder->xPais !== "" ? (string) $dadosEnder->xPais : "null";
-                $bairro = isset($dadosEnder->xBairro) && $dadosEnder->xBairro !== "" ? (string) $dadosEnder->xBairro : "null";
-                $endereco = isset($dadosEnder->xLgr) && $dadosEnder->xLgr !== "" ? (string) $dadosEnder->xLgr : "null";
-                $endNumero = isset($dadosEnder->nro) && $dadosEnder->nro !== "" ? (string) $dadosEnder->nro : "null";
-                $CEP = isset($dadosEnder->CEP) && $dadosEnder->CEP !== "" ? (string) $dadosEnder->CEP : "null";
-                $telefone = isset($dadosEnder->fone) && $dadosEnder->fone !== "" ? (string) $dadosEnder->fone : "null";
 
                 $pessoasEntrada = array(
                     'idEmpresa' => $idEmpresa,
                     'cpfCnpj' => $cpfCnpj,
                     'tipoPessoa' => $tipoPessoa,
-                    'nomePessoa' => $nomePessoa,
-                    'IE' => $IE,
-                    'municipio' => $municipio,
-                    'codigoCidade' => $codigoCidade,
-                    'codigoEstado' => $codigoEstado,
-                    'pais' => $pais,
-                    'bairro' => $bairro,
-                    'endereco' => $endereco,
-                    'endNumero' => $endNumero,
-                    'CEP' => $CEP,
-                    'telefone' => $telefone,
-                    'CRT' => $CRT
+                    'nomePessoa' => (string) $dados->xNome,
+                    'IE' => (string) $dados->IE,
+                    'municipio' => (string) $dadosEnder->xMun,
+                    'codigoCidade' => (string) $dadosEnder->cMun,
+                    'codigoEstado' => (string) $dadosEnder->UF,
+                    'pais' => (string) $dadosEnder->xPais,
+                    'bairro' => (string) $dadosEnder->xBairro,
+                    'endereco' => (string) $dadosEnder->xLgr,
+                    'endNumero' => (string) $dadosEnder->nro,
+                    'CEP' => (string) $dadosEnder->CEP,
+                    'telefone' => (string) $dadosEnder->fone,
+                    'CRT' => (string) $dados->CRT
                 );
                 
                 $pessoasRetorno = chamaAPI(null, '/cadastros/pessoas', json_encode($pessoasEntrada), 'PUT');
@@ -118,16 +106,14 @@ if (isset($jsonEntrada['xml'])) {
         $dtEmissao = isset($xml->infNFe->ide->dhEmi) && $xml->infNFe->ide->dhEmi !== "" ? "'" . date('Y-m-d', strtotime($xml->infNFe->ide->dhEmi)) . "'" : "null";
         $naturezaOp = isset($infNFe->ide->natOp) && $infNFe->ide->natOp !== "" ? "'" . (string) $infNFe->ide->natOp . "'" : "null";
         $modelo = isset($infNFe->ide->mod) && $infNFe->ide->mod !== "" ? "'" . (string) $infNFe->ide->mod . "'" : "null";
-        $baseCalculo = isset($infNFe->total->ICMSTot->vBC) && $infNFe->total->ICMSTot->vBC !== "" ? "'" . (string) $infNFe->total->ICMSTot->vBC . "'" : "null";
-        $valorProdutos = isset($infNFe->total->ICMSTot->vProd) && $infNFe->total->ICMSTot->vProd !== "" ? "'" . (string) $infNFe->total->ICMSTot->vProd . "'" : "null";
-        $pis = isset($infNFe->total->ICMSTot->vPIS) && $infNFe->total->ICMSTot->vPIS !== "" ? "'" . (string) $infNFe->total->ICMSTot->vPIS . "'" : "null";
-        $cofins = isset($infNFe->total->ICMSTot->vCOFINS) && $infNFe->total->ICMSTot->vCOFINS !== "" ? "'" . (string) $infNFe->total->ICMSTot->vCOFINS . "'" : "null";
         $XMLentrada = isset($jsonEntrada['xml']) && $jsonEntrada['xml'] !== "" ? "'" . $jsonEntrada['xml'] . "'" : "null";
-        $idPessoaEmitente = isset($idPessoaEmitente) && $idPessoaEmitente !== "" ? "'" . $idPessoaEmitente . "'" : "NULL";
-        $idPessoaDestinatario = isset($idPessoaDestinatario) && $idPessoaDestinatario !== "" ? "'" . $idPessoaDestinatario . "'" : "NULL";
-
+        $vBC = isset($infNFe->total->ICMSTot->vBC) && $infNFe->total->ICMSTot->vBC !== "" ? "'" . (string) $infNFe->total->ICMSTot->vBC . "'" : "null";
+        $vProd = isset($infNFe->total->ICMSTot->vProd) && $infNFe->total->ICMSTot->vProd !== "" ? "'" . (string) $infNFe->total->ICMSTot->vProd . "'" : "null";
+        $vPIS = isset($infNFe->total->ICMSTot->vPIS) && $infNFe->total->ICMSTot->vPIS !== "" ? "'" . (string) $infNFe->total->ICMSTot->vPIS . "'" : "null";
+        $vCOFINS = isset($infNFe->total->ICMSTot->vCOFINS) && $infNFe->total->ICMSTot->vCOFINS !== "" ? "'" . (string) $infNFe->total->ICMSTot->vCOFINS . "'" : "null";
+        
         $sqlNota = "INSERT INTO fisnota(chaveNFe,naturezaOp,modelo,XML,serie,NF,dtEmissao,idPessoaEmitente,idPessoaDestinatario,baseCalculo,valorProdutos,pis,cofins) 
-                    VALUES ($chaveNFe,$naturezaOp,$modelo,$XMLentrada,$serie,$NF,$dtEmissao,$idPessoaEmitente,$idPessoaDestinatario,$baseCalculo,$valorProdutos,$pis,$cofins)";
+                    VALUES ($chaveNFe,$naturezaOp,$modelo,$XMLentrada,$serie,$NF,$dtEmissao,$idPessoaEmitente,$idPessoaDestinatario,$vBC,$vProd,$vPIS,$vCOFINS)";
 
         //LOG
         if (isset($LOG_NIVEL)) {
@@ -141,17 +127,41 @@ if (isset($jsonEntrada['xml'])) {
 
         $idNotaInserido = mysqli_insert_id($conexao);
 
-        if ($atualizarNota) {
-            $jsonSaidaNFE = array(
-                "status" => 200,
-                "retorno" => "ok"
-            );
-        } else {
-            $jsonSaidaNFE = array(
-                "status" => 500,
-                "retorno" => "erro no mysql"
-            );
-        } 
+        $nomeTotal = "'" . $infNFe->total->ICMSTot->getName() . "'";
+        $vICMS = isset($infNFe->total->ICMSTot->vICMS) && $infNFe->total->ICMSTot->vICMS !== "" ? "'" . (string) $infNFe->total->ICMSTot->vICMS . "'" : "null";
+        $vICMS = isset($infNFe->total->ICMSTot->vICMS) && $infNFe->total->ICMSTot->vICMS !== "" ? "'" . (string) $infNFe->total->ICMSTot->vICMS . "'" : "null";
+        $vICMSDeson = isset($infNFe->total->ICMSTot->vICMSDeson) && $infNFe->total->ICMSTot->vICMSDeson !== "" ? "'" . (string) $infNFe->total->ICMSTot->vICMSDeson . "'" : "null";
+        $vFCPUFDest = isset($infNFe->total->ICMSTot->vFCPUFDest) && $infNFe->total->ICMSTot->vFCPUFDest !== "" ? "'" . (string) $infNFe->total->ICMSTot->vFCPUFDest . "'" : "null";
+        $vICMSUFRemet = isset($infNFe->total->ICMSTot->vICMSUFRemet) && $infNFe->total->ICMSTot->vICMSUFRemet !== "" ? "'" . (string) $infNFe->total->ICMSTot->vICMSUFRemet . "'" : "null";
+        $vFCP = isset($infNFe->total->ICMSTot->vFCP) && $infNFe->total->ICMSTot->vFCP !== "" ? "'" . (string) $infNFe->total->ICMSTot->vFCP . "'" : "null";
+        $vBCST = isset($infNFe->total->ICMSTot->vBCST) && $infNFe->total->ICMSTot->vBCST !== "" ? "'" . (string) $infNFe->total->ICMSTot->vBCST . "'" : "null";
+        $vST = isset($infNFe->total->ICMSTot->vST) && $infNFe->total->ICMSTot->vST !== "" ? "'" . (string) $infNFe->total->ICMSTot->vST . "'" : "null";
+        $vFCPST = isset($infNFe->total->ICMSTot->vFCPST) && $infNFe->total->ICMSTot->vFCPST !== "" ? "'" . (string) $infNFe->total->ICMSTot->vFCPST . "'" : "null";
+        $vFCPSTRet = isset($infNFe->total->ICMSTot->vFCPSTRet) && $infNFe->total->ICMSTot->vFCPSTRet !== "" ? "'" . (string) $infNFe->total->ICMSTot->vFCPSTRet . "'" : "null";
+        $vFrete = isset($infNFe->total->ICMSTot->vFrete) && $infNFe->total->ICMSTot->vFrete !== "" ? "'" . (string) $infNFe->total->ICMSTot->vFrete . "'" : "null";
+        $vSeg = isset($infNFe->total->ICMSTot->vSeg) && $infNFe->total->ICMSTot->vSeg !== "" ? "'" . (string) $infNFe->total->ICMSTot->vSeg . "'" : "null";
+        $vDesc = isset($infNFe->total->ICMSTot->vDesc) && $infNFe->total->ICMSTot->vDesc !== "" ? "'" . (string) $infNFe->total->ICMSTot->vDesc . "'" : "null";
+        $vII = isset($infNFe->total->ICMSTot->vII) && $infNFe->total->ICMSTot->vII !== "" ? "'" . (string) $infNFe->total->ICMSTot->vII . "'" : "null";
+        $vIPI = isset($infNFe->total->ICMSTot->vIPI) && $infNFe->total->ICMSTot->vIPI !== "" ? "'" . (string) $infNFe->total->ICMSTot->vIPI . "'" : "null";
+        $vIPIDevol = isset($infNFe->total->ICMSTot->vIPIDevol) && $infNFe->total->ICMSTot->vIPIDevol !== "" ? "'" . (string) $infNFe->total->ICMSTot->vIPIDevol . "'" : "null";
+        $vOutro = isset($infNFe->total->ICMSTot->vOutro) && $infNFe->total->ICMSTot->vOutro !== "" ? "'" . (string) $infNFe->total->ICMSTot->vOutro . "'" : "null";
+        $vNF = isset($infNFe->total->ICMSTot->vNF) && $infNFe->total->ICMSTot->vNF !== "" ? "'" . (string) $infNFe->total->ICMSTot->vNF . "'" : "null";
+        $vTotTribTOTAL = isset($infNFe->total->ICMSTot->vTotTrib) && $infNFe->total->ICMSTot->vTotTrib !== "" ? "'" . (string) $infNFe->total->ICMSTot->vTotTrib . "'" : "null";
+
+        $sqlNota = "INSERT INTO fisnotatotal(idNota,nomeTotal,vBC,vICMS,vICMSDeson,vFCPUFDest,vICMSUFRemet,vFCP,vBCST,vST,vFCPST,vFCPSTRet,vProd,vFrete,vSeg,vDesc,vII,vIPI,vIPIDevol,vPIS,vCOFINS,vOutro,vNF,vTotTrib)
+                    VALUES($idNotaInserido,$nomeTotal,$vBC,$vICMS,$vICMSDeson,$vFCPUFDest,$vICMSUFRemet,$vFCP,$vBCST,$vST,$vFCPST,$vFCPSTRet,$vProd,$vFrete,$vSeg,$vDesc,$vII,$vIPI,$vIPIDevol,$vPIS,$vCOFINS,$vOutro,$vNF,$vTotTribTOTAL)";
+
+        //LOG
+        if (isset($LOG_NIVEL)) {
+            if ($LOG_NIVEL >= 3) {
+                fwrite($arquivo, $identificacao . "-SQL_Nota->" . $sqlNota . "\n");
+            }
+        }
+        //LOG
+
+        $atualizarNota = mysqli_query($conexao, $sqlNota);
+
+
 
 
 //********************************************FISNOTAPRODUTOS
