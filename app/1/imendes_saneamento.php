@@ -27,56 +27,124 @@ if (isset($jsonEntrada["idEmpresa"])) {
 
 $conexao = conectaMysql($idEmpresa);
 
+//APIFISCA
+$sql_apifiscal = "SELECT apifiscal.login,apifiscal.senha,apifiscal.tpAmb,apifiscal.cfopEntrada,apifiscal.finalidade FROM apifiscal WHERE idEmpresa = $idEmpresa ";
+$buscar_apifiscal = mysqli_query($conexao, $sql_apifiscal);
+$row_apifiscal = mysqli_fetch_array($buscar_apifiscal, MYSQLI_ASSOC);
+$login = $row_apifiscal['login'];
+$senha = $row_apifiscal['senha'];
+$amb = $row_apifiscal['tpAmb'];
+$cfopEntrada = $row_apifiscal['cfopEntrada'];
+$finalidade = (int)$row_apifiscal['finalidade'];
 
-$apiEntrada = ' {
-  "idEmpresa": 1,
-"emit": {
-  "amb": 1,
-  "cnpj": "03521642000124",
-  "crt": 3,
-  "regimeTrib": "LR",
-  "uf": "RS",
-  "cnae": "9877895",
-  "regimeEspecial": "",
-  "substICMS ": "N",
-  "interdependente": "N"
-},
-"perfil": {
-  "uf": [
-    "SC","RS"
-  ],
-  "cfop": "1101",
-  "caracTrib": [
-    3
-  ],
-  "finalidade": 0,
-  "simplesN": "N",
-  "origem": "0",
-  "substICMS": "N",
-  "prodZFM": "N"
-},
-"produtos": [
- {
-    "codigo": "7891960708166",
-    "codInterno": "N",
-    "descricao": "LUVA 25 AG AMANCO",
-    "ncm": "1111111"
-  }
-]
-} ';
+
+//EMPRESA
+$sql_empresa = "SELECT empresa.idPessoa FROM empresa WHERE idEmpresa = $idEmpresa ";
+$buscar_empresa = mysqli_query(conectaMysql(null), $sql_empresa);
+$row_empresa = mysqli_fetch_array($buscar_empresa, MYSQLI_ASSOC);
+$idPessoaEmpresa = $row_empresa['idPessoa'];
+
+//PESSOAS
+$sql_empresaPessoa = "SELECT pessoas.cpfCnpj, pessoas.cnae, pessoas.regimeEspecial, pessoas.regimeTrib, pessoas.crt, pessoas.origem FROM pessoas WHERE idPessoa = $idPessoaEmpresa "; //empresaPessoa
+$buscar_empresaPessoa = mysqli_query($conexao, $sql_empresaPessoa);
+$row_empresaPessoa = mysqli_fetch_array($buscar_empresaPessoa, MYSQLI_ASSOC);
+$cpfCnpj = $row_empresaPessoa['cpfCnpj'];
+$cnae = $row_empresaPessoa['cnae'];
+$regimeEspecial = $row_empresaPessoa['regimeEspecial'];
+$regimeTrib = $row_empresaPessoa['regimeTrib'];
+if ($regimeTrib == 'SN') {
+  $simplesN = 'S';
+} else {
+  $simplesN = 'N';
+}
+$crt = (int)$row_empresaPessoa['crt'];
+$origem = $row_empresaPessoa['origem'];
+
+
+if (isset($jsonEntrada["idProduto"])) {
+  //PRODUTOS
+  $sql_produtos = "SELECT produtos.nomeProduto, produtos.codigoNcm, produtos.codigoNcm, produtos.eanProduto, produtos.idPessoaFornecedor FROM produtos WHERE idProduto = " . $jsonEntrada["idProduto"] . " ";
+  $buscar_produtos = mysqli_query($conexao, $sql_produtos);
+  $row_produtos = mysqli_fetch_array($buscar_produtos, MYSQLI_ASSOC);
+  $nomeProduto = $row_produtos['nomeProduto'];
+  $codigoNcm = $row_produtos['codigoNcm'];
+  $eanProduto = $row_produtos['eanProduto'];
+  $idPessoaFornecedor = $row_produtos['idPessoaFornecedor'];
+}
+
+//PESSOA FORNECEDOR
+$sql_pessoaFornecedor = "SELECT pessoas.codigoEstado, pessoas.caracTrib FROM pessoas WHERE idPessoa = $idPessoaFornecedor ";
+$buscar_pessoaFornecedor = mysqli_query($conexao, $sql_pessoaFornecedor);
+$row_pessoaFornecedor = mysqli_fetch_array($buscar_pessoaFornecedor, MYSQLI_ASSOC);
+$codigoEstado = $row_pessoaFornecedor['codigoEstado'];
+$caracTrib = (int)$row_pessoaFornecedor['caracTrib'];
+
+
+$emit = array(
+  'amb' => $amb,
+  'cnpj' => $cpfCnpj,
+  'crt' => $crt, //- Para o CRT 3, informe o campo 'regimeTrib' igual a 'LR' ou 'LP'."
+  'regimeTrib' => $regimeTrib,
+  'uf' => $codigoEstado,
+  'cnae' => $cnae,
+  'regimeEspecial' => $regimeEspecial,
+  'substICMS' => "N", // - Verificar com Daniel
+  'interdependente' => "N", // - Verificar com Daniel
+);
+
+$ufPerfil = array(
+  $codigoEstado
+);
+
+$caracTrib = array(
+  $caracTrib
+);
+$perfil = array(
+  'uf' => $ufPerfil,
+  'cfop' => $cfopEntrada, //"1101"
+  'caracTrib' => $caracTrib,
+  'finalidade' => $finalidade,
+  'simplesN' => $simplesN,
+  'origem' => $origem,
+  'substICMS' => "N",
+  'prodZFM' => "N"
+);
+
+$produto = array(
+  'codigo' => $eanProduto,
+  'codInterno' => "N",
+  'descricao' => $nomeProduto,
+  'ncm' => $codigoNcm
+);
+
+$produtos = array(
+  $produto
+);
+
+$imendesEntrada = array(
+  'emit' => $emit,
+  'perfil' => $perfil,
+  'produtos' => $produtos
+);
+
+$imendesEntrada = json_encode($imendesEntrada, true);
 
 $apiHeaders = array(
   "Content-Type: application/json",
-  "login: 03521642000124",
-  "senha: fp7pvBfMt7D2"
+  "login: $login",
+  "senha: $senha"
 );
 
+
 // CHAMADA IMENDES
-$JSON = chamaAPI ("http://consultatributos.com.br:8080",
-                  "/api/v3/public/SaneamentoGrades",
-                  $apiEntrada,
-                  "POST",
-                  $apiHeaders);
+$JSON = chamaAPI(
+  "http://consultatributos.com.br:8080",
+  "/api/v3/public/SaneamentoGrades",
+  $imendesEntrada,
+  "POST",
+  $apiHeaders
+);
+
 
 function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo)
 {
@@ -86,13 +154,13 @@ function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigo
   $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
 
 
-  if($row_consulta !== null){
+  if ($row_consulta !== null) {
     $idProduto = $row_consulta["idProduto"];
     $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest, codigoGrupo=$codigoGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
     WHERE idProduto = $idProduto";
 
     $atualizar = mysqli_query($conexao, $update_produtos);
-  }else{
+  } else {
     $atualizar = " Produto não encontrado ";
   }
 
@@ -125,7 +193,8 @@ function adicionaHistorico($conexao, $retornoImendes)
   return $adicionaHistorico;
 }
 
-function adicionaRegraFiscal($conexao, $regras, $codigoGrupo){
+function adicionaRegraFiscal($conexao, $regras, $codigoGrupo)
+{
   foreach ($regras as $regra) {
 
     foreach ($regra as $ufs) {
@@ -170,11 +239,11 @@ function adicionaRegraFiscal($conexao, $regras, $codigoGrupo){
           $regraGeral = isset($CaracTrib['regraGeral']) && $CaracTrib['regraGeral'] !== "null"    ? "'" . $CaracTrib['regraGeral'] . "'" : "null";
 
           //Verifica se tem regra
-          $sql_consulta = "SELECT * FROM regrafiscal WHERE codigoGrupo = $codigoGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib" ;
+          $sql_consulta = "SELECT * FROM regrafiscal WHERE codigoGrupo = $codigoGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib";
           $buscar_consulta = mysqli_query($conexao, $sql_consulta);
           $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
-  
-          if($row_consulta == null){
+
+          if ($row_consulta == null) {
             $sql = " INSERT INTO regrafiscal (codigoGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, codRegra, codExcecao, dtVigIni,
             dtVigFin, cFOPCaracTrib, cST, cSOSN, aliqIcmsInterna, aliqIcmsInterestadual, reducaoBcIcms, reducaoBcIcmsSt, redBcICMsInterestadual,
             aliqIcmsSt, iVA, iVAAjust, fCP, codBenef, pDifer, pIsencao, antecipado, desonerado, pICMSDeson, isento, tpCalcDifal, ampLegal,
@@ -185,7 +254,7 @@ function adicionaRegraFiscal($conexao, $regras, $codigoGrupo){
             null, null, $regraGeral) ";
 
             $adicionaregraFiscal = mysqli_query($conexao, $sql);
-          }else{
+          } else {
             $adicionaregraFiscal = " Regra existente ";
           }
         }
