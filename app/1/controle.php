@@ -39,6 +39,10 @@ if ($metodo == "GET") {
     case "fisnotaproduto":
       include 'fisnotaproduto.php';
       break;
+
+    case "regrafiscal":
+      include 'regrafiscal.php';
+      break;
   
     default:
       $jsonSaida = json_decode(json_encode(
