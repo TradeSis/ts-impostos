@@ -32,8 +32,6 @@ if (isset($_GET['operacao'])) {
 
 		echo json_encode($regra);
 		return $regra;
-
-		//header('Location: ../contratos/index.php');
 	}
 
 	if ($operacao == "filtrar") {

@@ -1,9 +1,5 @@
 <?php
-// Lucas 22032023 adicionado if de tituloContrato
-// Lucas 21032023 ajustado estrutura dentro do else, adicionado $where;
-// Lucas 20032023 adicionar if de idCliente
-// Lucas 17022023 adicionado condição else para idContratoStatus
-// Lucas 07022023 criacao
+// Lucas 11012024 criacao
 
 $LOG_CAMINHO = defineCaminhoLog();
 if (isset($LOG_CAMINHO)) {
