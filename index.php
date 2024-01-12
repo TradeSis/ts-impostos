@@ -30,7 +30,7 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
         <?php include_once  ROOT . "/sistema/painel.php"; ?>
 
         <div class="container-fluid">
-            <div class="row">
+            <div class="row ">
                 <div class="col-lg-10 d-none d-md-none d-lg-block pr-0 pl-0 ts-bgAplicativos">
                     <ul class="nav a" id="myTabs">
 
@@ -58,6 +58,13 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
                                 href="?tab=operacoes" role="tab">Operações</a>
                             </li>
                         <?php }
+                        if ($nivelMenu >= 1) { ?>
+                            <li class="nav-item mr-1">
+                                <a class="nav-link 
+                                <?php if ($tab == "nfe") {echo " active ";} ?>" 
+                                href="?tab=nfe" role="tab">NFE</a>
+                            </li>
+                        <?php }
                         if ($nivelMenu >= 4) { ?>
                             <li class="nav-item mr-1">
                                 <a class="nav-link 
@@ -69,14 +76,14 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
                     </ul>
                 </div>
                 <!--Essa coluna só vai aparecer em dispositivo mobile-->
-                <div class="col-7 col-md-9 d-md-block d-lg-none ts-bgAplicativos">
+                <div class="col-7 col-md-9 d-md-block d-lg-none" style="background-color: #13216A;">
                     <!--atraves do GET testa o valor para selecionar um option no select-->
                     <?php if (isset($_GET['tab'])) {
                         $getTab = $_GET['tab'];
                     } else {
                         $getTab = '';
                     } ?>
-                    <select class="form-select mt-2 selectSubMenuAplicativos" id="subtabSistema">
+                    <select class="form-select mt-2" id="subtabServices" style="color:#000; width:160px;text-align:center; ">
                         <option value="<?php echo URLROOT ?>/sistema/index.php?tab=ncm" 
                         <?php if ($getTab == "ncm") {echo " selected ";} ?>>NCM/CEST</option>
 
@@ -96,10 +103,13 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
             $src = "";
 
             if ($tab == "ncm") {
-                $src = "ncm/ncm_table.php";
+                $src = "ncm/tabelas.php";
             }
             if ($tab == "operacoes") {
                 $src = "operacoes/fisoperacao.php";
+            }
+            if ($tab == "nfe") {
+                $src = "nfe/nfe.php";
             }
             if ($tab == "configuracao") {
                 $src = "configuracao/";

@@ -1,84 +1,11 @@
 <?php
-//Lucas 13102023 padrao novo
 include_once(__DIR__ . '/../header.php');
-include_once(__DIR__ . '/../database/fisoperacao.php');
-include_once(__DIR__ . '/../database/fisatividade.php');
-include_once(__DIR__ . '/../database/fisnatureza.php');
-include_once(__DIR__ . '/../database/fisprocesso.php');
-/* include_once('../database/fisoperacao.php');
-include_once('../database/fisatividade.php');
-include_once('../database/fisnatureza.php');
-include_once('../database/fisprocesso.php'); */
-
-$atividades = buscaAtividade();
-$processos = buscaProcesso();
-$naturezas = buscaNatureza();
-$operacoes = buscaOperacao();
-
-$filtroEntrada = null;
-$dadosOp = null;
-$FiltroTipoOp = null;
-$idAtividade = null;
-$idProcesso = null;
-$idNatureza = null;
-
-
-if (isset($_SESSION['filtro_operacao'])) {
-    $filtroEntrada = $_SESSION['filtro_operacao'];
-    $FiltroTipoOp = $filtroEntrada['FiltroTipoOp'];
-    $dadosOp = $filtroEntrada['dadosOp'];
-    $idAtividade = $filtroEntrada['idAtividade'];
-    $idProcesso = $filtroEntrada['idProcesso'];
-    $idNatureza = $filtroEntrada['idNatureza'];
-}
-
 ?>
-<!doctype html>
-<html lang="pt-BR">
-
-<head>
-
-    <?php include_once ROOT . "/vendor/head_css.php"; ?>
-
-</head>
-
-<style>
-    .nav-link.active:any-link {
-        background-color: #567381;
-        border: 1px solid #DFDFDF;
-        border-radius: 5px 5px 0px 0px;
-        color: #fff;
-    }
-
-    .line {
-        width: 100%;
-        border-bottom: 1px solid #707070;
-    }
-</style>
 
 <body>
 
 
-    <div class="container-fluid">
-        <div class="pt-4 text-center">
-            <ul class="nav nav-pills" id="myTab" role="tablist">
-                <li class="nav-item mr-1">
-                    <a class="nav-link active" href="ncm_table.php">NCM</a>
-                </li>
-                <li class="nav-item mr-1">
-                    <a class="nav-link active" href="cest_table.php">Cest</a>
-                </li>
-                <li class="nav-item mr-1">
-                    <a class="nav-link active" style="color: #ffffff!important; background-color: #13216A!important" href="#">Operação</a>
-                </li>
-            </ul>
-            <div class="line"></div>
-            <div class="row">
-                <BR> <!-- MENSAGENS/ALERTAS -->
-            </div>
-            <div class="row">
-                <BR> <!-- BOTOES AUXILIARES -->
-            </div>
+        <div class="container-fluid">
             <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
                 <div class="col-3 text-start">
                     <!-- TITULO -->
@@ -86,8 +13,8 @@ if (isset($_SESSION['filtro_operacao'])) {
                 </div>
                 <div class="col-3">
                     <!-- FILTROS -->
-                    <form class="d-flex" action="" method="post" style="text-align: right;">
-                        <select class="form-control" name="FiltroTipoOp" id="FiltroTipoOp">
+                    <form method="post">
+                        <select class="form-select ts-input" name="FiltroTipoOp" id="FiltroTipoOp">
                             <option <?php if ($FiltroTipoOp == "nomeOperacao") {
                                         echo "selected";
                                     } ?> value="nomeOperacao">Nome</option>
@@ -103,14 +30,15 @@ if (isset($_SESSION['filtro_operacao'])) {
                     </form>
                 </div>
                 <div class="col-4">
+                    <!-- FILTROS -->
                     <div class="input-group">
                         <?php if (!empty($dadosOp)) { ?>
-                            <input type="text" class="form-control" id="dadosOp" value="<?php echo $dadosOp ?>">
+                            <input type="text" class="form-control ts-input" id="dadosOp" value="<?php echo $dadosOp ?>">
                         <?php } else { ?>
-                            <input type="text" class="form-control" id="dadosOp" placeholder="Operação">
+                            <input type="text" class="form-control ts-input" id="dadosOp" placeholder="Operação">
                         <?php } ?>
 
-                        <button class="btn btn-primary" id="buscar" type="button" style="margin-top:10px;">
+                        <button class="btn btn-primary" id="buscarOperacao" type="button">
                             <span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">search</span>
                         </button>
                     </div>
@@ -123,15 +51,14 @@ if (isset($_SESSION['filtro_operacao'])) {
             </div>
 
 
-            <div class="table mt-2 ts-divTabela">
-                <table class="table table-hover table-sm align-middle">
+            <div class="table mt-2 ts-divTabela ts-tableFiltros">
+                <table class="table table-hover table-sm">
                     <thead class="ts-headertabelafixo">
-
                         <tr>
                             <th>Operação</th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idAtividade" id="FiltroAtividade">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idAtividade" id="FiltroAtividade">
                                         <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
                                         <?php
                                         foreach ($atividades as $atividade) {
@@ -147,7 +74,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             </th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idProcesso" id="FiltroProcesso">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idProcesso" id="FiltroProcesso">
                                         <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
                                         <?php
                                         foreach ($processos as $processo) {
@@ -163,7 +90,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             </th>
                             <th>
                                 <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idNatureza" id="FiltroNatureza">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idNatureza" id="FiltroNatureza">
                                         <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
                                         <?php
                                         foreach ($naturezas as $natureza) {
@@ -183,32 +110,31 @@ if (isset($_SESSION['filtro_operacao'])) {
                         </tr>
                     </thead>
 
-                    <tbody id='dados' class="fonteCorpo">
+                    <tbody id='dadosOpTable' class="fonteCorpo">
 
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- LOCAL PARA COLOCAR OS JS -->
 
-        <?php include_once ROOT . "/vendor/footer_js.php"; ?>
+    <!-- LOCAL PARA COLOCAR OS JS -->
 
         <script>
-            buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+            buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
 
             function limpar() {
-                buscar(null, null, null, null, null);
+                buscarOp(null, null, null, null, null);
                 window.location.reload();
             }
 
-            function buscar(FiltroTipoOp, dadosOp, idAtividade, idProcesso, idNatureza) {
+            function buscarOp(FiltroTipoOp, dadosOp, idAtividade, idProcesso, idNatureza) {
                 $.ajax({
                     type: 'POST',
                     dataType: 'html',
                     url: '../database/fisoperacao.php?operacao=filtrar',
                     beforeSend: function() {
-                        $("#dados").html("Carregando...");
+                        $("#dadosOpTable").html("Carregando...");
                     },
                     data: {
                         FiltroTipoOp: FiltroTipoOp,
@@ -235,7 +161,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                             linha = linha + "</TR>";
                         }
 
-                        $("#dados").html(linha);
+                        $("#dadosOpTable").html(linha);
                     },
                     error: function(e) {
                         alert('Erro: ' + JSON.stringify(e));
@@ -244,25 +170,25 @@ if (isset($_SESSION['filtro_operacao'])) {
             }
 
             $("#FiltroAtividade").change(function() {
-                buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+                buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
             })
 
             $("#FiltroProcesso").change(function() {
-                buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+                buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
             })
 
             $("#FiltroNatureza").change(function() {
-                buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+                buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
             })
 
             $(document).ready(function() {
-                $("#buscar").click(function() {
-                    buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+                $("#buscarOperacao").click(function() {
+                    buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
                 });
 
                 $(document).keypress(function(e) {
                     if (e.key === "Enter") {
-                        buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+                        buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
                     }
                 });
             });
@@ -314,8 +240,8 @@ if (isset($_SESSION['filtro_operacao'])) {
                 exportToCSV();
             });
         </script>
+    <!-- LOCAL PARA COLOCAR OS JS -FIM -->
 
-        <!-- LOCAL PARA COLOCAR OS JS -FIM -->
 
 </body>
 

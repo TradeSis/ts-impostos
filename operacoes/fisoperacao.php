@@ -38,138 +38,310 @@ if (isset($_SESSION['filtro_operacao'])) {
 
 </head>
 
-<style>
-    ul {
-        list-style-type: none;
-    }
-</style>
 
 <body>
 
     <div class="container-fluid">
 
-    <div class="row">
-            <BR> <!-- MENSAGENS/ALERTAS -->
+        <nav class="ts-menuFiltros" style="margin-top: -45px;">
+            <label class="pl-2" for="">Filtrar por:</label>
+
+            <div class="col-sm text-end mt-2">
+                <a onClick="limpar()" role=" button" class="btn btn-sm bg-info text-white">Limpar</a>
+            </div>
+        </nav>
+
+        <div class="row">
+            <!-- MENSAGENS/ALERTAS -->
         </div>
         <div class="row">
-            <BR> <!-- BOTOES AUXILIARES -->
+            <!-- BOTOES AUXILIARES -->
         </div>
-        <div class="row">
-            <div class="col-6 order-1 col-sm-6  col-md-6 order-md-1 col-lg-1 order-lg-1 mt-3">
+
+        <div class="row align-items-center">
+            <div class="col-6 order-4 col-sm-6 col-md mt-1-6 order-md-4 col-lg-1 order-lg-1 mt-3 text-start">
                 <button type="button" class="ts-btnFiltros btn btn-sm"><span class="material-symbols-outlined">
                         filter_alt
                     </span></button>
-
             </div>
 
-            <div class="col-12 col-sm-12 col-md-12 col-lg-2 order-lg-2 mt-4">
+            <div class="col-10 order-1 col-sm-11 col-md mt-1-11 order-md-1 col-lg-2 order-lg-2 mt-4">
                 <h2 class="ts-tituloPrincipal">Operações Fiscais</h2>
+                <h6 style="font-size: 10px;font-style:italic;text-align:left;"></h6>
             </div>
 
-            <div class="col-12 col-sm-12 col-md-12 col-lg-5 order-lg-3">
+            <div class="col-12 order-3 col-sm-12 col-md mt-1-12 col-lg-5 order-lg-3">
                 <div class="input-group">
-                    <input type="text" class="form-control" id="buscanotas" placeholder="Buscar por id ou numero da nota">
+                    <input type="text" class="form-control ts-input" id="busca" placeholder="Buscar por id">
                     <span class="input-group-btn">
-                        <button class="btn btn-primary mt-2" id="buscar" type="button"><span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">
-                                search
-                            </span></button>
+                        <button class="btn btn-primary" id="buscar" type="button">
+                            <span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;"
+                                class="material-symbols-outlined">search</span>
+                        </button>
                     </span>
                 </div>
             </div>
 
-
-            <div class="col-6 order-2 col-sm-6 col-md-6 order-md-2 col-lg-4 order-lg-4 mt-3 text-end" style=" margin-left:-30px ">
-            <a href="fisoperacao_inserir.php" role="button" class="btn btn-success"><i class="bi bi-plus-square"></i>&nbsp Novo</a>            </div>
+            <div class="col-2 order-2 col-sm-1 col-md mt-1-1 order-md-2 col-lg-2 order-lg-4">
+            </div>
+            <div class="col-6 order-5 col-sm-6 col-md mt-1-6 order-md-4 col-lg-2 order-lg-5 mt-1 text-end">
+                <button type="button" class="btn btn-success mr-4" data-bs-toggle="modal"
+                    data-bs-target="#inserirModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
+            </div>
         </div>
 
-        <!-- <div class="row">
-            <div class=" btnAbre">
-                <span style="font-size: 25px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">
-                    filter_alt
-                </span>
+        <div class="table mt-2 ts-divTabela ts-tableFiltros">
+            <table class="table table-hover table-sm">
+                <thead class="ts-headertabelafixo">
+                    <tr>
+                        <th>Operação</th>
+                        <th>
+                            <form action="" method="post">
+                                <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idAtividade"
+                                    id="FiltroAtividade">
+                                    <option value="<?php echo null ?>">
+                                        <?php echo " Atividade" ?>
+                                    </option>
+                                    <?php
+                                    foreach ($atividades as $atividade) {
+                                        ?>
+                                        <option <?php
+                                        if ($atividade['idAtividade'] == $idAtividade) {
+                                            echo "selected";
+                                        }
+                                        ?> value="<?php echo $atividade['idAtividade'] ?>">
+                                            <?php echo $atividade['nomeAtividade'] ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </form>
+                        </th>
+                        <th>
+                            <form action="" method="post">
+                                <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idProcesso"
+                                    id="FiltroProcesso">
+                                    <option value="<?php echo null ?>">
+                                        <?php echo " Processo" ?>
+                                    </option>
+                                    <?php
+                                    foreach ($processos as $processo) {
+                                        ?>
+                                        <option <?php
+                                        if ($processo['idProcesso'] == $idProcesso) {
+                                            echo "selected";
+                                        }
+                                        ?> value="<?php echo $processo['idProcesso'] ?>">
+                                            <?php echo $processo['nomeProcesso'] ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </form>
+                        </th>
+                        <th>
+                            <form action="" method="post">
+                                <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idNatureza"
+                                    id="FiltroNatureza">
+                                    <option value="<?php echo null ?>">
+                                        <?php echo " Natureza" ?>
+                                    </option>
+                                    <?php
+                                    foreach ($naturezas as $natureza) {
+                                        ?>
+                                        <option <?php
+                                        if ($natureza['idNatureza'] == $idNatureza) {
+                                            echo "selected";
+                                        }
+                                        ?> value="<?php echo $natureza['idNatureza'] ?>">
+                                            <?php echo $natureza['nomeNatureza'] ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </form>
+                        </th>
+                        <th>idGrupoOper</th>
+                        <th>idEntSai</th>
+                        <th>xfop</th>
+                        <th colspan="2">Ação</th>
+                    </tr>
+                </thead>
 
-            </div>
+                <tbody id='dados' class="fonteCorpo">
 
-            <div class="col-sm-3 ml-2">
-                <p class="ts-tituloPrincipal">Operações Fiscais</p>
-            </div>
-
-            <div class="col-sm" style="text-align:right">
-                <a href="fisoperacao_inserir.php" role="button" class="btn btn-success"><i class="bi bi-plus-square"></i>&nbsp Novo</a>
-            </div>
-        </div> -->
-
-            <div class="table mt-2 ts-divTabela ts-tableFiltros">
-                <table class="table table-hover table-sm align-middle">
-                    <thead class="ts-headertabelafixo">
-                        <tr class="ts-headerTabelaLinhaCima">
-                            <th>Operação</th>
-                            <th >
-                                <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idAtividade"
-                                        id="FiltroAtividade">
-                                        <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
-                                        <?php
-                                        foreach ($atividades as $atividade) {
-                                            ?>
-                                            <option <?php
-                                            if ($atividade['idAtividade'] == $idAtividade) {
-                                                echo "selected";
-                                            }
-                                            ?> value="<?php echo $atividade['idAtividade'] ?>"><?php echo $atividade['nomeAtividade'] ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </form>
-                            </th>
-                            <th>
-                                <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idProcesso" id="FiltroProcesso">
-                                        <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
-                                        <?php
-                                        foreach ($processos as $processo) {
-                                            ?>
-                                            <option <?php
-                                            if ($processo['idProcesso'] == $idProcesso) {
-                                                echo "selected";
-                                            }
-                                            ?> value="<?php echo $processo['idProcesso'] ?>"><?php echo $processo['nomeProcesso'] ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </form>
-                            </th>
-                            <th>
-                                <form action="" method="post">
-                                    <select class="form-control selectFiltrosHeaderTabela" name="idNatureza" id="FiltroNatureza">
-                                        <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
-                                        <?php
-                                        foreach ($naturezas as $natureza) {
-                                            ?>
-                                            <option <?php
-                                            if ($natureza['idNatureza'] == $idNatureza) {
-                                                echo "selected";
-                                            }
-                                            ?> value="<?php echo $natureza['idNatureza'] ?>"><?php echo $natureza['nomeNatureza'] ?></option>
-                                        <?php } ?>
-                                    </select>
-                                </form>
-                            </th>
-                            <th>idGrupoOper</th>
-                            <th>idEntSai</th>
-                            <th>xfop</th>
-                            <th colspan="2">Ação</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id='dados' class="fonteCorpo">
-
-                    </tbody>
-                </table>
-            </div>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-       <!-- LOCAL PARA COLOCAR OS JS -->
+    <!--------- INSERIR --------->
+    <div class="modal" id="inserirModal" tabindex="-1" aria-labelledby="inserirModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Inserir CP</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
 
-       <?php include_once ROOT . "/vendor/footer_js.php"; ?>
+                        <label class="form-label ts-label">Nome da operação</label>
+                        <input type="text" name="nomeOperacao" class="form-control ts-input" autocomplete="off">
+
+                        <div class="row mt-3">
+                            <div class="col-md">
+                                <label class="form-label ts-label">Atividade</label>
+                                <select class="form-select ts-input" name="idAtividade">
+                                    <?php
+                                    foreach ($atividades as $atividade) {
+                                        ?>
+                                    <option value="<?php echo $atividade['idAtividade'] ?>">
+                                        <?php echo $atividade['nomeAtividade'] ?>
+                                    </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                            <div class="col-md">
+                                <label class="form-label ts-label">Processo</label>
+                                <select class="form-select ts-input" name="idProcesso">
+                                    <?php
+                                    foreach ($processos as $processo) {
+                                        ?>
+                                    <option value="<?php echo $processo['idProcesso'] ?>">
+                                        <?php echo $processo['nomeProcesso'] ?>
+                                    </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                            <div class="col-md">
+                                <label class="form-label ts-label">Natureza</label>
+                                <select class="form-select ts-input" name="idNatureza">
+                                    <?php
+                                    foreach ($naturezas as $natureza) {
+                                        ?>
+                                    <option value="<?php echo $natureza['idNatureza'] ?>">
+                                        <?php echo $natureza['nomeNatureza'] ?>
+                                    </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md">
+                                <label class="form-label ts-label">idGrupoOper</label>
+                                <input type="number" name="idGrupoOper" class="form-control ts-input"
+                                    autocomplete="off">
+                            </div>
+
+                            <div class="col-md">
+                                <label class="form-label ts-label">idEntSai</label>
+                                <input type="number" name="idEntSai" class="form-control ts-input" autocomplete="off">
+                            </div>
+
+                            <div class="col-md">
+                                <label class="form-label ts-label">xfop</label>
+                                <input type="text" name="xfop" class="form-control ts-input" autocomplete="off">
+                            </div>
+                        </div>
+                </div><!--body-->
+                <div class="modal-footer">
+                    <div class="card-footer bg-transparent text-end">
+                        <button type="submit" class="btn btn-success">Cadastrar</button>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!--------- ALTERAR --------->
+    <div class="modal" id="alterarmodal" tabindex="-1" aria-labelledby="alterarmodalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Alterar CP</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post">
+
+                        <input type="hidden" class="form-control ts-input" name="idOperacao">
+
+                        <label class="form-label ts-label">Nome da operação</label>
+                        <input type="text" class="form-control ts-input" name="nomeOperacao" id="nomeOperacao">
+
+                        <div class="row mt-3">
+                            <div class="col-md">
+                                <label class="form-label ts-label">Atividade</label>
+                                <select class="form-select ts-input" name="idAtividade" id="idAtividade">
+                                    <?php
+                                    foreach ($atividades as $atividade) { ?>
+                                    <option value="<?php echo $atividade['idAtividade'] ?>">
+                                        <?php echo $atividade['nomeAtividade'] ?>
+                                    </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                            <div class="col-md">
+                                <label class="form-label ts-label">Processo</label>
+                                <select class="form-select ts-input" name="idProcesso" id="idProcesso">
+                                    <?php
+                                    foreach ($processos as $processo) {
+                                        ?>
+                                    <option value="<?php echo $processo['idProcesso'] ?>">
+                                        <?php echo $processo['nomeProcesso'] ?>
+                                    </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+
+                            <div class="col-md">
+                                <label class="form-label ts-label">Natureza</label>
+                                <select class="form-select ts-input" name="idNatureza" id="idNatureza">
+                                    <?php
+                                    foreach ($naturezas as $natureza) {
+                                        ?>
+                                    <option value="<?php echo $natureza['idNatureza'] ?>">
+                                        <?php echo $natureza['nomeNatureza'] ?>
+                                    </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md">
+                                <label class="form-label ts-label">idGrupoOper</label>
+                                <input type="text" class="form-control ts-input" name="idGrupoOper" id="idGrupoOper">
+                            </div>
+
+                            <div class="col-md">
+                                <label class="form-label ts-label">idEntSai</label>
+                                <input type="text" class="form-control ts-input" name="idEntSai" id="idEntSai">
+                            </div>
+
+                            <div class="col-md">
+                                <label class="form-label ts-label">xfop</label>
+                                <input type="text" class="form-control ts-input" name="xfop" id="xfop">
+                            </div>
+                        </div>
+                </div><!--body-->
+                <div class="modal-footer">
+                    <div class="card-footer bg-transparent text-end">
+                        <button type="submit" class="btn btn-success">Salvar</button>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- LOCAL PARA COLOCAR OS JS -->
+
+    <?php include_once ROOT . "/vendor/footer_js.php"; ?>
 
     <script>
         buscar(null, null, $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
@@ -200,18 +372,20 @@ if (isset($_SESSION['filtro_operacao'])) {
                     var linha = "";
                     for (var $i = 0; $i < json.length; $i++) {
                         var object = json[$i];
+                        linha += "<tr>";
+                        linha += "<td>" + object.nomeOperacao + "</td>";
+                        linha += "<td>" + object.nomeAtividade + "</td>";
+                        linha += "<td>" + object.nomeProcesso + "</td>";
+                        linha += "<td>" + object.nomeNatureza + "</td>";
+                        linha += "<td>" + object.idGrupoOper + "</td>";
+                        linha += "<td>" + object.idEntSai + "</td>";
+                        linha += "<td>" + object.xfop + "</td>";
+                        linha += "<td class='text-center' id='botao'>";
+                        linha += "<button type='button' class='btn btn-warning btn-sm' data-toggle='modal' data-target='#alterarmodal' data-idOperacao='" + object.idOperacao + "'><i class='bi bi-pencil-square'></i></button>" 
+                        linha += "<a class='btn btn-danger btn-sm' href='fisoperacao_excluir.php?idOperacao=" + object.idOperacao + "' role='button'><i class='bi bi-trash'></i></i></a>"
+                        linha += "</td>";
+                        linha += "</tr>";
 
-                        linha = linha + "<TR>";
-                        linha = linha + "<TD>" + object.nomeOperacao + "</TD>";
-                        linha = linha + "<TD>" + object.nomeAtividade + "</TD>";
-                        linha = linha + "<TD>" + object.nomeProcesso + "</TD>";
-                        linha = linha + "<TD>" + object.nomeNatureza + "</TD>";
-                        linha = linha + "<TD>" + object.idGrupoOper + "</TD>";
-                        linha = linha + "<TD>" + object.idEntSai + "</TD>";
-                        linha = linha + "<TD>" + object.xfop + "</TD>";
-                        linha = linha + "<TD>" + "<a class='btn btn-warning btn-sm' href='fisoperacao_alterar.php?idOperacao=" + object.idOperacao + "' role='button'><i class='bi bi-pencil-square'></i></i></a>" + "</TD>";
-                        linha = linha + "<TD>" + "<a class='btn btn-danger btn-sm' href='fisoperacao_excluir.php?idOperacao=" + object.idOperacao + "' role='button'><i class='bi bi-trash'></i></i></a>" + "</TD>";
-                        linha = linha + "</TR>";
                     }
 
                     $("#dados").html(linha);
@@ -246,18 +420,73 @@ if (isset($_SESSION['filtro_operacao'])) {
             });
         });
 
-       /*  $('.btnAbre').click(function () {
-            $('.menuFiltros').toggleClass('mostra');
-            $('.diviFrame').toggleClass('mostra');
-        }); */
+        /*  $('.btnAbre').click(function () {
+             $('.menuFiltros').toggleClass('mostra');
+             $('.diviFrame').toggleClass('mostra');
+         }); */
         /* Novo script para menu filtros */
-        $('.ts-btnFiltros').click(function() {
+        $('.ts-btnFiltros').click(function () {
             $('.ts-menuFiltros').toggleClass('mostra');
             $('.ts-tableFiltros').toggleClass('mostra');
         });
+
+        $(document).on('click', 'button[data-target="#alterarmodal"]', function() {
+            var idOperacao = $(this).attr("data-idOperacao");
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: '<?php echo URLROOT ?>/impostos/database/fisoperacao.php?operacao=buscar',
+                data: {
+                    idOperacao: idOperacao
+                },
+                success: function(data) {
+                    $('#idOperacao').val(data.idOperacao);
+                    $('#nomeOperacao').val(data.nomeOperacao);
+                    $('#idAtividade').val(data.idAtividade);
+                    $('#idProcesso').val(data.idProcesso);
+                    $('#idNatureza').val(data.idNatureza);
+                    $('#idGrupoOper').val(data.idGrupoOper);
+                    $('#idEntSai').val(data.idEntSai);
+                    $('#xfop').val(data.xfop);
+                    $('#alterarmodal').modal('show');
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            $("#inserirForm").submit(function (event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: "../database/fisoperacao.php?operacao=inserir",
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: refreshPage,
+                });
+            });
+
+            $("#alterarForm").submit(function (event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: "../database/fisoperacao.php?operacao=alterar",
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: refreshPage,
+                });
+            });
+
+            function refreshPage() {
+                window.location.reload();
+            }
+        });
     </script>
 
-<!-- LOCAL PARA COLOCAR OS JS -FIM -->
+    <!-- LOCAL PARA COLOCAR OS JS -FIM -->
 
 </body>
 
