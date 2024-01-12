@@ -41,6 +41,24 @@ function buscarNotaProduto($idNota=null)
 	return $notas;
 }
 
+function buscarNotaImpostos($idNota=null)
+{
+
+	$notas = array();
+
+	$idEmpresa = null;
+	if (isset($_SESSION['idEmpresa'])) {
+		$idEmpresa = $_SESSION['idEmpresa'];
+	}
+
+	$apiEntrada = array(
+		'idNota' => $idNota,
+		'idEmpresa' => $idEmpresa
+	);
+	$notas = chamaAPI(null, '/impostos/fisnotatotal', json_encode($apiEntrada), 'GET');
+	return $notas;
+}
+
 
 if (isset($_GET['operacao'])) {
 
@@ -57,42 +75,16 @@ if (isset($_GET['operacao'])) {
 		$apiEntrada = array(
 			'xml' => $xmlContent,
 			'idEmpresa' => $_SESSION['idEmpresa'],
-			'idPessoaEmitente' => null,
-			'idPessoaDestinatario' => null,
-			'idNota' => null
 		);
 
-		//Inserir Pessoa
-		$pessoas = chamaAPI(null, '/impostos/nfepessoa', json_encode($apiEntrada), 'PUT');
-		foreach ($pessoas as $id => $pessoaResponse) {
-			if ($pessoaResponse["status"] === 200) {
-				$idPessoaInserido = $pessoaResponse["idPessoaInserido"];
-				if ($id == 0) {
-					$apiEntrada['idPessoaEmitente'] = $idPessoaInserido;
-				} elseif ($id == 1) {
-					$apiEntrada['idPessoaDestinatario'] = $idPessoaInserido;
-				}
-			}
-		}
-		
-		//Inserir Nota
 		$nfe = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
-		if ($nfe["status"] === 200) {
-			$idNota = $nfe['idNotaInserido'];
-			$apiEntrada['idNota'] = $idNota;
-
-		//Inserir fisNotaProduto e Produto
-		$produtos = chamaAPI(null, '/impostos/nfeprodutos', json_encode($apiEntrada), 'PUT');
-		$fisnotaproduto = chamaAPI(null, '/impostos/nfefisnotaproduto', json_encode($apiEntrada), 'PUT');
-
-		}
 		
 		echo json_encode($nfe);
 		return $nfe;
 		
 	}
 
-	if ($operacao == "buscar") {
+	if ($operacao == "buscarNota") {
 		$apiEntrada = array(
 			'idEmpresa' => $_SESSION['idEmpresa'],
 			'idNota' => $_POST['idNota'],
@@ -103,6 +95,33 @@ if (isset($_GET['operacao'])) {
 		echo json_encode($notas);
 		return $notas;
 	}
+
+	if ($operacao == "buscarNotaProduto") {
+		$apiEntrada = array(
+			'idEmpresa' => $_SESSION['idEmpresa'],
+			'idNota' => $_POST['idNota'],
+		);
+		
+		$produ = chamaAPI(null, '/impostos/fisnotaproduto', json_encode($apiEntrada), 'GET');
+
+		echo json_encode($produ);
+		return $produ;
+	}
+
+	if ($operacao == "buscarProduImposto") {
+		$apiEntrada = array(
+			'idEmpresa' => $_SESSION['idEmpresa'],
+			'idNota' => $_POST['idNota'],
+			'nItem' => $_POST['nItem']
+		);
+		
+		$produ = chamaAPI(null, '/impostos/fisnotaproduimposto', json_encode($apiEntrada), 'GET');
+
+		echo json_encode($produ);
+		return $produ;
+	}
+
+	
 
 
 

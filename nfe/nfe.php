@@ -113,7 +113,7 @@ $notas = buscarNota();
                 $.ajax({
                     method: "POST",
                     dataType: 'json',
-                    url: "../database/fisnota.php?operacao=buscar",
+                    url: "../database/fisnota.php?operacao=buscarNota",
                     data: { 
                         idNota: idNota
                     },
