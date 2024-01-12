@@ -1,184 +1,140 @@
 <?php
-include_once(__DIR__ . '/../head.php');
-include_once(__DIR__ . '/../database/fisoperacao.php');
-include_once(__DIR__ . '/../database/fisatividade.php');
-include_once(__DIR__ . '/../database/fisnatureza.php');
-include_once(__DIR__ . '/../database/fisprocesso.php');
-/* include_once('../database/fisoperacao.php');
-include_once('../database/fisatividade.php');
-include_once('../database/fisnatureza.php');
-include_once('../database/fisprocesso.php'); */
-
-$atividades = buscaAtividade();
-$processos = buscaProcesso();
-$naturezas = buscaNatureza();
-$operacoes = buscaOperacao();
-
-$filtroEntrada = null;
-$dadosOp = null;
-$FiltroTipoOp = null;
-$idAtividade = null;
-$idProcesso = null;
-$idNatureza = null;
-
-
-if (isset($_SESSION['filtro_operacao'])) {
-    $filtroEntrada = $_SESSION['filtro_operacao'];
-    $FiltroTipoOp = $filtroEntrada['FiltroTipoOp'];
-    $dadosOp = $filtroEntrada['dadosOp'];
-    $idAtividade = $filtroEntrada['idAtividade'];
-    $idProcesso = $filtroEntrada['idProcesso'];
-    $idNatureza = $filtroEntrada['idNatureza'];
-}
-
+include_once(__DIR__ . '/../header.php');
 ?>
 
-<body class="bg-transparent">
+<body>
 
 
-    <div class="container-fluid">
-        <div class="mt-3">
-            <div class="card mt-3">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="ncm_table.php">NCM</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="cest_table.php">Cest</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" style="color:blue" href="#">Operação</a>
-                    </li>
-                </ul>
+        <div class="container-fluid">
+            <div class="row align-items-center"> <!-- LINHA SUPERIOR A TABLE -->
+                <div class="col-3 text-start">
+                    <!-- TITULO -->
+                    <h2 class="ts-tituloPrincipal">Operação</h2>
+                </div>
+                <div class="col-3">
+                    <!-- FILTROS -->
+                    <form method="post">
+                        <select class="form-select ts-input" name="FiltroTipoOp" id="FiltroTipoOp">
+                            <option <?php if ($FiltroTipoOp == "nomeOperacao") {
+                                        echo "selected";
+                                    } ?> value="nomeOperacao">Nome</option>
+                            <option <?php if ($FiltroTipoOp == "idEntSai") {
+                                        echo "selected";
+                                    } ?> value="idEntSai">
+                                idEntSai</option>
+                            <option <?php if ($FiltroTipoOp == "xfop") {
+                                        echo "selected";
+                                    } ?> value="xfop">xfop
+                            </option>
+                        </select>
+                    </form>
+                </div>
+                <div class="col-4">
+                    <!-- FILTROS -->
+                    <div class="input-group">
+                        <?php if (!empty($dadosOp)) { ?>
+                            <input type="text" class="form-control ts-input" id="dadosOp" value="<?php echo $dadosOp ?>">
+                        <?php } else { ?>
+                            <input type="text" class="form-control ts-input" id="dadosOp" placeholder="Operação">
+                        <?php } ?>
 
-                <div class="row justify-content-center">
-                    <div class="col-sm-2">
-                        <form class="d-flex" action="" method="post" style="text-align: right;">
-                            <select class="form-control" name="FiltroTipoOp" id="FiltroTipoOp">
-                                <option <?php if ($FiltroTipoOp == "nomeOperacao") {
-                                    echo "selected";
-                                } ?>
-                                    value="nomeOperacao">Nome</option>
-                                <option <?php if ($FiltroTipoOp == "idEntSai") {
-                                    echo "selected";
-                                } ?> value="idEntSai">
-                                    idEntSai</option>
-                                <option <?php if ($FiltroTipoOp == "xfop") {
-                                    echo "selected";
-                                } ?> value="xfop">xfop
-                                </option>
-                            </select>
-                        </form>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <div class="input-group">
-                            <?php if (!empty($dadosOp)) { ?>
-                                <input type="text" class="form-control" id="dadosOp" value="<?php echo $dadosOp ?>">
-                            <?php } else { ?>
-                                <input type="text" class="form-control" id="dadosOp" placeholder="Operação">
-                            <?php } ?>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-3">
-                        <button class="btn btn-primary w-50 mt-3" id="buscar" type="button">Pesquisar</button>
-                    </div>
-                    <div class="col-sm-3" style="margin-left:-100px;">
-                        <button class="btn btn-warning w-50 mt-3" id="export" name="export" type="submit">Gerar
-                            CSV</button>
+                        <button class="btn btn-primary" id="buscarOperacao" type="button">
+                            <span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">search</span>
+                        </button>
                     </div>
                 </div>
 
-                <div
-                    class="table table-sm table-hover table-striped table-bordered table-wrapper-scroll-y my-custom-scrollbar diviFrame mt-2">
-                    <table class="table" id="myIframe">
-                        <thead class="thead-light">
-
-                            <tr>
-                                <th class="text-center">Operação</th>
-                                <th class="text-center">
-                                    <form action="" method="post">
-                                        <select class="form-control fonteSelect text-center" name="idAtividade"
-                                            id="FiltroAtividade"
-                                            style="font-size: 16px; font-weight: bold; margin-top:-10px; margin-bottom:-6px;">
-                                            <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
-                                            <?php
-                                            foreach ($atividades as $atividade) {
-                                                ?>
-                                                <option <?php
-                                                if ($atividade['idAtividade'] == $idAtividade) {
-                                                    echo "selected";
-                                                }
-                                                ?> value="<?php echo $atividade['idAtividade'] ?>"><?php echo $atividade['nomeAtividade'] ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </form>
-                                </th>
-                                <th class="text-center">
-                                    <form action="" method="post">
-                                        <select class="form-control text-center" name="idProcesso" id="FiltroProcesso"
-                                            style="font-size: 16px; font-weight: bold; margin-top:-10px; margin-bottom:-6px;">
-                                            <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
-                                            <?php
-                                            foreach ($processos as $processo) {
-                                                ?>
-                                                <option <?php
-                                                if ($processo['idProcesso'] == $idProcesso) {
-                                                    echo "selected";
-                                                }
-                                                ?> value="<?php echo $processo['idProcesso'] ?>"><?php echo $processo['nomeProcesso'] ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </form>
-                                </th>
-                                <th class="text-center">
-                                    <form action="" method="post">
-                                        <select class="form-control text-center" name="idNatureza" id="FiltroNatureza"
-                                            style="font-size: 16px; font-weight: bold; margin-top:-10px; margin-bottom:-6px;">
-                                            <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
-                                            <?php
-                                            foreach ($naturezas as $natureza) {
-                                                ?>
-                                                <option <?php
-                                                if ($natureza['idNatureza'] == $idNatureza) {
-                                                    echo "selected";
-                                                }
-                                                ?> value="<?php echo $natureza['idNatureza'] ?>"><?php echo $natureza['nomeNatureza'] ?></option>
-                                            <?php } ?>
-                                        </select>
-                                    </form>
-                                </th>
-                                <th class="text-center">idGrupoOper</th>
-                                <th class="text-center">idEntSai</th>
-                                <th class="text-center">xfop</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id='dados' class="fonteCorpo">
-
-                        </tbody>
-                    </table>
+                <div class="col-2 text-end">
+                    <button class="btn btn-warning" id="export" name="export" type="submit">Gerar
+                        CSV</button>
                 </div>
+            </div>
+
+
+            <div class="table mt-2 ts-divTabela ts-tableFiltros">
+                <table class="table table-hover table-sm">
+                    <thead class="ts-headertabelafixo">
+                        <tr>
+                            <th>Operação</th>
+                            <th>
+                                <form action="" method="post">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idAtividade" id="FiltroAtividade">
+                                        <option value="<?php echo null ?>"><?php echo " Atividade" ?></option>
+                                        <?php
+                                        foreach ($atividades as $atividade) {
+                                        ?>
+                                            <option <?php
+                                                    if ($atividade['idAtividade'] == $idAtividade) {
+                                                        echo "selected";
+                                                    }
+                                                    ?> value="<?php echo $atividade['idAtividade'] ?>"><?php echo $atividade['nomeAtividade'] ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </form>
+                            </th>
+                            <th>
+                                <form action="" method="post">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idProcesso" id="FiltroProcesso">
+                                        <option value="<?php echo null ?>"><?php echo " Processo" ?></option>
+                                        <?php
+                                        foreach ($processos as $processo) {
+                                        ?>
+                                            <option <?php
+                                                    if ($processo['idProcesso'] == $idProcesso) {
+                                                        echo "selected";
+                                                    }
+                                                    ?> value="<?php echo $processo['idProcesso'] ?>"><?php echo $processo['nomeProcesso'] ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </form>
+                            </th>
+                            <th>
+                                <form action="" method="post">
+                                    <select class="form-select ts-input ts-selectFiltrosHeaderTabela" name="idNatureza" id="FiltroNatureza">
+                                        <option value="<?php echo null ?>"><?php echo " Natureza" ?></option>
+                                        <?php
+                                        foreach ($naturezas as $natureza) {
+                                        ?>
+                                            <option <?php
+                                                    if ($natureza['idNatureza'] == $idNatureza) {
+                                                        echo "selected";
+                                                    }
+                                                    ?> value="<?php echo $natureza['idNatureza'] ?>"><?php echo $natureza['nomeNatureza'] ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </form>
+                            </th>
+                            <th>idGrupoOper</th>
+                            <th>idEntSai</th>
+                            <th>xfop</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id='dadosOpTable' class="fonteCorpo">
+
+                    </tbody>
+                </table>
             </div>
         </div>
 
 
+    <!-- LOCAL PARA COLOCAR OS JS -->
+
         <script>
-            buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+            buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
 
             function limpar() {
-                buscar(null, null, null, null, null);
+                buscarOp(null, null, null, null, null);
                 window.location.reload();
             }
 
-            function buscar(FiltroTipoOp, dadosOp, idAtividade, idProcesso, idNatureza) {
+            function buscarOp(FiltroTipoOp, dadosOp, idAtividade, idProcesso, idNatureza) {
                 $.ajax({
                     type: 'POST',
                     dataType: 'html',
                     url: '../database/fisoperacao.php?operacao=filtrar',
-                    beforeSend: function () {
-                        $("#dados").html("Carregando...");
+                    beforeSend: function() {
+                        $("#dadosOpTable").html("Carregando...");
                     },
                     data: {
                         FiltroTipoOp: FiltroTipoOp,
@@ -187,7 +143,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                         idProcesso: idProcesso,
                         idNatureza: idNatureza
                     },
-                    success: function (msg) {
+                    success: function(msg) {
                         var json = JSON.parse(msg);
 
                         var linha = "";
@@ -205,34 +161,34 @@ if (isset($_SESSION['filtro_operacao'])) {
                             linha = linha + "</TR>";
                         }
 
-                        $("#dados").html(linha);
+                        $("#dadosOpTable").html(linha);
                     },
-                    error: function (e) {
+                    error: function(e) {
                         alert('Erro: ' + JSON.stringify(e));
                     }
                 });
             }
 
-            $("#FiltroAtividade").change(function () {
-                buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+            $("#FiltroAtividade").change(function() {
+                buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
             })
 
-            $("#FiltroProcesso").change(function () {
-                buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+            $("#FiltroProcesso").change(function() {
+                buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
             })
 
-            $("#FiltroNatureza").change(function () {
-                buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+            $("#FiltroNatureza").change(function() {
+                buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
             })
 
-            $(document).ready(function () {
-                $("#buscar").click(function () {
-                    buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+            $(document).ready(function() {
+                $("#buscarOperacao").click(function() {
+                    buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
                 });
 
-                $(document).keypress(function (e) {
+                $(document).keypress(function(e) {
                     if (e.key === "Enter") {
-                        buscar($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
+                        buscarOp($("#FiltroTipoOp").val(), $("#dadosOp").val(), $("#FiltroAtividade").val(), $("#FiltroProcesso").val(), $("#FiltroNatureza").val());
                     }
                 });
             });
@@ -249,7 +205,7 @@ if (isset($_SESSION['filtro_operacao'])) {
                         idProcesso: $("#FiltroProcesso").val(),
                         idNatureza: $("#FiltroNatureza").val()
                     },
-                    success: function (json) {
+                    success: function(json) {
                         var csvContent = "data:text/csv;charset=utf-8,\uFEFF";
                         csvContent += "NomeOperacao,NomeAtividade,NomeProcesso,NomeNatureza,IdGrupoOper,IdEntSai,XFOP\n";
 
@@ -274,17 +230,17 @@ if (isset($_SESSION['filtro_operacao'])) {
 
                         document.body.removeChild(link);
                     },
-                    error: function (e) {
+                    error: function(e) {
                         alert('Erro: ' + JSON.stringify(e));
                     }
                 });
             }
 
-            $("#export").click(function () {
+            $("#export").click(function() {
                 exportToCSV();
             });
-
         </script>
+    <!-- LOCAL PARA COLOCAR OS JS -FIM -->
 
 
 </body>

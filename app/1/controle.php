@@ -32,6 +32,29 @@ if ($metodo == "GET") {
       include 'cest.php';
       break;
 
+    case "fisnota":
+      include 'fisnota.php';
+      break;
+
+    case "fisnotaproduto":
+      include 'fisnotaproduto.php';
+      break;
+
+
+    case "fisnotaproduimposto":
+      include 'fisnotaproduimposto.php';
+      break;
+
+    case "fisnotatotal":
+      include 'fisnotatotal.php';
+      break;
+
+
+    case "regrafiscal":
+      include 'regrafiscal.php';
+      break;
+  
+
     default:
       $jsonSaida = json_decode(json_encode(
         array(
@@ -61,6 +84,27 @@ if ($metodo == "PUT") {
     case "fisoperacao":
       include 'fisoperacao_inserir.php';
       break;
+
+    case "fisnota":
+      include 'fisnota_inserir.php';
+      break;
+
+    case "nfepessoa":
+      include 'nfepessoa_inserir.php';
+      break;
+
+    case "nfefisnotaproduto":
+      include 'nfefisnotaproduto_inserir.php';
+      break;
+
+    case "nfeprodutos":
+      include 'nfeprodutos_inserir.php';
+      break;
+
+    case "fisnotaproduimposto":
+      include 'fisnotaproduimposto_inserir.php';
+      break;
+
 
     default:
       $jsonSaida = json_decode(json_encode(

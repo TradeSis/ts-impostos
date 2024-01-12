@@ -1,43 +1,69 @@
 <?php
+//Lucas 13102023 novo padrao
 // gabriel 060623 15:06
 
-include_once('../head.php');
+include_once('../header.php');
 include_once('../database/fisprocesso.php');
 
 $processos = buscaProcesso($_GET['idProcesso']);
-
 ?>
+<!doctype html>
+<html lang="pt-BR">
 
-<body class="bg-transparent">
+<head>
 
-    <div class="container" style="margin-top:10px">
+    <?php include_once ROOT . "/vendor/head_css.php"; ?>
 
-        <div class="col-sm mt-4" style="text-align:right">
-            <a href="../configuracao/?tab=configuracao&stab=fisprocesso" role="button" class="btn btn-primary"><i class="bi bi-arrow-left-square"></i></i>&#32;Voltar</a>
+</head>
+
+<body>
+
+    <div class="container-fluid">
+
+        <div class="row">
+            <BR> <!-- MENSAGENS/ALERTAS -->
         </div>
-        <div class="col-sm">
-            <spam class="col titulo">Alterar Processo</spam>
+        <div class="row">
+            <BR> <!-- BOTOES AUXILIARES -->
         </div>
-        <div class="container" style="margin-top: 10px">
-            <form action="../database/fisprocesso.php?operacao=alterar" method="post">
-        
-                <div class="col-md-12 form-group mb-4">
+        <div class="row"> <!-- LINHA SUPERIOR A TABLE -->
+            <div class="col-3">
+                <!-- TITULO -->
+                <h2 class="ts-tituloPrincipal">Alterar Processo</h2>
+            </div>
+            <div class="col-7">
+                <!-- FILTROS -->
+            </div>
 
-                    <label class='control-label' for='inputNormal'></label>
-                    <div class="for-group">
-                        <input type="text" class="form-control" name="nomeProcesso" value="<?php echo $processos['nomeProcesso'] ?>">
-                    </div>
-                    <input type="text" class="form-control" name="idProcesso" value="<?php echo $processos['idProcesso'] ?>" style="display: none">
+            <div class="col-2 text-end">
+                <a href="../configuracao/?tab=configuracao&stab=fisprocesso" role="button" class="btn btn-primary"><i class="bi bi-arrow-left-square"></i></i>&#32;Voltar</a>
+            </div>
+        </div>
+
+        <form class="mb-4" action="../database/fisprocesso.php?operacao=alterar" method="post">
+
+            <div class="col-md-12 form-group mb-4">
+
+                <label class='control-label' for='inputNormal'></label>
+                <div class="for-group">
+                    <input type="text" class="form-control ts-input" name="nomeProcesso" value="<?php echo $processos['nomeProcesso'] ?>">
                 </div>
+                <input type="text" class="form-control ts-input" name="idProcesso" value="<?php echo $processos['idProcesso'] ?>" style="display: none">
+            </div>
 
-                <div style="text-align:right">
-                <button type="submit" id="botao" class="btn btn-success"><i class="bi bi-sd-card-fill"></i>&#32;Salvar</button>
-                </div>
-            </form>
-        </div>
+            <div class="text-end mt-4">
+                <button type="submit" class="btn  btn-success"><i class="bi bi-sd-card-fill"></i>&#32;Salvar</button>
+            </div>
+        </form>
+
 
     </div>
 
+    <!-- LOCAL PARA COLOCAR OS JS -->
+
+    <?php include_once ROOT . "/vendor/footer_js.php"; ?>
+
+    <!-- LOCAL PARA COLOCAR OS JS -FIM -->
 
 </body>
 

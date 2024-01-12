@@ -100,6 +100,16 @@ if (isset($_GET['operacao'])) {
 		return $operacao;
 
 	}
+	if ($operacao == "buscar") {
+		$apiEntrada = array(
+			'idOperacao' => $_POST['idOperacao']
+		);
+		$operacao = chamaAPI(null, '/impostos/fisoperacao', json_encode($apiEntrada), 'GET');
+
+		echo json_encode($operacao);
+		return $operacao;
+	}
+
 
 
 

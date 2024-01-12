@@ -6,7 +6,6 @@
 if (session_status() === PHP_SESSION_NONE) {
 	session_start();
 }
-
 include_once __DIR__ . "/../config.php";
 
 if (!isset($_SESSION['LAST_ACTIVITY']) || !isset($_SESSION['usuario'])) {
@@ -21,24 +20,5 @@ if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 
 
 $_SESSION['LAST_ACTIVITY'] = time(); // update last activity time stamp
 $logado = $_SESSION['usuario'];
-
-
-
+// helio 051023 - retirado toda parte HTML, HEAD, que precisa ficar em cada programa
 ?>
-<!DOCTYPE html>
-
-<head>
-    <title>Impostos</title>
-</head>
-<html>
-
-<body>
-
-<?php
-        include_once ROOT. "/vendor/vendor.php";
-?>
-
-
-</body>
-
-</html>

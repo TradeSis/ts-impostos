@@ -1,69 +1,79 @@
 <?php
-include_once(__DIR__ . '/../head.php');
+//Lucas 17102023 novo padrao
+include_once(__DIR__ . '/../header.php');
 ?>
+<!doctype html>
+<html lang="pt-BR">
 
-<style>
-  .temp {
-    color: black
-  }
-</style>
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-2 mb-3">
-      <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
+<head>
+
+  <?php include_once ROOT . "/vendor/head_css.php"; ?>
+
+</head>
+
+<body>
+
+  <div class="container-fluid">
+    <div class="row pt-4">
+      <div class="col-md-2 mb-3">
+        <ul class="nav nav-pills flex-column" id="myTab" role="tablist">
+          <?php
+          $stab = 'fisatividade';
+          if (isset($_GET['stab'])) {
+            $stab = $_GET['stab'];
+          }
+          //echo "<HR>stab=" . $stab;
+          ?>
+          <li class="nav-item ">
+            <a class="nav-link ts-tabConfig <?php if ($stab == "fisatividade") {
+                                              echo " active ";
+                                            } ?>" href="?tab=configuracao&stab=fisatividade" role="tab">Atividade</a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link ts-tabConfig <?php if ($stab == "fisnatureza") {
+                                              echo " active ";
+                                            } ?>" href="?tab=configuracao&stab=fisnatureza" role="tab">Natureza</a>
+          </li>
+          <li class="nav-item ">
+            <a class="nav-link ts-tabConfig <?php if ($stab == "fisprocesso") {
+                                              echo " active ";
+                                            } ?>" href="?tab=configuracao&stab=fisprocesso" role="tab">Processo</a>
+          </li>
+
+
+        </ul>
+      </div>
+      <div class="col-md-10">
         <?php
-        $stab = 'fisatividade';
-        if (isset($_GET['stab'])) {
-          $stab = $_GET['stab'];
+        $ssrc = "";
+
+        if ($stab == "fisatividade") {
+          $ssrc = "fisatividade.php";
         }
-        //echo "<HR>stab=" . $stab;
+        if ($stab == "fisnatureza") {
+          $ssrc = "fisnatureza.php";
+        }
+        if ($stab == "fisprocesso") {
+          $ssrc = "fisprocesso.php";
+        }
+
+        if ($ssrc !== "") {
+          //echo $ssrc;
+          include($ssrc);
+        }
+
         ?>
-        <li class="nav-item ">
-          <a class="nav-link <?php if ($stab == "fisatividade") {
-            echo " active ";
-          } ?>"
-            href="?tab=configuracao&stab=fisatividade" role="tab" style="color:black">Atividade</a>
-        </li>
-        <li class="nav-item ">
-          <a class="nav-link <?php if ($stab == "fisnatureza") {
-            echo " active ";
-          } ?>"
-            href="?tab=configuracao&stab=fisnatureza" role="tab" style="color:black">Natureza</a>
-        </li>
-        <li class="nav-item ">
-          <a class="nav-link <?php if ($stab == "fisprocesso") {
-            echo " active ";
-          } ?>"
-            href="?tab=configuracao&stab=fisprocesso" role="tab" style="color:black">Processo</a>
-        </li>
-    
 
-      </ul>
+      </div>
     </div>
-    <div class="col-md-10">
-      <?php
-          $ssrc = "";
 
-          if ($stab == "fisatividade") {
-            $ssrc = "fisatividade.php";
-          }
-          if ($stab == "fisnatureza") {
-            $ssrc = "fisnatureza.php";
-          }
-          if ($stab == "fisprocesso") {
-            $ssrc = "fisprocesso.php";
-          }
-
-          if ($ssrc !== "") {
-            //echo $ssrc;
-            include($ssrc);
-          }
-
-      ?>
-
-    </div>
   </div>
 
+  <!-- LOCAL PARA COLOCAR OS JS -->
 
+  <?php include_once ROOT . "/vendor/footer_js.php"; ?>
 
-</div>
+  <!-- LOCAL PARA COLOCAR OS JS -FIM -->
+</body>
+
+</html>
