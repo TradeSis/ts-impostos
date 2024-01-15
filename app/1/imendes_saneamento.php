@@ -38,11 +38,45 @@ if (isset($LOG_NIVEL)) {
 }
 
 $login = $row_apifiscal['login'];
+if (!$row_apifiscal['login']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "apifiscal.login não informado"
+  );
+  return;  
+}
 $senha = $row_apifiscal['senha'];
+if (!$row_apifiscal['senha']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "apifiscal.senha não informado"
+  );
+  return;  
+}
 $amb = $row_apifiscal['tpAmb'];
+if (!$row_apifiscal['tpAmb']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "apifiscal.tpAmb não informado"
+  );
+  return;  
+}
 $cfopEntrada = $row_apifiscal['cfopEntrada'];
-$finalidade = (int)$row_apifiscal['finalidade'];
-
+if (!$row_apifiscal['cfopEntrada']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "apifiscal.cfopEntrada não informado"
+  );
+  return;  
+}
+$finalidade = isset($row_apifiscal['finalidade']) && $row_apifiscal['finalidade'] !== "null" ? (int)$row_apifiscal['finalidade'] : "null";
+if ($row_apifiscal['finalidade'] == null) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "apifiscal.finalidade não informado"
+  );
+  return;  
+}
 
 //EMPRESA
 $sql_empresa = "SELECT empresa.idPessoa FROM empresa WHERE idEmpresa = $idEmpresa ";
@@ -63,8 +97,29 @@ if (isset($LOG_NIVEL)) {
 
 $cpfCnpj = $row_empresaPessoa['cpfCnpj'];
 $cnae = $row_empresaPessoa['cnae'];
+if (!$row_empresaPessoa['cnae']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "empresaPessoa.cnae não informado"
+  );
+  return;  
+}
 $regimeEspecial = $row_empresaPessoa['regimeEspecial'];
+if (!$row_empresaPessoa['regimeEspecial']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "empresaPessoa.regimeEspecial não informado"
+  );
+  return;  
+}
 $regimeTrib = $row_empresaPessoa['regimeTrib'];
+if (!$row_empresaPessoa['regimeTrib']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "empresaPessoa.regimeTrib não informado"
+  );
+  return;  
+}
 $codigoEstado = $row_empresaPessoa['codigoEstado'];
 $crt = (int)$row_empresaPessoa['crt'];
 if (!$row_empresaPessoa['crt']) {
@@ -75,7 +130,6 @@ if (!$row_empresaPessoa['crt']) {
   return;  
 }
 $origem = $row_empresaPessoa['origem'];
-
 if (!isset($origem)) {
   $jsonSaida = array(
     "status" => 400,
@@ -111,6 +165,7 @@ if (isset($jsonEntrada["idProduto"])) {
 $sql_pessoaFornecedor = "SELECT pessoas.codigoEstado, pessoas.caracTrib FROM pessoas WHERE idPessoa = $idPessoaFornecedor ";
 $buscar_pessoaFornecedor = mysqli_query($conexao, $sql_pessoaFornecedor);
 $row_pessoaFornecedor = mysqli_fetch_array($buscar_pessoaFornecedor, MYSQLI_ASSOC);
+
 if (isset($LOG_NIVEL)) {
   if ($LOG_NIVEL >= 2) {
     fwrite($arquivo, $identificacao . "-pessoaFORNECEDOR->" . json_encode($row_pessoaFornecedor) . "\n");
@@ -118,8 +173,15 @@ if (isset($LOG_NIVEL)) {
 }
 
 $codigoEstadoFornecedor = $row_pessoaFornecedor['codigoEstado'];
-$caracTrib = (int)$row_pessoaFornecedor['caracTrib'];
 
+$caracTrib = isset($row_pessoaFornecedor['caracTrib']) && $row_pessoaFornecedor['caracTrib'] !== "null" ? (int)$row_pessoaFornecedor['caracTrib'] : "null";
+if ($row_pessoaFornecedor['caracTrib'] == null) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "empresaPessoa.caracTrib não informado"
+  );
+  return;  
+}
 
 $emit = array(
   'amb' => $amb,

@@ -65,15 +65,10 @@ while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
         $regra[$rows]["dtVigFinFormatada"] = $dtVigFinFormatada;
     }
 
-    
-    
-
     $rows = $rows + 1;
 }
 
-if (isset($jsonEntrada["codigoGrupo"]) && $rows == 1) {
-    $regra = $regra[0];
-}
+
 if (isset($jsonEntrada["idRegraFiscal"]) && $rows == 1) {
     $regra = $regra[0];
 }
