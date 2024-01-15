@@ -31,6 +31,11 @@ $conexao = conectaMysql($idEmpresa);
 $sql_apifiscal = "SELECT apifiscal.login,apifiscal.senha,apifiscal.tpAmb,apifiscal.cfopEntrada,apifiscal.finalidade FROM apifiscal WHERE idEmpresa = $idEmpresa ";
 $buscar_apifiscal = mysqli_query($conexao, $sql_apifiscal);
 $row_apifiscal = mysqli_fetch_array($buscar_apifiscal, MYSQLI_ASSOC);
+if (isset($LOG_NIVEL)) {
+  if ($LOG_NIVEL >= 2) {
+    fwrite($arquivo, $identificacao . "-APIFISCAL->" . json_encode($row_apifiscal) . "\n");
+  }
+}
 
 $login = $row_apifiscal['login'];
 $senha = $row_apifiscal['senha'];
@@ -50,6 +55,11 @@ $idPessoaEmpresa = $row_empresa['idPessoa'];
 $sql_empresaPessoa = "SELECT pessoas.codigoEstado, pessoas.cpfCnpj, pessoas.cnae, pessoas.regimeEspecial, pessoas.regimeTrib, pessoas.crt, pessoas.origem FROM pessoas WHERE idPessoa = $idPessoaEmpresa "; //empresaPessoa
 $buscar_empresaPessoa = mysqli_query($conexao, $sql_empresaPessoa);
 $row_empresaPessoa = mysqli_fetch_array($buscar_empresaPessoa, MYSQLI_ASSOC);
+if (isset($LOG_NIVEL)) {
+  if ($LOG_NIVEL >= 2) {
+    fwrite($arquivo, $identificacao . "-empresaPESSOA->" . json_encode($row_empresaPessoa) . "\n");
+  }
+}
 
 $cpfCnpj = $row_empresaPessoa['cpfCnpj'];
 $cnae = $row_empresaPessoa['cnae'];
@@ -85,6 +95,11 @@ if (isset($jsonEntrada["idProduto"])) {
   $sql_produtos = "SELECT produtos.nomeProduto, produtos.codigoNcm, produtos.codigoNcm, produtos.eanProduto, produtos.idPessoaFornecedor FROM produtos WHERE idProduto = " . $jsonEntrada["idProduto"] . " ";
   $buscar_produtos = mysqli_query($conexao, $sql_produtos);
   $row_produtos = mysqli_fetch_array($buscar_produtos, MYSQLI_ASSOC);
+  if (isset($LOG_NIVEL)) {
+    if ($LOG_NIVEL >= 2) {
+      fwrite($arquivo, $identificacao . "-produtos->" . json_encode($row_produtos) . "\n");
+    }
+  }
   
   $nomeProduto = $row_produtos['nomeProduto'];
   $codigoNcm = $row_produtos['codigoNcm'];
@@ -96,6 +111,11 @@ if (isset($jsonEntrada["idProduto"])) {
 $sql_pessoaFornecedor = "SELECT pessoas.codigoEstado, pessoas.caracTrib FROM pessoas WHERE idPessoa = $idPessoaFornecedor ";
 $buscar_pessoaFornecedor = mysqli_query($conexao, $sql_pessoaFornecedor);
 $row_pessoaFornecedor = mysqli_fetch_array($buscar_pessoaFornecedor, MYSQLI_ASSOC);
+if (isset($LOG_NIVEL)) {
+  if ($LOG_NIVEL >= 2) {
+    fwrite($arquivo, $identificacao . "-pessoaFORNECEDOR->" . json_encode($row_pessoaFornecedor) . "\n");
+  }
+}
 
 $codigoEstadoFornecedor = $row_pessoaFornecedor['codigoEstado'];
 $caracTrib = (int)$row_pessoaFornecedor['caracTrib'];
@@ -148,13 +168,18 @@ $imendesEntrada = array(
   'produtos' => $produtos
 );
 
-$imendesEntrada = json_encode($imendesEntrada, true);
 
 $apiHeaders = array(
   "Content-Type: application/json",
   "login: $login",
   "senha: $senha"
 );
+
+if (isset($LOG_NIVEL)) {
+  if ($LOG_NIVEL >= 2) {
+    fwrite($arquivo, $identificacao . "-imendesEntrada->" . json_encode($imendesEntrada) . "\n");
+  }
+}
 
 //echo $imendesEntrada ;
 
@@ -163,10 +188,16 @@ $apiHeaders = array(
 $JSON = chamaAPI(
   "http://consultatributos.com.br:8080",
   "/api/v3/public/SaneamentoGrades",
-  $imendesEntrada,
+  json_encode($imendesEntrada),
   "POST",
   $apiHeaders
 );
+
+if (isset($LOG_NIVEL)) {
+  if ($LOG_NIVEL >= 2) {
+    fwrite($arquivo, $identificacao . "-imendesSaida->" . json_encode($JSON) . "\n");
+  }
+}
 
 //echo "IMENDES\n".json_encode($JSON)."\n";
 
@@ -385,7 +416,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
 //LOG
 if (isset($LOG_NIVEL)) {
   if ($LOG_NIVEL >= 2) {
-    fwrite($arquivo, $identificacao . "-SAIDA->" . json_encode($jsonSaida) . "\n\n");
+    fwrite($arquivo, $identificacao . "-SAIDA->" . json_encode($jsonSaida) . "\n");
   }
 }
 //LOG
