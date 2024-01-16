@@ -145,6 +145,7 @@ if ($regimeTrib == 'SN') {
 
 
 if (isset($jsonEntrada["idProduto"])) {
+  //echo 'idProduto ' . $jsonEntrada["idProduto"];
   //PRODUTOS
   $sql_produtos = "SELECT produtos.nomeProduto, produtos.codigoNcm, produtos.codigoNcm, produtos.eanProduto, produtos.idPessoaFornecedor FROM produtos WHERE idProduto = " . $jsonEntrada["idProduto"] . " ";
   $buscar_produtos = mysqli_query($conexao, $sql_produtos);
@@ -230,7 +231,6 @@ $imendesEntrada = array(
   'produtos' => $produtos
 );
 
-
 $apiHeaders = array(
   "Content-Type: application/json",
   "login: $login",
@@ -243,8 +243,6 @@ if (isset($LOG_NIVEL)) {
   }
 }
 
-//echo $imendesEntrada ;
-
 
 // CHAMADA IMENDES
 $JSON = chamaAPI(
@@ -254,6 +252,17 @@ $JSON = chamaAPI(
   "POST",
   $apiHeaders
 );
+//prodNaoRet
+
+$produtoNaoRetornado = $JSON['Cabecalho']['prodNaoRet'];
+//echo json_encode($produtoNaoRetornado);
+if($produtoNaoRetornado == 1){
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "Nenhum produto encontrado.",
+    "mensagem" => true
+  );
+}
 
 if (isset($LOG_NIVEL)) {
   if ($LOG_NIVEL >= 2) {
