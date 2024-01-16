@@ -252,10 +252,9 @@ $JSON = chamaAPI(
   "POST",
   $apiHeaders
 );
-//prodNaoRet
+
 
 $produtoNaoRetornado = $JSON['Cabecalho']['prodNaoRet'];
-//echo json_encode($produtoNaoRetornado);
 if($produtoNaoRetornado == 1){
   $jsonSaida = array(
     "status" => 400,
