@@ -258,7 +258,7 @@ $produtoNaoRetornado = $JSON['Cabecalho']['prodNaoRet'];
 if($produtoNaoRetornado == 1){
   $jsonSaida = array(
     "status" => 400,
-    "retorno" => "Nenhum produto encontrado.",
+    "retorno" => "Nenhum produto retornado.",
     "mensagem" => true
   );
 }
@@ -453,8 +453,15 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
         'ipiex' => $grupo['iPI']['ex']
       );
 
+      if (isset($LOG_NIVEL)) {
+        if ($LOG_NIVEL >= 2) {
+          fwrite($arquivo, $identificacao . "-GRUPOINSERIR->" . json_encode($apiEntrada) . "\n");
+        }
+      }
+
       $inserirGrupo = chamaAPI(null, '/cadastros/grupoproduto', json_encode($apiEntrada), 'PUT');
 
+      
       //TRY-CATCH
       try {
         $jsonSaida = array(
