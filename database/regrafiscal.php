@@ -36,12 +36,7 @@ if (isset($_GET['operacao'])) {
 
 	if ($operacao == "filtrar") {
 
-		$codigoGrupo = $_POST["codigoGrupo"];
-
-		if ($codigoGrupo == ""){
-			$codigoGrupo = null;
-		}
-
+		$codigoGrupo = isset($_POST["codigoGrupo"]) && $_POST["codigoGrupo"] !== ""    ? "'" . $_POST["codigoGrupo"] . "'" : null;
 	
 		$apiEntrada = array(
 			'idEmpresa' => $idEmpresa,
