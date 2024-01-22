@@ -335,6 +335,9 @@ function adicionaRegraFiscal($conexao, $regras, $codigoGrupo)
           $finalidade = isset($CaracTrib['finalidade']) && $CaracTrib['finalidade'] !== "null"    ? "'" . $CaracTrib['finalidade'] . "'" : "null";
           $codRegra = isset($CaracTrib['codRegra']) && $CaracTrib['codRegra'] !== "null"    ? "'" . $CaracTrib['codRegra'] . "'" : "null";
           $codExcecao = isset($CaracTrib['codExcecao']) && $CaracTrib['codExcecao'] !== "null"    ? "'" . $CaracTrib['codExcecao'] . "'" : "null";
+
+          // TESTAR EXISTENCIA DA REGRAFISCAL com select $codRegra e $codExcecao
+
           $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigIni'])) : "null";
           $dtVigFin = isset($CaracTrib['dtVigFin']) && $CaracTrib['dtVigFin'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigFin'])) : "null";
           $cFOPCaracTrib = isset($CaracTrib['cFOP']) && $CaracTrib['cFOP'] !== "null"    ? "'" . $CaracTrib['cFOP'] . "'" : "null";
@@ -382,6 +385,10 @@ function adicionaRegraFiscal($conexao, $regras, $codigoGrupo)
           } else {
             $adicionaregraFiscal = " Regra existente ";
           }
+
+          // TESTAR A EXISTENCIA DE operacaofiscal com select 
+          
+
         }
       }
     }
