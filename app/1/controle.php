@@ -118,7 +118,10 @@ if ($metodo == "PUT") {
 }
 
 if ($metodo == "POST") {
-
+  if ($funcao == "imendes" && $parametro == "saneamento") {
+    $funcao = "imendes/saneamento";
+    $parametro = null;
+  }
   switch ($funcao) {
 
     case "fisatividade":
@@ -137,6 +140,10 @@ if ($metodo == "POST") {
       include 'fisoperacao_alterar.php';
       break;
 
+   case "imendes/saneamento":
+        include 'imendes_saneamento.php';
+        break;
+  
     default:
       $jsonSaida = json_decode(json_encode(
         array(
