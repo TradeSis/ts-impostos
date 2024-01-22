@@ -318,7 +318,7 @@ function adicionaHistorico($conexao, $retornoImendes)
   return $adicionaHistorico;
 }
 
-function adicionaRegraFiscal($conexao, $regras, $codigoGrupo)
+function adicionaRegraFiscal($regras, $codigoGrupo)
 {
   foreach ($regras as $regra) {
 
@@ -335,15 +335,12 @@ function adicionaRegraFiscal($conexao, $regras, $codigoGrupo)
           $finalidade = isset($CaracTrib['finalidade']) && $CaracTrib['finalidade'] !== "null"    ? "'" . $CaracTrib['finalidade'] . "'" : "null";
           $codRegra = isset($CaracTrib['codRegra']) && $CaracTrib['codRegra'] !== "null"    ? "'" . $CaracTrib['codRegra'] . "'" : "null";
           $codExcecao = isset($CaracTrib['codExcecao']) && $CaracTrib['codExcecao'] !== "null"    ? "'" . $CaracTrib['codExcecao'] . "'" : "null";
-          /* echo 'COD REGRA ' . json_encode($codRegra);
-          echo '';
-          echo 'COD EXCECAO ' . json_encode($codExcecao); */
         
           //Verifica se existe regrafiscal
-          $sql_regra = "SELECT * FROM regrafiscal WHERE codRegra = $codRegra AND codExcecao = $codExcecao ";
-          $buscar_regra = mysqli_query($conexao, $sql_regra);
+          $sql_regra = "SELECT * FROM fiscalregra WHERE codRegra = $codRegra AND codExcecao = $codExcecao ";
+          $buscar_regra = mysqli_query(conectaMysql(null), $sql_regra);
           $row_regra = mysqli_fetch_array($buscar_regra, MYSQLI_ASSOC);
-          //echo json_encode($row_regra);
+       
           
           if ($row_regra == null) {
             $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigIni'])) : "null";
@@ -374,7 +371,7 @@ function adicionaRegraFiscal($conexao, $regras, $codigoGrupo)
             //$Convenio = isset($CaracTrib['Convenio']) && $CaracTrib['Convenio'] !== "null"    ? "'" . $CaracTrib['Convenio'] . "'" : "null";
             $regraGeral = isset($CaracTrib['regraGeral']) && $CaracTrib['regraGeral'] !== "null"    ? "'" . $CaracTrib['regraGeral'] . "'" : "null";
           
-            $sql = " INSERT INTO regrafiscal (codRegra, codExcecao, dtVigIni,
+            $sql = " INSERT INTO fiscalregra (codRegra, codExcecao, dtVigIni,
             dtVigFin, cFOPCaracTrib, cST, cSOSN, aliqIcmsInterna, aliqIcmsInterestadual, reducaoBcIcms, reducaoBcIcmsSt, redBcICMsInterestadual,
             aliqIcmsSt, iVA, iVAAjust, fCP, codBenef, pDifer, pIsencao, antecipado, desonerado, pICMSDeson, isento, tpCalcDifal, ampLegal,
             Protocolo, Convenio, regraGeral) 
@@ -383,23 +380,23 @@ function adicionaRegraFiscal($conexao, $regras, $codigoGrupo)
             $aliqIcmsSt, $iVA, $iVAAjust, $fCP, $codBenef, $pDifer, $pIsencao, $antecipado, $desonerado, $pICMSDeson, $isento, $tpCalcDifal, $ampLegal_formatada,
             null, null, $regraGeral) ";
 
-            $adicionaregraFiscal = mysqli_query($conexao, $sql);
+            $adicionaregraFiscal = mysqli_query(conectaMysql(null), $sql);
           } else {
             //echo  " Regra existente ";
             $adicionaregraFiscal = " Regra existente ";
           }
 
           //Verifica se existe operacaofiscal
-          $sql_operacao = "SELECT * FROM operacaofiscal WHERE codigoGrupo = $codigoGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
-          $buscar_operacao = mysqli_query($conexao, $sql_operacao);
+          $sql_operacao = "SELECT * FROM fiscaloperacao WHERE codigoGrupo = $codigoGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
+          $buscar_operacao = mysqli_query(conectaMysql(null), $sql_operacao);
           $row_operacao = mysqli_fetch_array($buscar_operacao, MYSQLI_ASSOC);
           //echo 'OPERACAO ' . json_encode($row_operacao);
 
           if ($row_operacao == null) {
-            $sql = " INSERT INTO operacaofiscal (codigoGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, codRegra) 
+            $sql = " INSERT INTO fiscaloperacao (codigoGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, codRegra) 
             VALUES ($codigoGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $codRegra) ";
 
-            $adicionaOpercaoFiscal = mysqli_query($conexao, $sql);
+            $adicionaOpercaoFiscal = mysqli_query(conectaMysql(null), $sql);
           } else {
             //echo 'Operação Fiscal existente';
             $adicionaOpercaoFiscal = " Operação Fiscal existente ";
@@ -425,8 +422,8 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
     $eanProdutos = $grupo['prodEan'];
 
     //Verifica se já tem codigoGrupo
-    $sql_consulta = "SELECT * FROM grupoproduto WHERE codigoGrupo = $codigoGrupo ";
-    $buscar_consulta = mysqli_query($conexao, $sql_consulta);
+    $sql_consulta = "SELECT * FROM fiscalgrupo WHERE codigoGrupo = $codigoGrupo ";
+    $buscar_consulta = mysqli_query(conectaMysql(null), $sql_consulta);
     $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
     $codigoGrupo = isset($row_consulta["codigoGrupo"]) && $row_consulta["codigoGrupo"] !== "null"    ? "'" . $row_consulta["codigoGrupo"] . "'" : "null";
     $codigoNcm = isset($row_consulta["codigoNcm"]) && $row_consulta["codigoNcm"] !== "null"    ? "'" . $row_consulta["codigoNcm"] . "'" : "null";
@@ -437,7 +434,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       foreach ($eanProdutos as $eanProduto) {
         $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo);
       }
-      $regrafiscal = adicionaRegraFiscal($conexao, $grupo['Regras'], $grupo['codigo']);
+      $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $grupo['codigo']);
       $jsonSaida = array(
         "status" => 200,
         "retorno" => "codigo do Grupo existente",
@@ -445,7 +442,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       );
     } else {
 
-      $regrafiscal = adicionaRegraFiscal($conexao, $grupo['Regras'], $grupo['codigo']);
+      $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $grupo['codigo']);
       $codigoGrupo = "'" . $grupo['codigo'] . "'";
       $codigoCest = "'" . $grupo['cEST'] .  "'";
       $codigoNcm = "'" . $grupo['nCM'] . "'";
@@ -482,7 +479,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
         }
       }
 
-      $inserirGrupo = chamaAPI(null, '/cadastros/grupoproduto', json_encode($apiEntrada), 'PUT');
+      $inserirGrupo = chamaAPI(null, '/impostos/grupoproduto', json_encode($apiEntrada), 'PUT');
 
       
       //TRY-CATCH

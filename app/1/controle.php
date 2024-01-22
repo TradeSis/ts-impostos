@@ -57,6 +57,10 @@ if ($metodo == "GET") {
       include 'operacaofiscal.php';
       break;
 
+    case "grupoproduto":
+      include 'grupoproduto.php';
+      break;
+
     default:
       $jsonSaida = json_decode(json_encode(
         array(
@@ -107,6 +111,9 @@ if ($metodo == "PUT") {
       include 'fisnotaproduimposto_inserir.php';
       break;
 
+    case "grupoproduto":
+      include 'grupoproduto_inserir.php';
+      break;
 
     default:
       $jsonSaida = json_decode(json_encode(

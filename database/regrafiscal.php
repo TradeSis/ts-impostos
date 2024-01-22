@@ -9,11 +9,6 @@ include_once __DIR__ . "/../conexao.php";
 if (isset($_GET['operacao'])) {
 
 	$operacao = $_GET['operacao'];
-	$idEmpresa = null;
-	if (isset($_SESSION['idEmpresa'])) {
-    	$idEmpresa = $_SESSION['idEmpresa'];
-	}
-
 
 	if ($operacao == "filtrar") {
 
@@ -23,7 +18,6 @@ if (isset($_GET['operacao'])) {
 		}
 
 		$apiEntrada = array(
-			'idEmpresa' => $idEmpresa,
 			'codRegra' => $codRegra,
 		);
 		

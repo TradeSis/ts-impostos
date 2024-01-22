@@ -21,19 +21,14 @@ if (isset($LOG_NIVEL)) {
 }
 //LOG
 
-$idEmpresa = null;
-if (isset($jsonEntrada["idEmpresa"])) {
-    $idEmpresa = $jsonEntrada["idEmpresa"];
-}
-
-$conexao = conectaMysql($idEmpresa);
+$conexao = conectaMysql(null);
 
 $operacao = array();
 
-$sql = "SELECT * FROM operacaofiscal  ";
+$sql = "SELECT * FROM fiscaloperacao  ";
 
 if (isset($jsonEntrada["idoperacaofiscal"])) {
-    $sql = $sql . " where operacaofiscal.idoperacaofiscal = " . "'" . $jsonEntrada["idoperacaofiscal"] . "'" ;
+    $sql = $sql . " where fiscaloperacao.idoperacaofiscal = " . "'" . $jsonEntrada["idoperacaofiscal"] . "'" ;
 }
 
 

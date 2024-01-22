@@ -21,19 +21,15 @@ if (isset($LOG_NIVEL)) {
 }
 //LOG
 
-$idEmpresa = null;
-if (isset($jsonEntrada["idEmpresa"])) {
-    $idEmpresa = $jsonEntrada["idEmpresa"];
-}
 
-$conexao = conectaMysql($idEmpresa);
+$conexao = conectaMysql(null);
 
 $regra = array();
 
-$sql = "SELECT * ,'' AS dtVigIniFormatada ,'' AS dtVigFinFormatada FROM regrafiscal  ";
+$sql = "SELECT * ,'' AS dtVigIniFormatada ,'' AS dtVigFinFormatada FROM fiscalregra  ";
 
 if (isset($jsonEntrada["codRegra"])) {
-    $sql = $sql . " where regrafiscal.codRegra = " . "'" . $jsonEntrada["codRegra"] . "'" ;
+    $sql = $sql . " where fiscalregra.codRegra = " . "'" . $jsonEntrada["codRegra"] . "'" ;
 }
 
 

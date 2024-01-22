@@ -9,10 +9,6 @@ include_once __DIR__ . "/../conexao.php";
 if (isset($_GET['operacao'])) {
 
 	$operacao = $_GET['operacao'];
-	$idEmpresa = null;
-	if (isset($_SESSION['idEmpresa'])) {
-    	$idEmpresa = $_SESSION['idEmpresa'];
-	}
 
 	if ($operacao == "buscar") {
 
@@ -24,7 +20,6 @@ if (isset($_GET['operacao'])) {
 
 	
 		$apiEntrada = array(
-			'idEmpresa' => $idEmpresa,
 			'idRegraFiscal' => $idRegraFiscal,
 		);
 		
@@ -37,7 +32,6 @@ if (isset($_GET['operacao'])) {
 	if ($operacao == "filtrar") {
 
 		$apiEntrada = array(
-			'idEmpresa' => $idEmpresa,
 			'idoperacaofiscal' => null,
 		);
 		
