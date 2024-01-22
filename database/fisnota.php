@@ -68,12 +68,10 @@ if (isset($_GET['operacao'])) {
 
 		$xmlArquivo = file_get_contents($_FILES['file']['tmp_name']);
 
-		$xml = simplexml_load_string($xmlArquivo);
-		$NFe = $xml->NFe;
-		$xmlContent = $NFe->asXML();
-
+	//$xml = simplexml_load_string($xmlArquivo);
+		// Envia XML puro
 		$apiEntrada = array(
-			'xml' => $xmlContent,
+			'xml' => $xmlArquivo,
 			'idEmpresa' => $_SESSION['idEmpresa'],
 		);
 

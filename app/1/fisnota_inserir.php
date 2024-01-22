@@ -7,7 +7,7 @@ if (isset($LOG_CAMINHO)) {
     $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "nfe_inserir";
     if (isset($LOG_NIVEL)) {
         if ($LOG_NIVEL >= 1) {
-            $arquivo = fopen(defineCaminhoLog() . "fisnota_" . date("dmY") . ".log", "a");
+            $arquivo = fopen(defineCaminhoLog() . "fisnota_inserir" . date("dmY") . ".log", "a");
         }
     }
 }
@@ -27,11 +27,18 @@ if (isset($jsonEntrada["idEmpresa"])) {
 }
 $conexao = conectaMysql($idEmpresa);
 
+// Pega XML puro
 if (isset($jsonEntrada['xml'])) {
 
     $xml = simplexml_load_string($jsonEntrada['xml']);
-    $infNFe = $xml->infNFe;
+    $infNFe = $xml->NFe->infNFe;
+    if ($infNFe == null) {
+        $infNFe = $xml->nfeProc->NFe->infNFe;
+    }
+    
+}
 
+if (isset($infNFe)) {
 
 //********************************************PESSOAS
 
@@ -103,7 +110,7 @@ if (isset($jsonEntrada['xml'])) {
 
         $NF = isset($infNFe->ide->nNF) && $infNFe->ide->nNF !== "" ? "'" . (string) $infNFe->ide->nNF . "'" : "null";
         $serie = isset($infNFe->ide->serie) && $infNFe->ide->serie !== "" ? "'" . (string) $infNFe->ide->serie . "'" : "null";
-        $dtEmissao = isset($xml->infNFe->ide->dhEmi) && $xml->infNFe->ide->dhEmi !== "" ? "'" . date('Y-m-d', strtotime($xml->infNFe->ide->dhEmi)) . "'" : "null";
+        $dtEmissao = isset($infNFe->ide->dhEmi) && $infNFe->ide->dhEmi !== "" ? "'" . date('Y-m-d', strtotime($infNFe->ide->dhEmi)) . "'" : "null";
         $naturezaOp = isset($infNFe->ide->natOp) && $infNFe->ide->natOp !== "" ? "'" . (string) $infNFe->ide->natOp . "'" : "null";
         $modelo = isset($infNFe->ide->mod) && $infNFe->ide->mod !== "" ? "'" . (string) $infNFe->ide->mod . "'" : "null";
         $XMLentrada = isset($jsonEntrada['xml']) && $jsonEntrada['xml'] !== "" ? "'" . $jsonEntrada['xml'] . "'" : "null";
@@ -113,7 +120,7 @@ if (isset($jsonEntrada['xml'])) {
         $vCOFINS = isset($infNFe->total->ICMSTot->vCOFINS) && $infNFe->total->ICMSTot->vCOFINS !== "" ? "'" . (string) $infNFe->total->ICMSTot->vCOFINS . "'" : "null";
         
         $sqlNota = "INSERT INTO fisnota(chaveNFe,naturezaOp,modelo,XML,serie,NF,dtEmissao,idPessoaEmitente,idPessoaDestinatario,baseCalculo,valorProdutos,pis,cofins) 
-                    VALUES ($chaveNFe,$naturezaOp,$modelo,$XMLentrada,$serie,$NF,$dtEmissao,$idPessoaEmitente,$idPessoaDestinatario,$vBC,$vProd,$vPIS,$vCOFINS)";
+                    VALUES ($chaveNFe,$naturezaOp,$modelo,'',$serie,$NF,$dtEmissao,$idPessoaEmitente,$idPessoaDestinatario,$vBC,$vProd,$vPIS,$vCOFINS)";
 
         //LOG
         if (isset($LOG_NIVEL)) {
@@ -124,7 +131,19 @@ if (isset($jsonEntrada['xml'])) {
         //LOG
 
         $atualizarNota = mysqli_query($conexao, $sqlNota);
-
+        
+        if ($atualizarNota) {
+            $jsonSaida = array(
+                "status" => 200,
+                "retorno" => "ok"
+            );
+        } else {
+            $jsonSaida = array(
+                "status" => 501,
+                "retorno" => "erro no mysql"
+            );
+            return;
+        }
         $idNotaInserido = mysqli_insert_id($conexao);
 
         $nomeTotal = "'" . $infNFe->total->ICMSTot->getName() . "'";
@@ -160,8 +179,7 @@ if (isset($jsonEntrada['xml'])) {
         //LOG
 
         $atualizarNota = mysqli_query($conexao, $sqlNota);
-
-
+       
 
 
 //********************************************FISNOTAPRODUTOS
@@ -169,17 +187,7 @@ if (isset($jsonEntrada['xml'])) {
         include 'fisnotaproduto_inserir.php';
 
 
-        if ($atualizarNota) {
-            $jsonSaida = array(
-                "status" => 200,
-                "retorno" => "ok"
-            );
-        } else {
-            $jsonSaida = array(
-                "status" => 500,
-                "retorno" => "erro no mysql"
-            );
-        }
+       
     } 
 } else {
     $jsonSaida = array(

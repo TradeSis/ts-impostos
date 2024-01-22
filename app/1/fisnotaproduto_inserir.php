@@ -1,6 +1,8 @@
 <?php
 foreach ($infNFe->det as $item) {
 
+    
+
     $idNota = isset($idNotaInserido) && $idNotaInserido !== "" ? "'" . $idNotaInserido . "'" : "null";
     $nItem = isset($item['nItem']) && $item['nItem'] !== "" ? "'" . (string) $item['nItem'] . "'" : "null";
     $quantidade = isset($item->prod->qCom) && $item->prod->qCom !== "" ? "'" . (string) $item->prod->qCom . "'" : "null";
@@ -13,21 +15,17 @@ foreach ($infNFe->det as $item) {
     $eanProduto = isset($item->prod->cEAN) && $item->prod->cEAN !== "" ? "'" . (string) $item->prod->cEAN . "'" : "null";
     $refProduto = isset($item->prod->cProd) && $item->prod->cProd !== "" ? "'" . (string) $item->prod->cProd . "'" : "null";
 
-    if ($refProduto == $eanProduto) {
-        $refProduto = "'NULL'";
-    }
+    
     if ($eanProduto == "'SEM GTIN'" || $eanProduto == "''") {
-        $eanProduto = "'NULL'";
+        $eanProduto = "null";
     }
-
-    if ($eanProduto === "NULL") {
+    if ($eanProduto == "null") {
         $buscaProduto2 = "SELECT * FROM produtos WHERE idPessoaFornecedor = $idPessoaEmitente AND refProduto = $refProduto";
     } else {
         $buscaProduto2 = "SELECT * FROM produtos WHERE eanProduto = $eanProduto";
     }
 
     $buscar = mysqli_query($conexao, $buscaProduto2);
-
     if (mysqli_num_rows($buscar) == 0) {
 
         $produEntrada = array(
