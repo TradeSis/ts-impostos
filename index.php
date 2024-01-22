@@ -65,6 +65,20 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
                                 href="?tab=nfe" role="tab">NFE</a>
                             </li>
                         <?php }
+                        if ($nivelMenu >= 1) { ?>
+                            <li class="nav-item mr-1">
+                                <a class="nav-link 
+                                <?php if ($tab == "operacaofiscal") {echo " active ";} ?>" 
+                                href="?tab=operacaofiscal" role="tab">Operação Fiscal</a>
+                            </li>
+                        <?php }
+                        if ($nivelMenu >= 1) { ?>
+                            <li class="nav-item mr-1">
+                                <a class="nav-link 
+                                <?php if ($tab == "regrafiscal") {echo " active ";} ?>" 
+                                href="?tab=regrafiscal" role="tab">Regra Fiscal</a>
+                            </li>
+                        <?php }
                         if ($nivelMenu >= 4) { ?>
                             <li class="nav-item mr-1">
                                 <a class="nav-link 
@@ -90,6 +104,12 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
                         <option value="<?php echo URLROOT ?>/sistema/index.php?tab=operacoes" 
                         <?php if ($getTab == "operacoes") {echo " selected ";} ?>>Operações</option>
 
+                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=operacaofiscal" 
+                        <?php if ($getTab == "operacaofiscal") {echo " selected ";} ?>>Operação Fiscal</option>
+
+                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=regrafiscal" 
+                        <?php if ($getTab == "regrafiscal") {echo " selected ";} ?>>Regra Fiscal</option>
+
                         <option value="<?php echo URLROOT ?>/sistema/index.php?tab=configuracao" 
                         <?php if ($getTab == "configuracao") {echo " selected ";} ?>>Configurações</option>
                     </select>
@@ -110,6 +130,12 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
             }
             if ($tab == "nfe") {
                 $src = "nfe/nfe.php";
+            }
+            if ($tab == "operacaofiscal") {
+                $src = "cadastros/operacaofiscal.php";
+            }
+            if ($tab == "regrafiscal") {
+                $src = "cadastros/regrafiscal.php";
             }
             if ($tab == "configuracao") {
                 $src = "configuracao/";

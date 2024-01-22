@@ -14,20 +14,34 @@ if (isset($_GET['operacao'])) {
     	$idEmpresa = $_SESSION['idEmpresa'];
 	}
 
+	if ($operacao == "buscar") {
 
-	if ($operacao == "filtrar") {
+		$idRegraFiscal = $_POST["idRegraFiscal"];
 
-		$codRegra = $_POST["codRegra"];
-		if ($codRegra == ""){
-			$codRegra = null;
+		if ($idRegraFiscal == ""){
+			$idRegraFiscal = null;
 		}
 
+	
 		$apiEntrada = array(
 			'idEmpresa' => $idEmpresa,
-			'codRegra' => $codRegra,
+			'idRegraFiscal' => $idRegraFiscal,
 		);
 		
 		$regra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'GET');
+
+		echo json_encode($regra);
+		return $regra;
+	}
+
+	if ($operacao == "filtrar") {
+
+		$apiEntrada = array(
+			'idEmpresa' => $idEmpresa,
+			'idoperacaofiscal' => null,
+		);
+		
+		$regra = chamaAPI(null, '/impostos/operacaofiscal', json_encode($apiEntrada), 'GET');
 
 		echo json_encode($regra);
 		return $regra;

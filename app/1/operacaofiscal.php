@@ -4,10 +4,10 @@
 $LOG_CAMINHO = defineCaminhoLog();
 if (isset($LOG_CAMINHO)) {
     $LOG_NIVEL = defineNivelLog();
-    $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "regra fiscal";
+    $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "operacao fiscal";
     if (isset($LOG_NIVEL)) {
         if ($LOG_NIVEL >= 1) {
-            $arquivo = fopen(defineCaminhoLog() . "regra_fiscal_" . date("dmY") . ".log", "a");
+            $arquivo = fopen(defineCaminhoLog() . "operacao_fiscal_" . date("dmY") . ".log", "a");
         }
     }
 }
@@ -28,12 +28,12 @@ if (isset($jsonEntrada["idEmpresa"])) {
 
 $conexao = conectaMysql($idEmpresa);
 
-$regra = array();
+$operacao = array();
 
-$sql = "SELECT * ,'' AS dtVigIniFormatada ,'' AS dtVigFinFormatada FROM regrafiscal  ";
+$sql = "SELECT * FROM operacaofiscal  ";
 
-if (isset($jsonEntrada["codRegra"])) {
-    $sql = $sql . " where regrafiscal.codRegra = " . "'" . $jsonEntrada["codRegra"] . "'" ;
+if (isset($jsonEntrada["idoperacaofiscal"])) {
+    $sql = $sql . " where operacaofiscal.idoperacaofiscal = " . "'" . $jsonEntrada["idoperacaofiscal"] . "'" ;
 }
 
 
@@ -49,25 +49,15 @@ if (isset($LOG_NIVEL)) {
 $rows = 0;
 $buscar = mysqli_query($conexao, $sql);
 while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
-    array_push($regra, $row);
-
-    if(isset($regra[$rows]["dtVigIni"])){
-        $dtVigIniFormatada = date('d/m/Y', strtotime($regra[$rows]["dtVigIni"]));
-        $regra[$rows]["dtVigIniFormatada"] = $dtVigIniFormatada;
-    }
-    if(isset($regra[$rows]["dtVigFin"])){
-        $dtVigFinFormatada = date('d/m/Y', strtotime($regra[$rows]["dtVigFin"]));
-        $regra[$rows]["dtVigFinFormatada"] = $dtVigFinFormatada;
-    }
-
+    array_push($operacao, $row);
     $rows = $rows + 1;
 }
 
 
-if (isset($jsonEntrada["codRegra"]) && $rows == 1) {
-    $regra = $regra[0];
+if (isset($jsonEntrada["idoperacaofiscal"]) && $rows == 1) {
+    $operacao = $operacao[0];
 }
-$jsonSaida = $regra;
+$jsonSaida = $operacao;
 
 //echo "-SAIDA->".json_encode($jsonSaida)."\n";
 
