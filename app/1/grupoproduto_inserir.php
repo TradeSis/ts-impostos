@@ -8,7 +8,7 @@ if (isset($LOG_CAMINHO)) {
     $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "grupoproduto_inserir";
     if (isset($LOG_NIVEL)) {
         if ($LOG_NIVEL >= 1) {
-            $arquivo = fopen(defineCaminhoLog() . "cadastros_" . date("dmY") . ".log", "a");
+            $arquivo = fopen(defineCaminhoLog() . "impostos_" . date("dmY") . ".log", "a");
         }
     }
 }

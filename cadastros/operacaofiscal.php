@@ -1,7 +1,14 @@
 <?php
 // lucas 15012024 criado
 include_once(__DIR__ . '/../header.php');
+include_once(__DIR__ . '/../database/regrafiscal.php');
+include_once(__DIR__ . '/../database/grupoproduto.php');
+//preparado para select de estados
+//include_once(ROOT . '/sistema/database/estados.php');
 
+//$estados = buscaEstados();
+$regrasfiscais = buscaCodigoRegra();
+$grupoprodutos = buscaCodigoGrupos();
 ?>
 <!doctype html>
 <html lang="pt-BR">
@@ -31,145 +38,91 @@ include_once(__DIR__ . '/../header.php');
                 <div class="input-group">
                     <input type="text" class="form-control ts-input" id="buscaCodigoGrupo" placeholder="Buscar por código">
                     <button class="btn btn-primary rounded" type="button" id="buscar"><i class="bi bi-search"></i></button>
+                    <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirOperacaoFiscalModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
                 </div>
             </div>
 
         </div>
 
-        <div class="modal fade" id="modalRegraFiscal" tabindex="-1" aria-labelledby="modalRegraFiscalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
+        <!-- MODAL REGRA FISCAl -->
+        <?php include_once 'modalregrafiscal.php' ?>
+
+        <!--------- INSERIR --------->
+        <div class="modal fade bd-example-modal-lg" id="inserirOperacaoFiscalModal" tabindex="-1" aria-labelledby="inserirOperacaoFiscalModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Regra Fiscal</h5>
+                        <h5 class="modal-title">Inserir Operação Fiscal</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md">
-                                <label class="form-label ts-label">codRegra</label>
-                                <input type="text" class="form-control ts-input" name="codRegra" id="codRegra_regrafiscal" readonly>
+                        <form method="post" id="form-inserirOperacaoFiscal">
+                            <div class="row">
+                                <div class="col-md">
+                                    <label class="form-label ts-label">idGrupo</label>
+                                    <select class="form-select ts-input" name="idGrupo">
+                                        <option value="<?php echo null ?>"></option>
+                                        <?php
+                                        foreach ($grupoprodutos as $grupoproduto) {
+                                        ?>
+                                            <option value="<?php echo $grupoproduto['codigoGrupo'] ?>">
+                                                <?php echo $grupoproduto['codigoGrupo'] ?>
+                                            </option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">codigoEstado</label>
+                                    <input type="text" class="form-control ts-input" name="codigoEstado">
+                                </div>
+                                <!--    PREPADO SELECT DE ESTADOS 
+                                    <div class="col-md">
+                                    <label class="form-label ts-label">codigoEstado</label>
+                                    <select class="form-select ts-input" name="codigoEstado">
+                                        <option value="<?php echo null ?>"></option>
+                                        <?php
+                                        foreach ($estados as $estado) {
+                                        ?>
+                                            <option value="<?php echo $estado['codigoEstado'] ?>">
+                                                <?php echo $estado['codigoEstado'] ?>
+                                            </option>
+                                        <?php } ?>
+                                    </select>
+                                </div> -->
+                                <div class="col-md">
+                                    <label class="form-label ts-label">cFOP</label>
+                                    <input type="text" class="form-control ts-input" name="cFOP">
+                                </div>
                             </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md">
-                                <label class="form-label ts-label">codExcecao</label>
-                                <input type="text" class="form-control ts-input" name="codExcecao" id="codExcecao_regrafiscal" readonly>
+                            <div class="row mt-2">
+                                <div class="col-md">
+                                    <label class="form-label ts-label">codigoCaracTrib</label>
+                                    <input type="text" class="form-control ts-input" name="codigoCaracTrib">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">finalidade</label>
+                                    <input type="text" class="form-control ts-input" name="finalidade">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">idRegra</label>
+                                    <select class="form-select ts-input" name="idRegra">
+                                        <option value="<?php echo null ?>"></option>
+                                        <?php
+                                        foreach ($regrasfiscais as $regrasfiscal) {
+                                        ?>
+                                            <option value="<?php echo $regrasfiscal['codRegra'] ?>">
+                                                <?php echo $regrasfiscal['codRegra'] ?>
+                                            </option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">dtVigIni</label>
-                                <input type="text" class="form-control ts-input" name="dtVigIni" id="dtVigIni_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">dtVigFin</label>
-                                <input type="text" class="form-control ts-input" name="dtVigFin" id="dtVigFin_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">cFOPCaracTrib</label>
-                                <input type="text" class="form-control ts-input" name="cFOPCaracTrib" id="cFOPCaracTrib_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">cST</label>
-                                <input type="text" class="form-control ts-input" name="cST" id="cST_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">cSOSN</label>
-                                <input type="text" class="form-control ts-input" name="cSOSN" id="cSOSN_regrafiscal" readonly>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md">
-                                <label class="form-label ts-label">aliqIcmsInterna</label>
-                                <input type="text" class="form-control ts-input" name="aliqIcmsInterna" id="aliqIcmsInterna_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">aliqIcmsInterestadual</label>
-                                <input type="text" class="form-control ts-input" name="aliqIcmsInterestadual" id="aliqIcmsInterestadual_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">reducaoBcIcms</label>
-                                <input type="text" class="form-control ts-input" name="reducaoBcIcms" id="reducaoBcIcms_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">reducaoBcIcmsSt</label>
-                                <input type="text" class="form-control ts-input" name="reducaoBcIcmsSt" id="reducaoBcIcmsSt_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">redBcICMsInterestadual</label>
-                                <input type="text" class="form-control ts-input" name="redBcICMsInterestadual" id="redBcICMsInterestadual_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">aliqIcmsSt</label>
-                                <input type="text" class="form-control ts-input" name="aliqIcmsSt" id="aliqIcmsSt_regrafiscal" readonly>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md">
-                                <label class="form-label ts-label">iVA</label>
-                                <input type="text" class="form-control ts-input" name="iVA" id="iVA_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">iVAAjust</label>
-                                <input type="text" class="form-control ts-input" name="iVAAjust" id="iVAAjust_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">fCP</label>
-                                <input type="text" class="form-control ts-input" name="fCP" id="fCP_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">codBenef</label>
-                                <input type="text" class="form-control ts-input" name="codBenef" id="codBenef_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">pDifer</label>
-                                <input type="text" class="form-control ts-input" name="pDifer" id="pDifer_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">pIsencao</label>
-                                <input type="text" class="form-control ts-input" name="pIsencao" id="pIsencao_regrafiscal" readonly>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md">
-                                <label class="form-label ts-label">antecipado</label>
-                                <input type="text" class="form-control ts-input" name="antecipado" id="antecipado_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">desonerado</label>
-                                <input type="text" class="form-control ts-input" name="desonerado" id="desonerado_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">pICMSDeson</label>
-                                <input type="text" class="form-control ts-input" name="pICMSDeson" id="pICMSDeson_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">isento</label>
-                                <input type="text" class="form-control ts-input" name="isento" id="isento_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">tpCalcDifal</label>
-                                <input type="text" class="form-control ts-input" name="tpCalcDifal" id="tpCalcDifal_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md-5">
-                                <label class="form-label ts-label">ampLegal</label>
-                                <input type="text" class="form-control ts-input" name="ampLegal" id="ampLegal_regrafiscal_regrafiscal" readonly>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-md">
-                                <label class="form-label ts-label">Protocolo</label>
-                                <input type="text" class="form-control ts-input" name="Protocolo" id="Protocolo_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">Convenio</label>
-                                <input type="text" class="form-control ts-input" name="Convenio" id="Convenio_regrafiscal" readonly>
-                            </div>
-                            <div class="col-md">
-                                <label class="form-label ts-label">regraGeral</label>
-                                <input type="text" class="form-control ts-input" name="regraGeral" id="regraGeral_regrafiscal" readonly>
-                            </div>
-                        </div>
-                    </div>
 
+                    </div><!--body-->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" id="btn-formInserir">Cadastrar</button>
+                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -178,12 +131,13 @@ include_once(__DIR__ . '/../header.php');
             <table class="table table-sm table-hover">
                 <thead class="ts-headertabelafixo">
                     <tr class="ts-headerTabelaLinhaCima">
-                        <th>codigoGrupo</th>
+                        <th>id</th>
+                        <th>idGrupo</th>
                         <th>codigoEstado</th>
                         <th>cFOP</th>
                         <th>codigoCaracTrib</th>
                         <th>finalidade</th>
-                        <th>codRegra</th>
+                        <th>idRegra</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -219,10 +173,10 @@ include_once(__DIR__ . '/../header.php');
                     $("#dados").html("Carregando...");
                 },
                 data: {
-                    codigoGrupo: buscaCodigoGrupo
+                    idGrupo: buscaCodigoGrupo
                 },
                 success: function(msg) {
-                    
+
                     var json = JSON.parse(msg);
 
                     var linha = "";
@@ -231,13 +185,14 @@ include_once(__DIR__ . '/../header.php');
 
                         linha = linha + "<tr>";
 
-                        linha = linha + "<td>" + object.codigoGrupo + "</td>";
+                        linha = linha + "<td>" + object.idoperacaofiscal + "</td>";
+                        linha = linha + "<td>" + object.idGrupo + "</td>";
                         linha = linha + "<td>" + object.codigoEstado + "</td>";
                         linha = linha + "<td>" + object.cFOP + "</td>";
                         linha = linha + "<td>" + object.codigoCaracTrib + "</td>";
                         linha = linha + "<td>" + object.finalidade + "</td>";
-                        linha = linha + "<td>" + object.codRegra + "</td>";
-                        linha = linha + "<td>" + "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#modalRegraFiscal' data-codRegra='" + object.codRegra + "'><i class='bi bi-eye'></i></button> ";
+                        linha = linha + "<td>" + object.idRegra + "</td>";
+                        linha = linha + "<td>" + "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#modalRegraFiscal' data-codRegra='" + object.idRegra + "'><i class='bi bi-eye'></i></button> ";
                         linha = linha + "</tr>";
                     }
                     $("#dados").html(linha);
@@ -261,7 +216,7 @@ include_once(__DIR__ . '/../header.php');
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
-                url: '../database/regrafiscal.php?operacao=filtrar',
+                url: '../database/regrafiscal.php?operacao=buscarCodRegra',
                 data: {
                     codRegra: codRegra
                 },
@@ -302,6 +257,31 @@ include_once(__DIR__ . '/../header.php');
                 }
 
             });
+        });
+
+        $(document).ready(function() {
+            $("#form-inserirOperacaoFiscal").submit(function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: "../database/operacaofiscal.php?operacao=inserir",
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: refreshPage,
+                    error: function(xhr, status, error) {
+                        alert("ERRO=" + JSON.stringify(error));
+                    }
+                });
+            });
+
+
+
+            function refreshPage() {
+                window.location.reload();
+            }
+
         });
     </script>
 

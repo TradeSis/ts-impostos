@@ -137,25 +137,6 @@ include_once(__DIR__ . '/../header.php');
             </div>
         </div>
 
-        <div class="table mt-2 ts-divTabela ts-tableFiltros text-center">
-            <table class="table table-sm table-hover">
-                <thead class="ts-headertabelafixo">
-                    <tr class="ts-headerTabelaLinhaCima">
-                        <th>codigoGrupo</th>
-                        <th>nomeGrupo</th>
-                        <th>codigoNcm</th>
-                        <th>codigoCest</th>
-                        <th></th>
-                    </tr>
-                </thead>
-
-                <tbody id='dados' class="fonteCorpo">
-
-                </tbody>
-            </table>
-        </div>
-
-
         <!--------- INSERIR --------->
         <div class="modal fade bd-example-modal-lg" id="inserirGrupoProdutoModal" tabindex="-1" aria-labelledby="inserirGrupoProdutoModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -260,6 +241,24 @@ include_once(__DIR__ . '/../header.php');
         </div>
 
 
+        <div class="table mt-2 ts-divTabela ts-tableFiltros text-center">
+            <table class="table table-sm table-hover">
+                <thead class="ts-headertabelafixo">
+                    <tr class="ts-headerTabelaLinhaCima">
+                        <th>id</th>
+                        <th>codigoGrupo</th>
+                        <th>nomeGrupo</th>
+                        <th>codigoNcm</th>
+                        <th>codigoCest</th>
+                        <th></th>
+                    </tr>
+                </thead>
+
+                <tbody id='dados' class="fonteCorpo">
+
+                </tbody>
+            </table>
+        </div>
 
     </div><!--container-fluid-->
 
@@ -297,6 +296,7 @@ include_once(__DIR__ . '/../header.php');
 
                         linha = linha + "<tr>";
 
+                        linha = linha + "<td>" + object.idGrupo + "</td>";
                         linha = linha + "<td>" + object.codigoGrupo + "</td>";
                         linha = linha + "<td>" + object.nomeGrupo + "</td>";
                         linha = linha + "<td>" + object.codigoNcm + "</td>";
@@ -322,7 +322,7 @@ include_once(__DIR__ . '/../header.php');
 
         $(document).on('click', 'button[data-bs-target="#visualizarGrupoProdutoModal"]', function() {
             var codigoGrupo = $(this).attr("data-codigoGrupo");
-        
+
             $.ajax({
                 type: 'POST',
                 dataType: 'json',

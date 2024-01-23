@@ -3,6 +3,17 @@
 
 include_once __DIR__ . "/../conexao.php";
 
+function buscaCodigoGrupos()
+{
+
+	$grupos = array();
+
+	$apiEntrada = array(
+		'codigo' => true
+	);
+	$grupos = chamaAPI(null, '/impostos/grupoproduto', json_encode($apiEntrada), 'GET');
+	return $grupos;
+}
 
 if (isset($_GET['operacao'])) {
 

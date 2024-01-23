@@ -115,6 +115,14 @@ if ($metodo == "PUT") {
       include 'grupoproduto_inserir.php';
       break;
 
+    case "regrafiscal":
+      include 'regrafiscal_inserir.php';
+      break;
+
+    case "operacaofiscal":
+      include 'operacaofiscal_inserir.php';
+      break;
+
     default:
       $jsonSaida = json_decode(json_encode(
         array(

@@ -385,12 +385,12 @@ function adicionaRegraFiscal($regras, $codigoGrupo)
           }
 
           //Verifica se existe operacaofiscal
-          $sql_operacao = "SELECT * FROM fiscaloperacao WHERE codigoGrupo = $codigoGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
+          $sql_operacao = "SELECT * FROM fiscaloperacao WHERE idGrupo = $codigoGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
           $buscar_operacao = mysqli_query(conectaMysql(null), $sql_operacao);
           $row_operacao = mysqli_fetch_array($buscar_operacao, MYSQLI_ASSOC);
 
           if ($row_operacao == null) {
-            $sql = " INSERT INTO fiscaloperacao (codigoGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, codRegra) 
+            $sql = " INSERT INTO fiscaloperacao (idGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, idRegra) 
             VALUES ($codigoGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $codRegra) ";
 
             $adicionaOpercaoFiscal = mysqli_query(conectaMysql(null), $sql);
