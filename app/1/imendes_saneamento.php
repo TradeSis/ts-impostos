@@ -274,7 +274,7 @@ if (isset($LOG_NIVEL)) {
 function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo)
 {
   //Atualiza Produto
-  $sql_consulta = "SELECT * FROM produtos WHERE eanProduto = $eanProduto ";
+  $sql_consulta = "SELECT produtos.idProduto FROM produtos WHERE eanProduto = $eanProduto ";
   $buscar_consulta = mysqli_query($conexao, $sql_consulta);
   $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
 
@@ -337,7 +337,7 @@ function adicionaRegraFiscal($regras, $codigoGrupo)
           $codExcecao = isset($CaracTrib['codExcecao']) && $CaracTrib['codExcecao'] !== "null"    ? "'" . $CaracTrib['codExcecao'] . "'" : "null";
         
           //Verifica se existe regrafiscal
-          $sql_regra = "SELECT * FROM fiscalregra WHERE codRegra = $codRegra AND codExcecao = $codExcecao ";
+          $sql_regra = "SELECT fiscalregra.codRegra, fiscalregra.codExcecao FROM fiscalregra WHERE codRegra = $codRegra AND codExcecao = $codExcecao ";
           $buscar_regra = mysqli_query(conectaMysql(null), $sql_regra);
           $row_regra = mysqli_fetch_array($buscar_regra, MYSQLI_ASSOC);
        
@@ -418,7 +418,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
     $eanProdutos = $grupo['prodEan'];
 
     //Verifica se já tem codigoGrupo
-    $sql_consulta = "SELECT * FROM fiscalgrupo WHERE codigoGrupo = $codigoGrupo ";
+    $sql_consulta = "SELECT fiscalgrupo.codigoGrupo, fiscalgrupo.codigoNcm, fiscalgrupo.codigoCest FROM fiscalgrupo WHERE codigoGrupo = $codigoGrupo ";
     $buscar_consulta = mysqli_query(conectaMysql(null), $sql_consulta);
     $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
     $codigoGrupo = isset($row_consulta["codigoGrupo"]) && $row_consulta["codigoGrupo"] !== "null"    ? "'" . $row_consulta["codigoGrupo"] . "'" : "null";
