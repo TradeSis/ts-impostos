@@ -9,38 +9,16 @@ include_once __DIR__ . "/../conexao.php";
 if (isset($_GET['operacao'])) {
 
 	$operacao = $_GET['operacao'];
-	$idEmpresa = null;
-	if (isset($_SESSION['idEmpresa'])) {
-    	$idEmpresa = $_SESSION['idEmpresa'];
-	}
-
-	if ($operacao == "buscar") {
-
-		$idRegraFiscal = $_POST["idRegraFiscal"];
-
-		if ($idRegraFiscal == ""){
-			$idRegraFiscal = null;
-		}
-
-	
-		$apiEntrada = array(
-			'idEmpresa' => $idEmpresa,
-			'idRegraFiscal' => $idRegraFiscal,
-		);
-		
-		$regra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'GET');
-
-		echo json_encode($regra);
-		return $regra;
-	}
 
 	if ($operacao == "filtrar") {
 
-		$codigoGrupo = isset($_POST["codigoGrupo"]) && $_POST["codigoGrupo"] !== ""    ? "'" . $_POST["codigoGrupo"] . "'" : null;
-	
+		$codRegra = $_POST["codRegra"];
+		if ($codRegra == ""){
+			$codRegra = null;
+		}
+
 		$apiEntrada = array(
-			'idEmpresa' => $idEmpresa,
-			'codigoGrupo' => $codigoGrupo,
+			'codRegra' => $codRegra,
 		);
 		
 		$regra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'GET');
