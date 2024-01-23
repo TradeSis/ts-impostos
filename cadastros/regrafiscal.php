@@ -16,11 +16,10 @@ include_once(__DIR__ . '/../header.php');
     <div class="container-fluid">
 
         <div class="row ">
-            <BR>
-            <!-- MENSAGENS/ALERTAS -->
+            <!--<BR> MENSAGENS/ALERTAS -->
         </div>
         <div class="row">
-            <BR> <!-- BOTOES AUXILIARES -->
+            <!--<BR> BOTOES AUXILIARES -->
         </div>
         <div class="row d-flex align-items-center justify-content-center mt-1 pt-1 ">
 
@@ -32,13 +31,11 @@ include_once(__DIR__ . '/../header.php');
                 <div class="input-group">
                     <input type="text" class="form-control ts-input" id="buscaCodigoGrupo" placeholder="Buscar por código">
                     <button class="btn btn-primary rounded" type="button" id="buscar"><i class="bi bi-search"></i></button>
-                    <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirGrupoProdutoModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
                 </div>
             </div>
 
         </div>
 
-        <!-- Modal -->
         <div class="modal fade" id="modalRegraFiscal" tabindex="-1" aria-labelledby="modalRegraFiscalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">

@@ -341,7 +341,6 @@ function adicionaRegraFiscal($regras, $codigoGrupo)
           $buscar_regra = mysqli_query(conectaMysql(null), $sql_regra);
           $row_regra = mysqli_fetch_array($buscar_regra, MYSQLI_ASSOC);
        
-          
           if ($row_regra == null) {
             $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigIni'])) : "null";
             $dtVigFin = isset($CaracTrib['dtVigFin']) && $CaracTrib['dtVigFin'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigFin'])) : "null";
@@ -382,7 +381,6 @@ function adicionaRegraFiscal($regras, $codigoGrupo)
 
             $adicionaregraFiscal = mysqli_query(conectaMysql(null), $sql);
           } else {
-            //echo  " Regra existente ";
             $adicionaregraFiscal = " Regra existente ";
           }
 
@@ -390,7 +388,6 @@ function adicionaRegraFiscal($regras, $codigoGrupo)
           $sql_operacao = "SELECT * FROM fiscaloperacao WHERE codigoGrupo = $codigoGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
           $buscar_operacao = mysqli_query(conectaMysql(null), $sql_operacao);
           $row_operacao = mysqli_fetch_array($buscar_operacao, MYSQLI_ASSOC);
-          //echo 'OPERACAO ' . json_encode($row_operacao);
 
           if ($row_operacao == null) {
             $sql = " INSERT INTO fiscaloperacao (codigoGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, codRegra) 
@@ -398,7 +395,6 @@ function adicionaRegraFiscal($regras, $codigoGrupo)
 
             $adicionaOpercaoFiscal = mysqli_query(conectaMysql(null), $sql);
           } else {
-            //echo 'Operação Fiscal existente';
             $adicionaOpercaoFiscal = " Operação Fiscal existente ";
           }
           return $adicionaOpercaoFiscal;

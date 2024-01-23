@@ -105,22 +105,22 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
                         $getTab = '';
                     } ?>
                     <select class="form-select mt-2" id="subtabServices" style="color:#000; width:160px;text-align:center; ">
-                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=ncm" 
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=ncm" 
                         <?php if ($getTab == "ncm") {echo " selected ";} ?>>NCM/CEST</option>
 
-                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=operacoes" 
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=operacoes" 
                         <?php if ($getTab == "operacoes") {echo " selected ";} ?>>Operações</option>
 
-                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=grupoproduto" 
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=grupoproduto" 
                         <?php if ($getTab == "grupoproduto") {echo " selected ";} ?>>Grupo Produto</option>
 
-                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=operacaofiscal" 
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=operacaofiscal" 
                         <?php if ($getTab == "operacaofiscal") {echo " selected ";} ?>>Operação Fiscal</option>
 
-                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=regrafiscal" 
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=regrafiscal" 
                         <?php if ($getTab == "regrafiscal") {echo " selected ";} ?>>Regra Fiscal</option>
 
-                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=configuracao" 
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=configuracao" 
                         <?php if ($getTab == "configuracao") {echo " selected ";} ?>>Configurações</option>
                     </select>
                 </div>
