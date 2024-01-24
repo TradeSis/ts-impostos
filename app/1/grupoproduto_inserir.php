@@ -61,16 +61,20 @@ if (isset($jsonEntrada['codigoGrupo'])) {
     }
     //LOG
 
+
+
     //TRY-CATCH
     try {
-
+        
         $atualizar = mysqli_query($conexao, $sql);
+        $idGrupo = mysqli_insert_id($conexao);
         if (!$atualizar)
             throw new Exception(mysqli_error($conexao));
 
         $jsonSaida = array(
             "status" => 200,
-            "retorno" => "ok"
+            "retorno" => "ok",
+            "idGrupo" => $idGrupo
         );
     } catch (Exception $e) {
         $jsonSaida = array(

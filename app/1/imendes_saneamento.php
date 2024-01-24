@@ -271,7 +271,7 @@ if (isset($LOG_NIVEL)) {
 
 //echo "IMENDES\n".json_encode($JSON)."\n";
 
-function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo)
+function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo)
 {
   //Atualiza Produto
   $sql_consulta = "SELECT produtos.idProduto FROM produtos WHERE eanProduto = $eanProduto ";
@@ -281,7 +281,7 @@ function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigo
 
   if ($row_consulta !== null) {
     $idProduto = $row_consulta["idProduto"];
-    $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest, codigoGrupo=$codigoGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
+    $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest, idGrupo=$idGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
     WHERE idProduto = $idProduto";
 
     $atualizar = mysqli_query($conexao, $update_produtos);
@@ -418,35 +418,32 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
     $eanProdutos = $grupo['prodEan'];
 
     //Verifica se já tem codigoGrupo
-    $sql_consulta = "SELECT fiscalgrupo.codigoGrupo, fiscalgrupo.codigoNcm, fiscalgrupo.codigoCest FROM fiscalgrupo WHERE codigoGrupo = $codigoGrupo ";
+    $sql_consulta = "SELECT fiscalgrupo.idGrupo, fiscalgrupo.codigoGrupo, fiscalgrupo.codigoNcm, fiscalgrupo.codigoCest FROM fiscalgrupo WHERE codigoGrupo = $codigoGrupo ";
     $buscar_consulta = mysqli_query(conectaMysql(null), $sql_consulta);
     $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
-    $codigoGrupo = isset($row_consulta["codigoGrupo"]) && $row_consulta["codigoGrupo"] !== "null"    ? "'" . $row_consulta["codigoGrupo"] . "'" : "null";
-    $codigoNcm = isset($row_consulta["codigoNcm"]) && $row_consulta["codigoNcm"] !== "null"    ? "'" . $row_consulta["codigoNcm"] . "'" : "null";
-    $codigoCest = isset($row_consulta["codigoCest"]) && $row_consulta["codigoCest"] !== "null"    ? "'" . $row_consulta["codigoCest"] . "'" : "null";
-
-
-    if ($codigoGrupo != "null") {
-      foreach ($eanProdutos as $eanProduto) {
-        $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo);
+  
+    if ($row_consulta != null) {
+      if($row_consulta["codigoGrupo"] != "null"){
+        $idGrupo = $row_consulta["idGrupo"];
+        $codigoGrupo = isset($row_consulta["codigoGrupo"]) && $row_consulta["codigoGrupo"] !== "null"    ? "'" . $row_consulta["codigoGrupo"] . "'" : "null";
+        $codigoNcm = isset($row_consulta["codigoNcm"]) && $row_consulta["codigoNcm"] !== "null"    ? "'" . $row_consulta["codigoNcm"] . "'" : "null";
+        $codigoCest = isset($row_consulta["codigoCest"]) && $row_consulta["codigoCest"] !== "null"    ? "'" . $row_consulta["codigoCest"] . "'" : "null";
+  
+  
+        foreach ($eanProdutos as $eanProduto) {
+          $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
+        }
+        $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $grupo['codigo']);
+        $jsonSaida = array(
+          "status" => 200,
+          "retorno" => "codigo do Grupo existente",
+          "codigoGrupo" => $codigoGrupo
+        );
       }
-      $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $grupo['codigo']);
-      $jsonSaida = array(
-        "status" => 200,
-        "retorno" => "codigo do Grupo existente",
-        "codigoGrupo" => $codigoGrupo
-      );
+      
     } else {
-
       $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $grupo['codigo']);
-      $codigoGrupo = "'" . $grupo['codigo'] . "'";
-      $codigoCest = "'" . $grupo['cEST'] .  "'";
-      $codigoNcm = "'" . $grupo['nCM'] . "'";
-
-      foreach ($eanProdutos as $eanProduto) {
-        $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo);
-      }
-
+  
       $apiEntrada = array(
         'idEmpresa' => $idEmpresa,
         'codigoGrupo' => $grupo['codigo'],
@@ -476,7 +473,14 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       }
 
       $inserirGrupo = chamaAPI(null, '/impostos/grupoproduto', json_encode($apiEntrada), 'PUT');
+      
+      $idGrupo = $inserirGrupo['idGrupo'];
+      $codigoCest = "'" . $grupo['cEST'] .  "'";
+      $codigoNcm = "'" . $grupo['nCM'] . "'";
 
+      foreach ($eanProdutos as $eanProduto) {
+        $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
+      }
       
       //TRY-CATCH
       try {
