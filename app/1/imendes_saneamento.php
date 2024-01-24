@@ -318,7 +318,7 @@ function adicionaHistorico($conexao, $retornoImendes)
   return $adicionaHistorico;
 }
 
-function adicionaRegraFiscal($regras, $codigoGrupo)
+function adicionaRegraFiscal($regras, $idGrupo)
 {
   foreach ($regras as $regra) {
 
@@ -335,64 +335,66 @@ function adicionaRegraFiscal($regras, $codigoGrupo)
           $finalidade = isset($CaracTrib['finalidade']) && $CaracTrib['finalidade'] !== "null"    ? "'" . $CaracTrib['finalidade'] . "'" : "null";
           $codRegra = isset($CaracTrib['codRegra']) && $CaracTrib['codRegra'] !== "null"    ? "'" . $CaracTrib['codRegra'] . "'" : "null";
           $codExcecao = isset($CaracTrib['codExcecao']) && $CaracTrib['codExcecao'] !== "null"    ? "'" . $CaracTrib['codExcecao'] . "'" : "null";
-        
+          $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigIni'])) : "null";
+          $dtVigFin = isset($CaracTrib['dtVigFin']) && $CaracTrib['dtVigFin'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigFin'])) : "null";
+          
           //Verifica se existe regrafiscal
-          $sql_regra = "SELECT fiscalregra.codRegra, fiscalregra.codExcecao FROM fiscalregra WHERE codRegra = $codRegra AND codExcecao = $codExcecao ";
+          $sql_regra = "SELECT fiscalregra.idRegra, fiscalregra.codRegra, fiscalregra.codExcecao FROM fiscalregra WHERE codRegra = $codRegra AND codExcecao = $codExcecao ";
           $buscar_regra = mysqli_query(conectaMysql(null), $sql_regra);
           $row_regra = mysqli_fetch_array($buscar_regra, MYSQLI_ASSOC);
-       
-          if ($row_regra == null) {
-            $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigIni'])) : "null";
-            $dtVigFin = isset($CaracTrib['dtVigFin']) && $CaracTrib['dtVigFin'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigFin'])) : "null";
-            $cFOPCaracTrib = isset($CaracTrib['cFOP']) && $CaracTrib['cFOP'] !== "null"    ? "'" . $CaracTrib['cFOP'] . "'" : "null";
-            $cST = isset($CaracTrib['cST']) && $CaracTrib['cST'] !== "null"    ? "'" . $CaracTrib['cST'] . "'" : "null";
-            $cSOSN = isset($CaracTrib['cSOSN']) && $CaracTrib['cSOSN'] !== "null"    ? "'" . $CaracTrib['cSOSN'] . "'" : "null";
-            $aliqIcmsInterna = isset($CaracTrib['aliqIcmsInterna']) && $CaracTrib['aliqIcmsInterna'] !== "null"    ? "'" . $CaracTrib['aliqIcmsInterna'] . "'" : "null";
-            $aliqIcmsInterestadual = isset($CaracTrib['aliqIcmsInterestadual']) && $CaracTrib['aliqIcmsInterestadual'] !== "null"    ? "'" . $CaracTrib['aliqIcmsInterestadual'] . "'" : "null";
-            $reducaoBcIcms = isset($CaracTrib['reducaoBcIcms']) && $CaracTrib['reducaoBcIcms'] !== "null"    ? "'" . $CaracTrib['reducaoBcIcms'] . "'" : "null";
-            $reducaoBcIcmsSt = isset($CaracTrib['reducaoBcIcmsSt']) && $CaracTrib['reducaoBcIcmsSt'] !== "null"    ? "'" . $CaracTrib['reducaoBcIcmsSt'] . "'" : "null";
-            $redBcICMsInterestadual = isset($CaracTrib['redBcICMsInterestadual']) && $CaracTrib['redBcICMsInterestadual'] !== "null"    ? "'" . $CaracTrib['redBcICMsInterestadual'] . "'" : "null";
-            $aliqIcmsSt = isset($CaracTrib['aliqIcmsSt']) && $CaracTrib['aliqIcmsSt'] !== "null"    ? "'" . $CaracTrib['aliqIcmsSt'] . "'" : "null";
-            $iVA = isset($CaracTrib['iVA']) && $CaracTrib['iVA'] !== "null"    ? "'" . $CaracTrib['iVA'] . "'" : "null";
-            $iVAAjust = isset($CaracTrib['iVAAjust']) && $CaracTrib['iVAAjust'] !== "null"    ? "'" . $CaracTrib['iVAAjust'] . "'" : "null";
-            $fCP = isset($CaracTrib['fCP']) && $CaracTrib['fCP'] !== "null"    ? "'" . $CaracTrib['fCP'] . "'" : "null";
-            $codBenef = isset($CaracTrib['codBenef']) && $CaracTrib['codBenef'] !== "null"    ? "'" . $CaracTrib['codBenef'] . "'" : "null";
-            $pDifer = isset($CaracTrib['pDifer']) && $CaracTrib['pDifer'] !== "null"    ? "'" . $CaracTrib['pDifer'] . "'" : "null";
-            $pIsencao = isset($CaracTrib['pIsencao']) && $CaracTrib['pIsencao'] !== "null"    ? "'" . $CaracTrib['pIsencao'] . "'" : "null";
-            $antecipado = isset($CaracTrib['antecipado']) && $CaracTrib['antecipado'] !== "null"    ? "'" . $CaracTrib['antecipado'] . "'" : "'N'";
-            $desonerado = isset($CaracTrib['desonerado']) && $CaracTrib['desonerado'] !== "null"    ? "'" . $CaracTrib['desonerado'] . "'" : "'N'";
-            $pICMSDeson = isset($CaracTrib['pICMSDeson']) && $CaracTrib['pICMSDeson'] !== "null"    ? "'" . $CaracTrib['pICMSDeson'] . "'" : "null";
-            $isento = isset($CaracTrib['isento']) && $CaracTrib['isento'] !== "null"    ? "'" . $CaracTrib['isento'] . "'" : "'N'";
-            $tpCalcDifal = isset($CaracTrib['tpCalcDifal']) && $CaracTrib['tpCalcDifal'] !== "null"    ? "'" . $CaracTrib['tpCalcDifal'] . "'" : "null";
-            $ampLegal = str_replace("'", "", $CaracTrib['ampLegal']);
-            $ampLegal_formatada = isset($ampLegal) && $ampLegal !== "null"    ? "'" .  $ampLegal . "'" : "null";
-            //$Protocolo = isset($CaracTrib['Protocolo']) && $CaracTrib['Protocolo'] !== "null"    ? "'" . $CaracTrib['Protocolo'] . "'" : "null";
-            //$Convenio = isset($CaracTrib['Convenio']) && $CaracTrib['Convenio'] !== "null"    ? "'" . $CaracTrib['Convenio'] . "'" : "null";
-            $regraGeral = isset($CaracTrib['regraGeral']) && $CaracTrib['regraGeral'] !== "null"    ? "'" . $CaracTrib['regraGeral'] . "'" : "null";
           
-            $sql = " INSERT INTO fiscalregra (codRegra, codExcecao, dtVigIni,
-            dtVigFin, cFOPCaracTrib, cST, cSOSN, aliqIcmsInterna, aliqIcmsInterestadual, reducaoBcIcms, reducaoBcIcmsSt, redBcICMsInterestadual,
-            aliqIcmsSt, iVA, iVAAjust, fCP, codBenef, pDifer, pIsencao, antecipado, desonerado, pICMSDeson, isento, tpCalcDifal, ampLegal,
-            Protocolo, Convenio, regraGeral) 
-            VALUES ($codRegra, $codExcecao, $dtVigIni,
-            $dtVigFin , $cFOPCaracTrib, $cST, $cSOSN, $aliqIcmsInterna, $aliqIcmsInterestadual, $reducaoBcIcms, $reducaoBcIcmsSt, $redBcICMsInterestadual,
-            $aliqIcmsSt, $iVA, $iVAAjust, $fCP, $codBenef, $pDifer, $pIsencao, $antecipado, $desonerado, $pICMSDeson, $isento, $tpCalcDifal, $ampLegal_formatada,
-            null, null, $regraGeral) ";
-
-            $adicionaregraFiscal = mysqli_query(conectaMysql(null), $sql);
+          if ($row_regra == null) {
+            $apiEntrada = array(
+              'codRegra' => $CaracTrib['codRegra'],
+              'codExcecao' => $CaracTrib['codExcecao'],
+              'dtVigIni' =>  $dtVigIni,
+              'dtVigFin' =>  $dtVigFin,
+              'cFOPCaracTrib' =>  $CaracTrib['cFOP'],
+              'cST' => $CaracTrib['cST'],
+              'cSOSN' =>  $CaracTrib['cSOSN'],
+              'aliqIcmsInterna' => $CaracTrib['aliqIcmsInterna'],
+              'aliqIcmsInterestadual' => $CaracTrib['aliqIcmsInterestadual'],
+              'reducaoBcIcms' => $CaracTrib['reducaoBcIcms'],
+              'reducaoBcIcmsSt' => $CaracTrib['reducaoBcIcmsSt'],
+              'redBcICMsInterestadual' => $CaracTrib['redBcICMsInterestadual'],
+              'aliqIcmsSt' => $CaracTrib['aliqIcmsSt'],
+              'iVA' => $CaracTrib['iVA'],
+              'iVAAjust' => $CaracTrib['iVAAjust'],
+              'fCP' => $CaracTrib['fCP'],
+              'codBenef' => $CaracTrib['codBenef'],
+              'pDifer' => $CaracTrib['pDifer'],
+              'pIsencao' => $CaracTrib['pIsencao'],
+              'antecipado' => $CaracTrib['antecipado'],
+              'desonerado' => $CaracTrib['desonerado'],
+              'pICMSDeson' => $CaracTrib['pICMSDeson'],
+              '$isento' => $CaracTrib['isento'],
+              '$tpCalcDifal' => $CaracTrib['tpCalcDifal'],
+              '$ampLegal' => $ampLegal = str_replace("'", "", $CaracTrib['ampLegal']),
+              '$ampLegal_formatada' => $ampLegal,
+              //'$Protocolo' => $CaracTrib['Protocolo'],
+              //'$Convenio' => $CaracTrib['Convenio'],
+              '$regraGeral' => $CaracTrib['regraGeral'],
+            
+            );
+            
+            $inserirRegra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'PUT');
+            $idRegra = $inserirRegra['idRegra'];
+           
           } else {
             $adicionaregraFiscal = " Regra existente ";
           }
 
           //Verifica se existe operacaofiscal
-          $sql_operacao = "SELECT * FROM fiscaloperacao WHERE idGrupo = $codigoGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
+          $sql_operacao = "SELECT * FROM fiscaloperacao WHERE idGrupo = $idGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
           $buscar_operacao = mysqli_query(conectaMysql(null), $sql_operacao);
           $row_operacao = mysqli_fetch_array($buscar_operacao, MYSQLI_ASSOC);
 
+          //echo 'ROW OPERACAO' . json_encode($row_operacao) . "\n";
+
           if ($row_operacao == null) {
             $sql = " INSERT INTO fiscaloperacao (idGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, idRegra) 
-            VALUES ($codigoGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $codRegra) ";
-
+            VALUES ($idGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $idRegra) ";
+//echo "__ ID2 __ " . $idRegra . "\n";
             $adicionaOpercaoFiscal = mysqli_query(conectaMysql(null), $sql);
           } else {
             $adicionaOpercaoFiscal = " Operação Fiscal existente ";
@@ -433,7 +435,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
         foreach ($eanProdutos as $eanProduto) {
           $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
         }
-        $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $grupo['codigo']);
+        $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $idGrupo);
         $jsonSaida = array(
           "status" => 200,
           "retorno" => "codigo do Grupo existente",
@@ -442,8 +444,6 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       }
       
     } else {
-      $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $grupo['codigo']);
-  
       $apiEntrada = array(
         'idEmpresa' => $idEmpresa,
         'codigoGrupo' => $grupo['codigo'],
@@ -477,6 +477,8 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       $idGrupo = $inserirGrupo['idGrupo'];
       $codigoCest = "'" . $grupo['cEST'] .  "'";
       $codigoNcm = "'" . $grupo['nCM'] . "'";
+
+      $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $idGrupo);
 
       foreach ($eanProdutos as $eanProduto) {
         $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
