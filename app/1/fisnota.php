@@ -12,8 +12,10 @@ $notas = array();
 $sql = "SELECT fisnota.*, 
         emitente.cpfCnpj AS emitente_cpfCnpj, emitente.nomePessoa AS emitente_nomePessoa, emitente.IE AS emitente_IE, emitente.municipio AS emitente_municipio, emitente.codigoEstado AS emitente_codigoEstado, emitente.pais AS emitente_pais, 
         destinatario.cpfCnpj AS destinatario_cpfCnpj, destinatario.nomePessoa AS destinatario_nomePessoa, destinatario.IE AS destinatario_IE, destinatario.municipio AS destinatario_municipio, destinatario.codigoEstado AS destinatario_codigoEstado, destinatario.pais AS destinatario_pais FROM fisnota
-        LEFT JOIN pessoas AS emitente ON fisnota.idPessoaEmitente = emitente.idPessoa
-        LEFT JOIN pessoas AS destinatario ON fisnota.idPessoaDestinatario = destinatario.idPessoa ";
+        LEFT JOIN pessoas AS emit ON fisnota.idPessoaEmitente = emit.idPessoa
+        LEFT JOIN pessoas  AS dest ON fisnota.idPessoaDestinatario = dest.idPessoa
+        LEFT JOIN local_impostos.geralpessoas AS emitente ON emit.cpfCnpj = emitente.cpfCnpj
+        LEFT JOIN local_impostos.geralpessoas AS destinatario ON dest.cpfCnpj = destinatario.cpfCnpj  ";
 $where = " where ";
 if (isset($jsonEntrada["idNota"])) {
   $sql = $sql . $where . " fisnota.idNota = " . $jsonEntrada["idNota"];
