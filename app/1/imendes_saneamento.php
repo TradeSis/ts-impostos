@@ -320,6 +320,9 @@ function adicionaHistorico($conexao, $retornoImendes)
 
 function adicionaRegraFiscal($regras, $idGrupo)
 {
+  
+  $returnRegraFiscal = "";
+
   foreach ($regras as $regra) {
 
     foreach ($regra as $ufs) {
@@ -378,7 +381,9 @@ function adicionaRegraFiscal($regras, $idGrupo)
 
             $inserirRegra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'PUT');
             $idRegra = $inserirRegra['idRegra'];
-
+          } else {
+            $idRegra = $row_regra['idRegra'];
+          }
 
             //Verifica se existe operacaofiscal
             $sql_operacao = "SELECT * FROM fiscaloperacao WHERE idGrupo = $idGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
@@ -389,20 +394,19 @@ function adicionaRegraFiscal($regras, $idGrupo)
               $sql = " INSERT INTO fiscaloperacao (idGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, idRegra) 
               VALUES ($idGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $idRegra) ";
 
-              $adicionaOpercaoFiscal = mysqli_query(conectaMysql(null), $sql);
-            } else {
-              $adicionaOpercaoFiscal = " Operação Fiscal existente ";
-            }
-            return $adicionaOpercaoFiscal;
-          } else {
-            $adicionaregraFiscal = " Regra existente ";
-          }
-        }
+              $inserirfiscaloperacao = mysqli_query(conectaMysql(null), $sql);
+              if($inserirfiscaloperacao==null) {
+                  $returnRegraFiscal = "erro inserir operacao";
+              } 
+              
+            } 
+         }
+        
       }
     }
   }
 
-  return $adicionaregraFiscal;
+  return $returnRegraFiscal;
 }
 
 $retornoImendes = $JSON;
