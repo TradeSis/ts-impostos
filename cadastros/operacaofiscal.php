@@ -192,7 +192,7 @@ $grupoprodutos = buscaCodigoGrupos();
                         linha = linha + "<td>" + object.codigoCaracTrib + "</td>";
                         linha = linha + "<td>" + object.finalidade + "</td>";
                         linha = linha + "<td>" + object.idRegra + "</td>";
-                        linha = linha + "<td>" + "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#modalRegraFiscal' data-codRegra='" + object.idRegra + "'><i class='bi bi-eye'></i></button> ";
+                        linha = linha + "<td>" + "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#modalRegraFiscal' data-idRegra='" + object.idRegra + "'><i class='bi bi-eye'></i></button> ";
                         linha = linha + "</tr>";
                     }
                     $("#dados").html(linha);
@@ -211,14 +211,14 @@ $grupoprodutos = buscaCodigoGrupos();
         });
 
         $(document).on('click', 'button[data-bs-target="#modalRegraFiscal"]', function() {
-            var codRegra = $(this).attr("data-codRegra");
-            //alert(codRegra)
+            var idRegra = $(this).attr("data-idRegra");
+            //alert(idRegra)
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
-                url: '../database/regrafiscal.php?operacao=buscarCodRegra',
+                url: '../database/regrafiscal.php?operacao=buscar',
                 data: {
-                    codRegra: codRegra
+                    idRegra: idRegra
                 },
                 success: function(data) {
                     $('#codRegra_regrafiscal').val(data.codRegra);

@@ -59,7 +59,7 @@ if (isset($_GET['operacao'])) {
 
 	}
 
-	if ($operacao == "buscarIdRegra") {
+	if ($operacao == "buscar") {
 		$idRegra = $_POST["idRegra"];
 
 		if ($idRegra == ""){
@@ -76,21 +76,6 @@ if (isset($_GET['operacao'])) {
 		return $regra;
 	}
 
-	if ($operacao == "buscarCodRegra") {
-		$codRegra = $_POST["codRegra"];
-		if ($codRegra == ""){
-			$codRegra = null;
-		} 
-
-		$apiEntrada = array(
-			'codRegra' => $codRegra,
-		);
-		
-		$regra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'GET');
-
-		echo json_encode($regra);
-		return $regra;
-	}
 
 	if ($operacao == "filtrar") {
 

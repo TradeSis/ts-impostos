@@ -280,7 +280,7 @@ include_once(__DIR__ . '/../header.php');
             $.ajax({
                 type: 'POST',
                 dataType: 'json',
-                url: '../database/regrafiscal.php?operacao=buscarIdRegra',
+                url: '../database/regrafiscal.php?operacao=buscar',
                 data: {
                     idRegra: idRegra
                 },

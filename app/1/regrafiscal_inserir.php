@@ -25,7 +25,7 @@ if (isset($LOG_NIVEL)) {
 $conexao = conectaMysql(null);
 
 $codRegra = isset($jsonEntrada['codRegra']) && $jsonEntrada['codRegra'] !== "" ? "'" . $jsonEntrada['codRegra'] . "'" : "NULL";
-$codExcecao  = isset($jsonEntrada['codExcecao ']) && $jsonEntrada['codExcecao '] !== "" ? "'" . $jsonEntrada['codExcecao '] . "'" : "NULL";
+$codExcecao  = isset($jsonEntrada['codExcecao']) && $jsonEntrada['codExcecao'] !== "" ? "'" . $jsonEntrada['codExcecao'] . "'" : "NULL";
 $dtVigIni = isset($jsonEntrada['dtVigIni']) && $jsonEntrada['dtVigIni'] !== "" ? "'" . $jsonEntrada['dtVigIni'] . "'" : "NULL";
 $dtVigFin = isset($jsonEntrada['dtVigFin']) && $jsonEntrada['dtVigFin'] !== "" ? "'" . $jsonEntrada['dtVigFin'] . "'" : "NULL";
 $cFOPCaracTrib = isset($jsonEntrada['cFOPCaracTrib']) && $jsonEntrada['cFOPCaracTrib'] !== "" ? "'" . $jsonEntrada['cFOPCaracTrib'] . "'" : "NULL";
