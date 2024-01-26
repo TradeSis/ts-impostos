@@ -26,6 +26,7 @@ if (isset($jsonEntrada["idEmpresa"])) {
 }
 
 $conexao = conectaMysql($idEmpresa);
+$conexaogeral = conectaMysql(null);
 
 //APIFISCA
 $sql_apifiscal = "SELECT apifiscal.login,apifiscal.senha,apifiscal.tpAmb,apifiscal.cfopEntrada,apifiscal.finalidade FROM apifiscal WHERE idEmpresa = $idEmpresa ";
@@ -80,60 +81,67 @@ if ($row_apifiscal['finalidade'] == null) {
 
 //EMPRESA
 $sql_empresa = "SELECT empresa.idPessoa FROM empresa WHERE idEmpresa = $idEmpresa ";
-$buscar_empresa = mysqli_query(conectaMysql(null), $sql_empresa);
+$buscar_empresa = mysqli_query($conexaogeral, $sql_empresa);
 $row_empresa = mysqli_fetch_array($buscar_empresa, MYSQLI_ASSOC);
-
 $idPessoaEmpresa = $row_empresa['idPessoa'];
 
 //PESSOAS
-$sql_empresaPessoa = "SELECT pessoas.codigoEstado, pessoas.cpfCnpj, pessoas.cnae, pessoas.regimeEspecial, pessoas.regimeTrib, pessoas.crt, pessoas.origem FROM pessoas WHERE idPessoa = $idPessoaEmpresa "; //empresaPessoa
-$buscar_empresaPessoa = mysqli_query($conexao, $sql_empresaPessoa);
-$row_empresaPessoa = mysqli_fetch_array($buscar_empresaPessoa, MYSQLI_ASSOC);
+$sql_empresa = "SELECT * FROM pessoas WHERE idPessoa = $idPessoaEmpresa ";
+$buscar_empresa = mysqli_query($conexao, $sql_empresa);
+$row_empresa = mysqli_fetch_array($buscar_empresa, MYSQLI_ASSOC);
+$cpfCnpjEmpresa = $row_empresa['cpfCnpj'];
+
+//GERALPESSOAS 
+$sql_geralPessoa = "SELECT geralpessoas.codigoEstado, geralpessoas.cpfCnpj, geralpessoas.cnae, geralpessoas.regimeEspecial, geralpessoas.regimeTrib, geralpessoas.crt, geralpessoas.origem,
+geralpessoas.caracTrib FROM geralpessoas WHERE cpfCnpj = $cpfCnpjEmpresa ";
+$buscar_geralPessoa = mysqli_query($conexaogeral, $sql_geralPessoa);
+$row_geralPessoa = mysqli_fetch_array($buscar_geralPessoa, MYSQLI_ASSOC);
+
 if (isset($LOG_NIVEL)) {
   if ($LOG_NIVEL >= 2) {
-    fwrite($arquivo, $identificacao . "-empresaPESSOA->" . json_encode($row_empresaPessoa) . "\n");
+    fwrite($arquivo, $identificacao . "-geralPESSOA->" . json_encode($row_geralPessoa) . "\n");
   }
 }
 
-$cpfCnpj = $row_empresaPessoa['cpfCnpj'];
-$cnae = $row_empresaPessoa['cnae'];
-if (!$row_empresaPessoa['cnae']) {
+$cpfCnpj = $row_geralPessoa['cpfCnpj'];
+$cnae = $row_geralPessoa['cnae'];
+if (!$row_geralPessoa['cnae']) {
   $jsonSaida = array(
     "status" => 400,
-    "retorno" => "empresaPessoa.cnae não informado"
+    "retorno" => "geralPessoa.cnae não informado"
   );
   return;
 }
-$regimeEspecial = $row_empresaPessoa['regimeEspecial'];
-if (!$row_empresaPessoa['regimeEspecial']) {
+$regimeEspecial = $row_geralPessoa['regimeEspecial'];
+if (!$row_geralPessoa['regimeEspecial']) {
   $jsonSaida = array(
     "status" => 400,
-    "retorno" => "empresaPessoa.regimeEspecial não informado"
+    "retorno" => "geralPessoa.regimeEspecial não informado"
   );
   return;
 }
-$regimeTrib = $row_empresaPessoa['regimeTrib'];
-if (!$row_empresaPessoa['regimeTrib']) {
+$regimeTrib = $row_geralPessoa['regimeTrib'];
+if (!$row_geralPessoa['regimeTrib']) {
   $jsonSaida = array(
     "status" => 400,
-    "retorno" => "empresaPessoa.regimeTrib não informado"
+    "retorno" => "geralPessoa.regimeTrib não informado"
   );
   return;
 }
-$codigoEstado = $row_empresaPessoa['codigoEstado'];
-$crt = (int)$row_empresaPessoa['crt'];
-if (!$row_empresaPessoa['crt']) {
+$codigoEstado = $row_geralPessoa['codigoEstado'];
+$crt = (int)$row_geralPessoa['crt'];
+if (!$row_geralPessoa['crt']) {
   $jsonSaida = array(
     "status" => 400,
-    "retorno" => "empresaPessoa.crt não informado"
+    "retorno" => "geralPessoa.crt não informado"
   );
   return;
 }
-$origem = $row_empresaPessoa['origem'];
+$origem = $row_geralPessoa['origem'];
 if (!isset($origem)) {
   $jsonSaida = array(
     "status" => 400,
-    "retorno" => "empresaPessoa.origem  não informado"
+    "retorno" => "geralPessoa.origem  não informado"
   );
   return;
 }
@@ -143,11 +151,19 @@ if ($regimeTrib == 'SN') {
   $simplesN = 'N';
 }
 
+$caracTrib = isset($row_geralPessoa['caracTrib']) && $row_geralPessoa['caracTrib'] !== "null" ? (int)$row_geralPessoa['caracTrib'] : "null";
+if ($row_geralPessoa['caracTrib'] == null) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "geralPessoa.caracTrib não informado"
+  );
+  return;
+}
+
 
 if (isset($jsonEntrada["idProduto"])) {
-  //echo 'idProduto ' . $jsonEntrada["idProduto"];
   //PRODUTOS
-  $sql_produtos = "SELECT produtos.nomeProduto, produtos.codigoNcm, produtos.codigoNcm, produtos.eanProduto, produtos.idPessoaFornecedor FROM produtos WHERE idProduto = " . $jsonEntrada["idProduto"] . " ";
+  $sql_produtos = "SELECT produtos.nomeProduto, produtos.codigoNcm, produtos.codigoNcm, produtos.eanProduto FROM produtos WHERE idProduto = " . $jsonEntrada["idProduto"] . " ";
   $buscar_produtos = mysqli_query($conexao, $sql_produtos);
   $row_produtos = mysqli_fetch_array($buscar_produtos, MYSQLI_ASSOC);
   if (isset($LOG_NIVEL)) {
@@ -159,30 +175,8 @@ if (isset($jsonEntrada["idProduto"])) {
   $nomeProduto = $row_produtos['nomeProduto'];
   $codigoNcm = $row_produtos['codigoNcm'];
   $eanProduto = $row_produtos['eanProduto'];
-  $idPessoaFornecedor = $row_produtos['idPessoaFornecedor'];
 }
 
-//PESSOA FORNECEDOR
-$sql_pessoaFornecedor = "SELECT pessoas.codigoEstado, pessoas.caracTrib FROM pessoas WHERE idPessoa = $idPessoaFornecedor ";
-$buscar_pessoaFornecedor = mysqli_query($conexao, $sql_pessoaFornecedor);
-$row_pessoaFornecedor = mysqli_fetch_array($buscar_pessoaFornecedor, MYSQLI_ASSOC);
-
-if (isset($LOG_NIVEL)) {
-  if ($LOG_NIVEL >= 2) {
-    fwrite($arquivo, $identificacao . "-pessoaFORNECEDOR->" . json_encode($row_pessoaFornecedor) . "\n");
-  }
-}
-
-$codigoEstadoFornecedor = $row_pessoaFornecedor['codigoEstado'];
-
-$caracTrib = isset($row_pessoaFornecedor['caracTrib']) && $row_pessoaFornecedor['caracTrib'] !== "null" ? (int)$row_pessoaFornecedor['caracTrib'] : "null";
-if ($row_pessoaFornecedor['caracTrib'] == null) {
-  $jsonSaida = array(
-    "status" => 400,
-    "retorno" => "empresaPessoa.caracTrib não informado"
-  );
-  return;
-}
 
 $emit = array(
   'amb' => $amb,
@@ -197,7 +191,7 @@ $emit = array(
 );
 
 $ufPerfil = array(
-  $codigoEstadoFornecedor
+  $codigoEstado
 );
 
 $caracTrib = array(
@@ -243,7 +237,6 @@ if (isset($LOG_NIVEL)) {
   }
 }
 
-
 // CHAMADA IMENDES
 $JSON = chamaAPI(
   "http://consultatributos.com.br:8080",
@@ -252,6 +245,7 @@ $JSON = chamaAPI(
   "POST",
   $apiHeaders
 );
+//echo "IMENDES\n".json_encode($JSON)."\n";
 
 
 $produtoNaoRetornado = $JSON['Cabecalho']['prodNaoRet'];
@@ -269,7 +263,7 @@ if (isset($LOG_NIVEL)) {
   }
 }
 
-//echo "IMENDES\n".json_encode($JSON)."\n";
+
 
 function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo)
 {
@@ -318,7 +312,7 @@ function adicionaHistorico($conexao, $retornoImendes)
   return $adicionaHistorico;
 }
 
-function adicionaRegraFiscal($regras, $idGrupo)
+function adicionaRegraFiscal($conexaogeral, $regras, $idGrupo)
 {
   
   $returnRegraFiscal = "";
@@ -343,7 +337,7 @@ function adicionaRegraFiscal($regras, $idGrupo)
 
           //Verifica se existe regrafiscal
           $sql_regra = "SELECT fiscalregra.idRegra, fiscalregra.codRegra, fiscalregra.codExcecao FROM fiscalregra WHERE codRegra = $codRegra AND codExcecao = $codExcecao ";
-          $buscar_regra = mysqli_query(conectaMysql(null), $sql_regra);
+          $buscar_regra = mysqli_query($conexaogeral, $sql_regra);
           $row_regra = mysqli_fetch_array($buscar_regra, MYSQLI_ASSOC);
 
           if ($row_regra == null) {
@@ -387,14 +381,14 @@ function adicionaRegraFiscal($regras, $idGrupo)
 
             //Verifica se existe operacaofiscal
             $sql_operacao = "SELECT * FROM fiscaloperacao WHERE idGrupo = $idGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
-            $buscar_operacao = mysqli_query(conectaMysql(null), $sql_operacao);
+            $buscar_operacao = mysqli_query($conexaogeral, $sql_operacao);
             $row_operacao = mysqli_fetch_array($buscar_operacao, MYSQLI_ASSOC);
 
             if ($row_operacao == null) {
               $sql = " INSERT INTO fiscaloperacao (idGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, idRegra) 
               VALUES ($idGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $idRegra) ";
 
-              $inserirfiscaloperacao = mysqli_query(conectaMysql(null), $sql);
+              $inserirfiscaloperacao = mysqli_query($conexaogeral, $sql);
               if($inserirfiscaloperacao==null) {
                   $returnRegraFiscal = "erro inserir operacao";
               } 
@@ -422,7 +416,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
 
     //Verifica se já tem codigoGrupo
     $sql_consulta = "SELECT fiscalgrupo.idGrupo, fiscalgrupo.codigoGrupo, fiscalgrupo.codigoNcm, fiscalgrupo.codigoCest FROM fiscalgrupo WHERE codigoGrupo = $codigoGrupo ";
-    $buscar_consulta = mysqli_query(conectaMysql(null), $sql_consulta);
+    $buscar_consulta = mysqli_query($conexaogeral, $sql_consulta);
     $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
 
     if ($row_consulta != null) {
@@ -436,7 +430,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
         foreach ($eanProdutos as $eanProduto) {
           $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
         }
-        $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $idGrupo);
+        $regrafiscal = adicionaRegraFiscal($conexaogeral, $grupo['Regras'], $idGrupo);
         $jsonSaida = array(
           "status" => 200,
           "retorno" => "codigo do Grupo existente",
@@ -478,7 +472,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       $codigoCest = "'" . $grupo['cEST'] .  "'";
       $codigoNcm = "'" . $grupo['nCM'] . "'";
 
-      $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $idGrupo);
+      $regrafiscal = adicionaRegraFiscal($conexaogeral, $grupo['Regras'], $idGrupo);
 
       foreach ($eanProdutos as $eanProduto) {
         $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
