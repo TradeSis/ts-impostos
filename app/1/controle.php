@@ -49,11 +49,17 @@ if ($metodo == "GET") {
       include 'fisnotatotal.php';
       break;
 
-
     case "regrafiscal":
       include 'regrafiscal.php';
       break;
-  
+
+    case "operacaofiscal":
+      include 'operacaofiscal.php';
+      break;
+
+    case "grupoproduto":
+      include 'grupoproduto.php';
+      break;
 
     default:
       $jsonSaida = json_decode(json_encode(
@@ -105,6 +111,17 @@ if ($metodo == "PUT") {
       include 'fisnotaproduimposto_inserir.php';
       break;
 
+    case "grupoproduto":
+      include 'grupoproduto_inserir.php';
+      break;
+
+    case "regrafiscal":
+      include 'regrafiscal_inserir.php';
+      break;
+
+    case "operacaofiscal":
+      include 'operacaofiscal_inserir.php';
+      break;
 
     default:
       $jsonSaida = json_decode(json_encode(

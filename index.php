@@ -65,6 +65,27 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
                                 href="?tab=nfe" role="tab">NFE</a>
                             </li>
                         <?php }
+                        if ($nivelMenu >= 1) { ?>
+                            <li class="nav-item mr-1">
+                                <a class="nav-link 
+                                <?php if ($tab == "grupoproduto") {echo " active ";} ?>" 
+                                href="?tab=grupoproduto" role="tab">Grupo Produto</a>
+                            </li>
+                        <?php }
+                        if ($nivelMenu >= 1) { ?>
+                            <li class="nav-item mr-1">
+                                <a class="nav-link 
+                                <?php if ($tab == "operacaofiscal") {echo " active ";} ?>" 
+                                href="?tab=operacaofiscal" role="tab">Operação Fiscal</a>
+                            </li>
+                        <?php }
+                        if ($nivelMenu >= 1) { ?>
+                            <li class="nav-item mr-1">
+                                <a class="nav-link 
+                                <?php if ($tab == "regrafiscal") {echo " active ";} ?>" 
+                                href="?tab=regrafiscal" role="tab">Regra Fiscal</a>
+                            </li>
+                        <?php }
                         if ($nivelMenu >= 4) { ?>
                             <li class="nav-item mr-1">
                                 <a class="nav-link 
@@ -84,13 +105,22 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
                         $getTab = '';
                     } ?>
                     <select class="form-select mt-2" id="subtabServices" style="color:#000; width:160px;text-align:center; ">
-                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=ncm" 
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=ncm" 
                         <?php if ($getTab == "ncm") {echo " selected ";} ?>>NCM/CEST</option>
 
-                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=operacoes" 
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=operacoes" 
                         <?php if ($getTab == "operacoes") {echo " selected ";} ?>>Operações</option>
 
-                        <option value="<?php echo URLROOT ?>/sistema/index.php?tab=configuracao" 
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=grupoproduto" 
+                        <?php if ($getTab == "grupoproduto") {echo " selected ";} ?>>Grupo Produto</option>
+
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=operacaofiscal" 
+                        <?php if ($getTab == "operacaofiscal") {echo " selected ";} ?>>Operação Fiscal</option>
+
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=regrafiscal" 
+                        <?php if ($getTab == "regrafiscal") {echo " selected ";} ?>>Regra Fiscal</option>
+
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=configuracao" 
                         <?php if ($getTab == "configuracao") {echo " selected ";} ?>>Configurações</option>
                     </select>
                 </div>
@@ -110,6 +140,15 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
             }
             if ($tab == "nfe") {
                 $src = "nfe/nfe.php";
+            }
+            if ($tab == "grupoproduto") {
+                $src = "cadastros/grupoproduto.php";
+            }
+            if ($tab == "operacaofiscal") {
+                $src = "cadastros/operacaofiscal.php";
+            }
+            if ($tab == "regrafiscal") {
+                $src = "cadastros/regrafiscal.php";
             }
             if ($tab == "configuracao") {
                 $src = "configuracao/";

@@ -21,25 +21,24 @@ if (isset($LOG_NIVEL)) {
 }
 //LOG
 
-$idEmpresa = null;
-if (isset($jsonEntrada["idEmpresa"])) {
-    $idEmpresa = $jsonEntrada["idEmpresa"];
-}
 
-$conexao = conectaMysql($idEmpresa);
+$conexao = conectaMysql(null);
 
 $regra = array();
 
-$sql = "SELECT * ,'' AS dtVigIniFormatada ,'' AS dtVigFinFormatada FROM regrafiscal  ";
+$sql = "SELECT * ,'' AS dtVigIniFormatada ,'' AS dtVigFinFormatada FROM fiscalregra  ";
 
-if (isset($jsonEntrada["codigoGrupo"])) {
-    $sql = $sql . " where regrafiscal.codigoGrupo = " . $jsonEntrada["codigoGrupo"];
+if (isset($jsonEntrada["idRegra"])) {
+    $sql = $sql . " where fiscalregra.idRegra = " . "'" . $jsonEntrada["idRegra"] . "'";
 }
-
-if (isset($jsonEntrada["idRegraFiscal"])) {
-    $sql = $sql . " where regrafiscal.idRegraFiscal = " . "'"  . $jsonEntrada["idRegraFiscal"] . "'" ;
+if (isset($jsonEntrada["codRegra"])) {
+    $sql = $sql . " where fiscalregra.codRegra = " . "'" . $jsonEntrada["codRegra"] . "'";
 }
-
+$where = " where ";
+if (isset($jsonEntrada["codigo"])) {
+    $sql = $sql . $where . " fiscalregra.codRegra IS NOT NULL ";
+    $where = " and ";
+}
 
 
 //echo "-SQL->" . $sql . "\n";
@@ -56,11 +55,11 @@ $buscar = mysqli_query($conexao, $sql);
 while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
     array_push($regra, $row);
 
-    if(isset($regra[$rows]["dtVigIni"])){
+    if (isset($regra[$rows]["dtVigIni"])) {
         $dtVigIniFormatada = date('d/m/Y', strtotime($regra[$rows]["dtVigIni"]));
         $regra[$rows]["dtVigIniFormatada"] = $dtVigIniFormatada;
     }
-    if(isset($regra[$rows]["dtVigFin"])){
+    if (isset($regra[$rows]["dtVigFin"])) {
         $dtVigFinFormatada = date('d/m/Y', strtotime($regra[$rows]["dtVigFin"]));
         $regra[$rows]["dtVigFinFormatada"] = $dtVigFinFormatada;
     }
@@ -69,7 +68,10 @@ while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
 }
 
 
-if (isset($jsonEntrada["idRegraFiscal"]) && $rows == 1) {
+if (isset($jsonEntrada["idRegra"]) && $rows == 1) {
+    $regra = $regra[0];
+}
+if (isset($jsonEntrada["codRegra"]) && $rows == 1) {
     $regra = $regra[0];
 }
 $jsonSaida = $regra;
