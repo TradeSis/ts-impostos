@@ -26,6 +26,7 @@ if (isset($jsonEntrada["idEmpresa"])) {
     $idEmpresa = $jsonEntrada["idEmpresa"];
 }
 $conexao = conectaMysql($idEmpresa);
+$conexao2 = conectaMysql(null);
 
 // Pega XML puro
 if (isset($jsonEntrada['xml'])) {
@@ -52,8 +53,8 @@ if (isset($infNFe)) {
                 $cpfCnpj = isset($dados->CPF) && $dados->CPF !== "" ? (string) $dados->CPF : "null";
                 $tipoPessoa = "F";
             }
-            $buscaPessoa = "SELECT * FROM pessoas WHERE cpfCnpj = $cpfCnpj";
-            $buscar = mysqli_query($conexao, $buscaPessoa);
+            $buscaPessoas = "SELECT * FROM pessoas WHERE cpfCnpj = $cpfCnpj";
+            $buscar = mysqli_query($conexao, $buscaPessoas);
             $dadosPessoa = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
             if (mysqli_num_rows($buscar) == 1) {
                 if ($campos == "emit") {
@@ -62,28 +63,39 @@ if (isset($infNFe)) {
                     $idPessoaDestinatario = $dadosPessoa["idPessoa"];
                 }
             } else {
-
-                $dadosEnder = ($campos == "emit") ? $dados->enderEmit : $dados->enderDest;
+                $buscaGeralPessoas = "SELECT * FROM geralpessoas WHERE cpfCnpj = $cpfCnpj";
+                $geralpessoas = mysqli_query($conexao2, $buscaGeralPessoas);
+                $dadosGeralpessoas = mysqli_fetch_array($geralpessoas, MYSQLI_ASSOC);
+                if (mysqli_num_rows($geralpessoas) == 0) {
+                    $dadosEnder = ($campos == "emit") ? $dados->enderEmit : $dados->enderDest;
+    
+                    $geralPessoasEntrada = array(
+                        'cpfCnpj' => $cpfCnpj,
+                        'tipoPessoa' => $tipoPessoa,
+                        'nomePessoa' => (string) $dados->xNome,
+                        'IE' => (string) $dados->IE,
+                        'municipio' => (string) $dadosEnder->xMun,
+                        'codigoCidade' => (string) $dadosEnder->cMun,
+                        'codigoEstado' => (string) $dadosEnder->UF,
+                        'pais' => (string) $dadosEnder->xPais,
+                        'bairro' => (string) $dadosEnder->xBairro,
+                        'endereco' => (string) $dadosEnder->xLgr,
+                        'endNumero' => (string) $dadosEnder->nro,
+                        'CEP' => (string) $dadosEnder->CEP,
+                        'telefone' => (string) $dadosEnder->fone,
+                        'CRT' => (string) $dados->CRT
+                    );
+                    
+                    $geralPessoasRetorno = chamaAPI(null, '/cadastros/geralpessoas', json_encode($geralPessoasEntrada), 'PUT');
+                }
 
                 $pessoasEntrada = array(
                     'idEmpresa' => $idEmpresa,
-                    'cpfCnpj' => $cpfCnpj,
-                    'tipoPessoa' => $tipoPessoa,
-                    'nomePessoa' => (string) $dados->xNome,
-                    'IE' => (string) $dados->IE,
-                    'municipio' => (string) $dadosEnder->xMun,
-                    'codigoCidade' => (string) $dadosEnder->cMun,
-                    'codigoEstado' => (string) $dadosEnder->UF,
-                    'pais' => (string) $dadosEnder->xPais,
-                    'bairro' => (string) $dadosEnder->xBairro,
-                    'endereco' => (string) $dadosEnder->xLgr,
-                    'endNumero' => (string) $dadosEnder->nro,
-                    'CEP' => (string) $dadosEnder->CEP,
-                    'telefone' => (string) $dadosEnder->fone,
-                    'CRT' => (string) $dados->CRT
+                    'cpfCnpj' => $cpfCnpj
                 );
                 
                 $pessoasRetorno = chamaAPI(null, '/cadastros/pessoas', json_encode($pessoasEntrada), 'PUT');
+
                 if ($campos == "emit") {
                     $idPessoaEmitente = $pessoasRetorno["idPessoa"];
                 } elseif ($campos == "dest") {
