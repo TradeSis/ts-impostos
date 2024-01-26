@@ -43,7 +43,7 @@ if (!$row_apifiscal['login']) {
     "status" => 400,
     "retorno" => "apifiscal.login não informado"
   );
-  return;  
+  return;
 }
 $senha = $row_apifiscal['senha'];
 if (!$row_apifiscal['senha']) {
@@ -51,7 +51,7 @@ if (!$row_apifiscal['senha']) {
     "status" => 400,
     "retorno" => "apifiscal.senha não informado"
   );
-  return;  
+  return;
 }
 $amb = $row_apifiscal['tpAmb'];
 if (!$row_apifiscal['tpAmb']) {
@@ -59,7 +59,7 @@ if (!$row_apifiscal['tpAmb']) {
     "status" => 400,
     "retorno" => "apifiscal.tpAmb não informado"
   );
-  return;  
+  return;
 }
 $cfopEntrada = $row_apifiscal['cfopEntrada'];
 if (!$row_apifiscal['cfopEntrada']) {
@@ -67,7 +67,7 @@ if (!$row_apifiscal['cfopEntrada']) {
     "status" => 400,
     "retorno" => "apifiscal.cfopEntrada não informado"
   );
-  return;  
+  return;
 }
 $finalidade = isset($row_apifiscal['finalidade']) && $row_apifiscal['finalidade'] !== "null" ? (int)$row_apifiscal['finalidade'] : "null";
 if ($row_apifiscal['finalidade'] == null) {
@@ -75,7 +75,7 @@ if ($row_apifiscal['finalidade'] == null) {
     "status" => 400,
     "retorno" => "apifiscal.finalidade não informado"
   );
-  return;  
+  return;
 }
 
 //EMPRESA
@@ -102,7 +102,7 @@ if (!$row_empresaPessoa['cnae']) {
     "status" => 400,
     "retorno" => "empresaPessoa.cnae não informado"
   );
-  return;  
+  return;
 }
 $regimeEspecial = $row_empresaPessoa['regimeEspecial'];
 if (!$row_empresaPessoa['regimeEspecial']) {
@@ -110,7 +110,7 @@ if (!$row_empresaPessoa['regimeEspecial']) {
     "status" => 400,
     "retorno" => "empresaPessoa.regimeEspecial não informado"
   );
-  return;  
+  return;
 }
 $regimeTrib = $row_empresaPessoa['regimeTrib'];
 if (!$row_empresaPessoa['regimeTrib']) {
@@ -118,7 +118,7 @@ if (!$row_empresaPessoa['regimeTrib']) {
     "status" => 400,
     "retorno" => "empresaPessoa.regimeTrib não informado"
   );
-  return;  
+  return;
 }
 $codigoEstado = $row_empresaPessoa['codigoEstado'];
 $crt = (int)$row_empresaPessoa['crt'];
@@ -127,7 +127,7 @@ if (!$row_empresaPessoa['crt']) {
     "status" => 400,
     "retorno" => "empresaPessoa.crt não informado"
   );
-  return;  
+  return;
 }
 $origem = $row_empresaPessoa['origem'];
 if (!isset($origem)) {
@@ -135,7 +135,7 @@ if (!isset($origem)) {
     "status" => 400,
     "retorno" => "empresaPessoa.origem  não informado"
   );
-  return;  
+  return;
 }
 if ($regimeTrib == 'SN') {
   $simplesN = 'S';
@@ -155,7 +155,7 @@ if (isset($jsonEntrada["idProduto"])) {
       fwrite($arquivo, $identificacao . "-produtos->" . json_encode($row_produtos) . "\n");
     }
   }
-  
+
   $nomeProduto = $row_produtos['nomeProduto'];
   $codigoNcm = $row_produtos['codigoNcm'];
   $eanProduto = $row_produtos['eanProduto'];
@@ -181,7 +181,7 @@ if ($row_pessoaFornecedor['caracTrib'] == null) {
     "status" => 400,
     "retorno" => "empresaPessoa.caracTrib não informado"
   );
-  return;  
+  return;
 }
 
 $emit = array(
@@ -255,7 +255,7 @@ $JSON = chamaAPI(
 
 
 $produtoNaoRetornado = $JSON['Cabecalho']['prodNaoRet'];
-if($produtoNaoRetornado == 1){
+if ($produtoNaoRetornado == 1) {
   $jsonSaida = array(
     "status" => 400,
     "retorno" => "Nenhum produto retornado.",
@@ -271,17 +271,17 @@ if (isset($LOG_NIVEL)) {
 
 //echo "IMENDES\n".json_encode($JSON)."\n";
 
-function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo)
+function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo)
 {
   //Atualiza Produto
-  $sql_consulta = "SELECT * FROM produtos WHERE eanProduto = $eanProduto ";
+  $sql_consulta = "SELECT produtos.idProduto FROM produtos WHERE eanProduto = $eanProduto ";
   $buscar_consulta = mysqli_query($conexao, $sql_consulta);
   $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
 
 
   if ($row_consulta !== null) {
     $idProduto = $row_consulta["idProduto"];
-    $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest, codigoGrupo=$codigoGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
+    $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest, idGrupo=$idGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
     WHERE idProduto = $idProduto";
 
     $atualizar = mysqli_query($conexao, $update_produtos);
@@ -318,8 +318,11 @@ function adicionaHistorico($conexao, $retornoImendes)
   return $adicionaHistorico;
 }
 
-function adicionaRegraFiscal($conexao, $regras, $codigoGrupo)
+function adicionaRegraFiscal($regras, $idGrupo)
 {
+  
+  $returnRegraFiscal = "";
+
   foreach ($regras as $regra) {
 
     foreach ($regra as $ufs) {
@@ -337,57 +340,73 @@ function adicionaRegraFiscal($conexao, $regras, $codigoGrupo)
           $codExcecao = isset($CaracTrib['codExcecao']) && $CaracTrib['codExcecao'] !== "null"    ? "'" . $CaracTrib['codExcecao'] . "'" : "null";
           $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigIni'])) : "null";
           $dtVigFin = isset($CaracTrib['dtVigFin']) && $CaracTrib['dtVigFin'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigFin'])) : "null";
-          $cFOPCaracTrib = isset($CaracTrib['cFOP']) && $CaracTrib['cFOP'] !== "null"    ? "'" . $CaracTrib['cFOP'] . "'" : "null";
-          $cST = isset($CaracTrib['cST']) && $CaracTrib['cST'] !== "null"    ? "'" . $CaracTrib['cST'] . "'" : "null";
-          $cSOSN = isset($CaracTrib['cSOSN']) && $CaracTrib['cSOSN'] !== "null"    ? "'" . $CaracTrib['cSOSN'] . "'" : "null";
-          $aliqIcmsInterna = isset($CaracTrib['aliqIcmsInterna']) && $CaracTrib['aliqIcmsInterna'] !== "null"    ? "'" . $CaracTrib['aliqIcmsInterna'] . "'" : "null";
-          $aliqIcmsInterestadual = isset($CaracTrib['aliqIcmsInterestadual']) && $CaracTrib['aliqIcmsInterestadual'] !== "null"    ? "'" . $CaracTrib['aliqIcmsInterestadual'] . "'" : "null";
-          $reducaoBcIcms = isset($CaracTrib['reducaoBcIcms']) && $CaracTrib['reducaoBcIcms'] !== "null"    ? "'" . $CaracTrib['reducaoBcIcms'] . "'" : "null";
-          $reducaoBcIcmsSt = isset($CaracTrib['reducaoBcIcmsSt']) && $CaracTrib['reducaoBcIcmsSt'] !== "null"    ? "'" . $CaracTrib['reducaoBcIcmsSt'] . "'" : "null";
-          $redBcICMsInterestadual = isset($CaracTrib['redBcICMsInterestadual']) && $CaracTrib['redBcICMsInterestadual'] !== "null"    ? "'" . $CaracTrib['redBcICMsInterestadual'] . "'" : "null";
-          $aliqIcmsSt = isset($CaracTrib['aliqIcmsSt']) && $CaracTrib['aliqIcmsSt'] !== "null"    ? "'" . $CaracTrib['aliqIcmsSt'] . "'" : "null";
-          $iVA = isset($CaracTrib['iVA']) && $CaracTrib['iVA'] !== "null"    ? "'" . $CaracTrib['iVA'] . "'" : "null";
-          $iVAAjust = isset($CaracTrib['iVAAjust']) && $CaracTrib['iVAAjust'] !== "null"    ? "'" . $CaracTrib['iVAAjust'] . "'" : "null";
-          $fCP = isset($CaracTrib['fCP']) && $CaracTrib['fCP'] !== "null"    ? "'" . $CaracTrib['fCP'] . "'" : "null";
-          $codBenef = isset($CaracTrib['codBenef']) && $CaracTrib['codBenef'] !== "null"    ? "'" . $CaracTrib['codBenef'] . "'" : "null";
-          $pDifer = isset($CaracTrib['pDifer']) && $CaracTrib['pDifer'] !== "null"    ? "'" . $CaracTrib['pDifer'] . "'" : "null";
-          $pIsencao = isset($CaracTrib['pIsencao']) && $CaracTrib['pIsencao'] !== "null"    ? "'" . $CaracTrib['pIsencao'] . "'" : "null";
-          $antecipado = isset($CaracTrib['antecipado']) && $CaracTrib['antecipado'] !== "null"    ? "'" . $CaracTrib['antecipado'] . "'" : "'N'";
-          $desonerado = isset($CaracTrib['desonerado']) && $CaracTrib['desonerado'] !== "null"    ? "'" . $CaracTrib['desonerado'] . "'" : "'N'";
-          $pICMSDeson = isset($CaracTrib['pICMSDeson']) && $CaracTrib['pICMSDeson'] !== "null"    ? "'" . $CaracTrib['pICMSDeson'] . "'" : "null";
-          $isento = isset($CaracTrib['isento']) && $CaracTrib['isento'] !== "null"    ? "'" . $CaracTrib['isento'] . "'" : "'N'";
-          $tpCalcDifal = isset($CaracTrib['tpCalcDifal']) && $CaracTrib['tpCalcDifal'] !== "null"    ? "'" . $CaracTrib['tpCalcDifal'] . "'" : "null";
-          $ampLegal = str_replace("'", "", $CaracTrib['ampLegal']);
-          $ampLegal_formatada = isset($ampLegal) && $ampLegal !== "null"    ? "'" .  $ampLegal . "'" : "null";
-          //$Protocolo = isset($CaracTrib['Protocolo']) && $CaracTrib['Protocolo'] !== "null"    ? "'" . $CaracTrib['Protocolo'] . "'" : "null";
-          //$Convenio = isset($CaracTrib['Convenio']) && $CaracTrib['Convenio'] !== "null"    ? "'" . $CaracTrib['Convenio'] . "'" : "null";
-          $regraGeral = isset($CaracTrib['regraGeral']) && $CaracTrib['regraGeral'] !== "null"    ? "'" . $CaracTrib['regraGeral'] . "'" : "null";
 
-          //Verifica se tem regra
-          $sql_consulta = "SELECT * FROM regrafiscal WHERE codigoGrupo = $codigoGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib";
-          $buscar_consulta = mysqli_query($conexao, $sql_consulta);
-          $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
+          //Verifica se existe regrafiscal
+          $sql_regra = "SELECT fiscalregra.idRegra, fiscalregra.codRegra, fiscalregra.codExcecao FROM fiscalregra WHERE codRegra = $codRegra AND codExcecao = $codExcecao ";
+          $buscar_regra = mysqli_query(conectaMysql(null), $sql_regra);
+          $row_regra = mysqli_fetch_array($buscar_regra, MYSQLI_ASSOC);
 
-          if ($row_consulta == null) {
-            $sql = " INSERT INTO regrafiscal (codigoGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, codRegra, codExcecao, dtVigIni,
-            dtVigFin, cFOPCaracTrib, cST, cSOSN, aliqIcmsInterna, aliqIcmsInterestadual, reducaoBcIcms, reducaoBcIcmsSt, redBcICMsInterestadual,
-            aliqIcmsSt, iVA, iVAAjust, fCP, codBenef, pDifer, pIsencao, antecipado, desonerado, pICMSDeson, isento, tpCalcDifal, ampLegal,
-            Protocolo, Convenio, regraGeral) 
-            VALUES ($codigoGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $codRegra, $codExcecao, $dtVigIni,
-            $dtVigFin , $cFOPCaracTrib, $cST, $cSOSN, $aliqIcmsInterna, $aliqIcmsInterestadual, $reducaoBcIcms, $reducaoBcIcmsSt, $redBcICMsInterestadual,
-            $aliqIcmsSt, $iVA, $iVAAjust, $fCP, $codBenef, $pDifer, $pIsencao, $antecipado, $desonerado, $pICMSDeson, $isento, $tpCalcDifal, $ampLegal_formatada,
-            null, null, $regraGeral) ";
+          if ($row_regra == null) {
+            $apiEntrada = array(
+              'codRegra' => $CaracTrib['codRegra'],
+              'codExcecao' => $CaracTrib['codExcecao'],
+              'dtVigIni' =>  $dtVigIni,
+              'dtVigFin' =>  $dtVigFin,
+              'cFOPCaracTrib' =>  $CaracTrib['cFOP'],
+              'cST' => $CaracTrib['cST'],
+              'cSOSN' =>  $CaracTrib['cSOSN'],
+              'aliqIcmsInterna' => $CaracTrib['aliqIcmsInterna'],
+              'aliqIcmsInterestadual' => $CaracTrib['aliqIcmsInterestadual'],
+              'reducaoBcIcms' => $CaracTrib['reducaoBcIcms'],
+              'reducaoBcIcmsSt' => $CaracTrib['reducaoBcIcmsSt'],
+              'redBcICMsInterestadual' => $CaracTrib['redBcICMsInterestadual'],
+              'aliqIcmsSt' => $CaracTrib['aliqIcmsSt'],
+              'iVA' => $CaracTrib['iVA'],
+              'iVAAjust' => $CaracTrib['iVAAjust'],
+              'fCP' => $CaracTrib['fCP'],
+              'codBenef' => $CaracTrib['codBenef'],
+              'pDifer' => $CaracTrib['pDifer'],
+              'pIsencao' => $CaracTrib['pIsencao'],
+              'antecipado' => $CaracTrib['antecipado'],
+              'desonerado' => $CaracTrib['desonerado'],
+              'pICMSDeson' => $CaracTrib['pICMSDeson'],
+              'isento' => $CaracTrib['isento'],
+              'tpCalcDifal' => $CaracTrib['tpCalcDifal'],
+              'ampLegal' => $ampLegal = str_replace("'", "", $CaracTrib['ampLegal']),
+              'ampLegal_formatada' => $ampLegal,
+              //'Protocolo' => $CaracTrib['Protocolo'],
+              //'Convenio' => $CaracTrib['Convenio'],
+              'regraGeral' => $CaracTrib['regraGeral'],
+            );
 
-            $adicionaregraFiscal = mysqli_query($conexao, $sql);
+            $inserirRegra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'PUT');
+            $idRegra = $inserirRegra['idRegra'];
           } else {
-            $adicionaregraFiscal = " Regra existente ";
+            $idRegra = $row_regra['idRegra'];
           }
-        }
+
+            //Verifica se existe operacaofiscal
+            $sql_operacao = "SELECT * FROM fiscaloperacao WHERE idGrupo = $idGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
+            $buscar_operacao = mysqli_query(conectaMysql(null), $sql_operacao);
+            $row_operacao = mysqli_fetch_array($buscar_operacao, MYSQLI_ASSOC);
+
+            if ($row_operacao == null) {
+              $sql = " INSERT INTO fiscaloperacao (idGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, idRegra) 
+              VALUES ($idGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $idRegra) ";
+
+              $inserirfiscaloperacao = mysqli_query(conectaMysql(null), $sql);
+              if($inserirfiscaloperacao==null) {
+                  $returnRegraFiscal = "erro inserir operacao";
+              } 
+              
+            } 
+         }
+        
       }
     }
   }
 
-  return $adicionaregraFiscal;
+  return $returnRegraFiscal;
 }
 
 $retornoImendes = $JSON;
@@ -402,35 +421,29 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
     $eanProdutos = $grupo['prodEan'];
 
     //Verifica se já tem codigoGrupo
-    $sql_consulta = "SELECT * FROM grupoproduto WHERE codigoGrupo = $codigoGrupo ";
-    $buscar_consulta = mysqli_query($conexao, $sql_consulta);
+    $sql_consulta = "SELECT fiscalgrupo.idGrupo, fiscalgrupo.codigoGrupo, fiscalgrupo.codigoNcm, fiscalgrupo.codigoCest FROM fiscalgrupo WHERE codigoGrupo = $codigoGrupo ";
+    $buscar_consulta = mysqli_query(conectaMysql(null), $sql_consulta);
     $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
-    $codigoGrupo = isset($row_consulta["codigoGrupo"]) && $row_consulta["codigoGrupo"] !== "null"    ? "'" . $row_consulta["codigoGrupo"] . "'" : "null";
-    $codigoNcm = isset($row_consulta["codigoNcm"]) && $row_consulta["codigoNcm"] !== "null"    ? "'" . $row_consulta["codigoNcm"] . "'" : "null";
-    $codigoCest = isset($row_consulta["codigoCest"]) && $row_consulta["codigoCest"] !== "null"    ? "'" . $row_consulta["codigoCest"] . "'" : "null";
+
+    if ($row_consulta != null) {
+      if ($row_consulta["codigoGrupo"] != "null") {
+        $idGrupo = $row_consulta["idGrupo"];
+        $codigoGrupo = isset($row_consulta["codigoGrupo"]) && $row_consulta["codigoGrupo"] !== "null"    ? "'" . $row_consulta["codigoGrupo"] . "'" : "null";
+        $codigoNcm = isset($row_consulta["codigoNcm"]) && $row_consulta["codigoNcm"] !== "null"    ? "'" . $row_consulta["codigoNcm"] . "'" : "null";
+        $codigoCest = isset($row_consulta["codigoCest"]) && $row_consulta["codigoCest"] !== "null"    ? "'" . $row_consulta["codigoCest"] . "'" : "null";
 
 
-    if ($codigoGrupo != "null") {
-      foreach ($eanProdutos as $eanProduto) {
-        $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo);
+        foreach ($eanProdutos as $eanProduto) {
+          $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
+        }
+        $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $idGrupo);
+        $jsonSaida = array(
+          "status" => 200,
+          "retorno" => "codigo do Grupo existente",
+          "codigoGrupo" => $codigoGrupo
+        );
       }
-      $regrafiscal = adicionaRegraFiscal($conexao, $grupo['Regras'], $grupo['codigo']);
-      $jsonSaida = array(
-        "status" => 200,
-        "retorno" => "codigo do Grupo existente",
-        "codigoGrupo" => $codigoGrupo
-      );
     } else {
-
-      $regrafiscal = adicionaRegraFiscal($conexao, $grupo['Regras'], $grupo['codigo']);
-      $codigoGrupo = "'" . $grupo['codigo'] . "'";
-      $codigoCest = "'" . $grupo['cEST'] .  "'";
-      $codigoNcm = "'" . $grupo['nCM'] . "'";
-
-      foreach ($eanProdutos as $eanProduto) {
-        $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $codigoGrupo);
-      }
-
       $apiEntrada = array(
         'idEmpresa' => $idEmpresa,
         'codigoGrupo' => $grupo['codigo'],
@@ -459,9 +472,18 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
         }
       }
 
-      $inserirGrupo = chamaAPI(null, '/cadastros/grupoproduto', json_encode($apiEntrada), 'PUT');
+      $inserirGrupo = chamaAPI(null, '/impostos/grupoproduto', json_encode($apiEntrada), 'PUT');
+      $idGrupo = $inserirGrupo['idGrupo'];
 
-      
+      $codigoCest = "'" . $grupo['cEST'] .  "'";
+      $codigoNcm = "'" . $grupo['nCM'] . "'";
+
+      $regrafiscal = adicionaRegraFiscal($grupo['Regras'], $idGrupo);
+
+      foreach ($eanProdutos as $eanProduto) {
+        $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
+      }
+
       //TRY-CATCH
       try {
         $jsonSaida = array(

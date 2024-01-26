@@ -5,27 +5,69 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 include_once __DIR__ . "/../conexao.php";
 
+function buscaCodigoRegra()
+{
+
+	$regra = array();
+
+	$apiEntrada = array(
+		'codigo' => true
+	);
+	$regra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'GET');
+	return $regra;
+}
 
 if (isset($_GET['operacao'])) {
 
 	$operacao = $_GET['operacao'];
-	$idEmpresa = null;
-	if (isset($_SESSION['idEmpresa'])) {
-    	$idEmpresa = $_SESSION['idEmpresa'];
+
+	if ($operacao=="inserir") {
+
+		$apiEntrada = array(
+			'codRegra ' => $_POST['codRegra '],
+			'codExcecao ' => $_POST['codExcecao '],
+			'dtVigIni' => $_POST['dtVigIni'],
+			'dtVigFin' => $_POST['dtVigFin'],
+			'cFOPCaracTrib' => $_POST['cFOPCaracTrib'],
+			'cST' => $_POST['cST'],
+			'cSOSN' => $_POST['cSOSN'],
+			'aliqIcmsInterna' => $_POST['aliqIcmsInterna'],
+			'aliqIcmsInterestadual' => $_POST['aliqIcmsInterestadual'],
+			'reducaoBcIcms' => $_POST['reducaoBcIcms'],
+			'reducaoBcIcmsSt' => $_POST['reducaoBcIcmsSt'],
+			'redBcICMsInterestadual' => $_POST['redBcICMsInterestadual'],
+			'aliqIcmsSt' => $_POST['aliqIcmsSt'],
+			'iVA' => $_POST['iVA'],
+			'iVAAjust' => $_POST['iVAAjust'],
+			'fCP' => $_POST['fCP'],
+			'codBenef' => $_POST['codBenef'],
+			'pDifer' => $_POST['pDifer'],
+			'pIsencao' => $_POST['pIsencao'],
+			'antecipado' => $_POST['antecipado'],
+			'desonerado' => $_POST['desonerado'],
+			'pICMSDeson' => $_POST['pICMSDeson'],
+			'isento' => $_POST['isento'],
+			'tpCalcDifal' => $_POST['tpCalcDifal'],
+			'ampLegal' => $_POST['ampLegal'],
+			'Protocolo' => $_POST['Protocolo'],
+			'Convenio' => $_POST['Convenio'],
+			'regraGeral' => $_POST['regraGeral'],
+		);
+
+		$regra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'PUT');
+		return $regra;
+
 	}
 
 	if ($operacao == "buscar") {
+		$idRegra = $_POST["idRegra"];
 
-		$idRegraFiscal = $_POST["idRegraFiscal"];
-
-		if ($idRegraFiscal == ""){
-			$idRegraFiscal = null;
+		if ($idRegra == ""){
+			$idRegra = null;
 		}
 
-	
 		$apiEntrada = array(
-			'idEmpresa' => $idEmpresa,
-			'idRegraFiscal' => $idRegraFiscal,
+			'idRegra' => $idRegra,
 		);
 		
 		$regra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'GET');
@@ -34,13 +76,11 @@ if (isset($_GET['operacao'])) {
 		return $regra;
 	}
 
+
 	if ($operacao == "filtrar") {
 
-		$codigoGrupo = isset($_POST["codigoGrupo"]) && $_POST["codigoGrupo"] !== ""    ? "'" . $_POST["codigoGrupo"] . "'" : null;
-	
 		$apiEntrada = array(
-			'idEmpresa' => $idEmpresa,
-			'codigoGrupo' => $codigoGrupo,
+			'idRegra' => null,
 		);
 		
 		$regra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'GET');
