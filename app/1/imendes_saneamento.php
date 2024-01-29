@@ -162,19 +162,49 @@ if ($row_geralPessoa['caracTrib'] == null) {
 
 
 if (isset($jsonEntrada["idProduto"])) {
+  echo 'IDPRODUTO ' . $jsonEntrada["idProduto"] . "\n";
+  //return;
   //PRODUTOS
-  $sql_produtos = "SELECT produtos.nomeProduto, produtos.codigoNcm, produtos.codigoNcm, produtos.eanProduto FROM produtos WHERE idProduto = " . $jsonEntrada["idProduto"] . " ";
+  $produtos = array();
+  $sql_produtos = "SELECT * FROM produtos WHERE idProduto = " . $jsonEntrada["idProduto"] . " ";
   $buscar_produtos = mysqli_query($conexao, $sql_produtos);
-  $row_produtos = mysqli_fetch_array($buscar_produtos, MYSQLI_ASSOC);
+  //$row_produtos = mysqli_fetch_array($buscar_produtos, MYSQLI_ASSOC);
+
+  while ($row = mysqli_fetch_array($buscar_produtos, MYSQLI_ASSOC)) {
+    //array_push($produtos, $row);
+    $idGeralProduto = $row['idGeralProduto'];
+    //echo "-idGeralProduto->". json_encode($idGeralProduto)."\n";
+    $sql2 = "SELECT geralprodutos.* FROM geralprodutos WHERE geralprodutos.idGeralProduto = $idGeralProduto";
+    $rows = 0;
+    $buscar2 = mysqli_query($conexaogeral, $sql2);
+  
+    while ($row2 = mysqli_fetch_array($buscar2, MYSQLI_ASSOC)) {
+      $mergedRow = array_merge($row, $row2);
+      array_push($produtos, $mergedRow);
+      $rows = $rows + 1;
+  } 
+  //echo "-ROW->". json_encode($row)."\n";
+  }
+  if (isset($jsonEntrada["idProduto"]) && $rows == 1) {
+    $produtos = $produtos[0];
+  }
+  $retornoProdutos = $produtos;
+   
   if (isset($LOG_NIVEL)) {
     if ($LOG_NIVEL >= 2) {
-      fwrite($arquivo, $identificacao . "-produtos->" . json_encode($row_produtos) . "\n");
+      //fwrite($arquivo, $identificacao . "-produtos->" . json_encode($row_produtos) . "\n");
+      fwrite($arquivo, $identificacao . "-produtos->" . json_encode($retornoProdutos) . "\n");
     }
   }
-
-  $nomeProduto = $row_produtos['nomeProduto'];
+  $nomeProduto = $retornoProdutos['nomeProduto'];
+  $codigoNcm = $retornoProdutos['codigoNcm'];
+  $eanProduto = $retornoProdutos['eanProduto'];
+  //echo "-nomeProduto->". json_encode($nomeProduto)."\n";
+  //echo "-codigoNcm->". json_encode($codigoNcm)."\n";
+  //echo "-eanProduto->". json_encode($eanProduto)."\n";
+  /* $nomeProduto = $row_produtos['nomeProduto'];
   $codigoNcm = $row_produtos['codigoNcm'];
-  $eanProduto = $row_produtos['eanProduto'];
+  $eanProduto = $row_produtos['eanProduto']; */
 }
 
 
@@ -265,20 +295,43 @@ if (isset($LOG_NIVEL)) {
 
 
 
-function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo)
+function atualizaProduto($conexaogeral,$conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo)
 {
-  //Atualiza Produto
-  $sql_consulta = "SELECT produtos.idProduto FROM produtos WHERE eanProduto = $eanProduto ";
-  $buscar_consulta = mysqli_query($conexao, $sql_consulta);
-  $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
+  echo 'EAN ' . $eanProduto . "\n";
+  echo 'NCM ' . $codigoNcm . "\n";
+  echo 'CEST ' . $codigoCest . "\n";
+  echo 'IDGRUPO ' . $idGrupo . "\n";
+  //return;
+  
+  //Atualiza Geral Produto
+  $sql_geralProdutos = "SELECT geralprodutos.idGeralProduto FROM geralprodutos WHERE eanProduto = $eanProduto ";
+  //echo  $sql_geralProdutos;
+  $buscar_geralProdutos = mysqli_query($conexaogeral, $sql_geralProdutos);
+  echo json_encode($buscar_geralProdutos);
+  $row_geralProdutos = mysqli_fetch_array($buscar_geralProdutos, MYSQLI_ASSOC);
 
+  if ($row_geralProdutos !== null) {
+    $idGeralProduto = $row_geralProdutos["idGeralProduto"];
+    echo 'IDGERALPRODUTO ' . $idGeralProduto . "\n";
 
-  if ($row_consulta !== null) {
-    $idProduto = $row_consulta["idProduto"];
-    $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest, idGrupo=$idGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
+    $update_geralProdutos = "UPDATE geralprodutos SET idGrupo=$idGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
+    WHERE idGeralProduto = $idGeralProduto";
+    echo 'SQL_GERALPRODUTO ' . $update_geralProdutos . "\n";
+
+    $atualizar = mysqli_query($conexaogeral, $update_geralProdutos);
+
+    //Atualiza Produto
+    /* $sql_produtos = "SELECT produtos.idProduto FROM produtos WHERE idGeralProduto = $idGeralProduto ";
+    $buscar_produtos = mysqli_query($conexao, $sql_produtos);
+    $row_produtos = mysqli_fetch_array($buscar_produtos, MYSQLI_ASSOC);
+    $idProduto = $row_produtos["idProduto"];
+    echo 'IDPRODUTO ' . $idProduto . "\n"; */
+
+    /* $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest
     WHERE idProduto = $idProduto";
+    echo 'SQL_PRODUTO ' . $update_produtos . "\n"; */
 
-    $atualizar = mysqli_query($conexao, $update_produtos);
+    //$atualizar2 = mysqli_query($conexao, $update_produtos);
   } else {
     $atualizar = " Produto não encontrado ";
   }
@@ -428,7 +481,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
 
 
         foreach ($eanProdutos as $eanProduto) {
-          $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
+          $atualizaProduto = atualizaProduto($conexaogeral, $conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
         }
         $regrafiscal = adicionaRegraFiscal($conexaogeral, $grupo['Regras'], $idGrupo);
         $jsonSaida = array(
@@ -475,7 +528,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       $regrafiscal = adicionaRegraFiscal($conexaogeral, $grupo['Regras'], $idGrupo);
 
       foreach ($eanProdutos as $eanProduto) {
-        $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
+        $atualizaProduto = atualizaProduto($conexaogeral, $conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
       }
 
       //TRY-CATCH
