@@ -7,7 +7,7 @@ $idEmpresa = null;
     	$idEmpresa = $jsonEntrada["idEmpresa"];
 	}
 $conexao = conectaMysql($idEmpresa);
-$conexao2 = conectaMysql(null);
+$conexaogeral = conectaMysql(null);
 $notas = array();
 
 $sql = "SELECT fisnota.*, 
@@ -27,7 +27,7 @@ while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
   $destinatario_cpfCnpj = $row['destinatario_cpfCnpj'];
 
   $sql2_emitente = "SELECT geralpessoas.* FROM geralpessoas WHERE geralpessoas.cpfCnpj = $emitente_cpfCnpj";
-  $buscar2_emitente = mysqli_query($conexao2, $sql2_emitente);
+  $buscar2_emitente = mysqli_query($conexaogeral, $sql2_emitente);
 
   while ($row2_emitente = mysqli_fetch_array($buscar2_emitente, MYSQLI_ASSOC)) {
       foreach ($row2_emitente as $dadosRow => $dadosEmitente) {
@@ -36,7 +36,7 @@ while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
   }
 
   $sql2_destinatario = "SELECT geralpessoas.* FROM geralpessoas WHERE geralpessoas.cpfCnpj = $destinatario_cpfCnpj";
-  $buscar2_destinatario = mysqli_query($conexao2, $sql2_destinatario);
+  $buscar2_destinatario = mysqli_query($conexaogeral, $sql2_destinatario);
 
   while ($row2_destinatario = mysqli_fetch_array($buscar2_destinatario, MYSQLI_ASSOC)) {
       foreach ($row2_destinatario as $dadosRow => $dadosDestinatario) {
