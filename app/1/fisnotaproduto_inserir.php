@@ -40,13 +40,27 @@ foreach ($infNFe->det as $item) {
         if (mysqli_num_rows($geralprodutos) == 0) {
             $dadosEnder = ($campos == "emit") ? $dados->enderEmit : $dados->enderDest;
     
-            $geralProdutosEntrada = array(
+                $geralProdutosEntrada = array(
                     'eanProduto' => str_replace("'", "", $eanProduto),
                     'nomeProduto' => (string) $item->prod->xProd
                 );
-                    
+                        
                 $geralProdutosRetorno = chamaAPI(null, '/cadastros/geralprodutos', json_encode($geralProdutosEntrada), 'PUT');
                 $idGeralProduto = $geralProdutosRetorno['idGeralProduto'];
+
+                //**GeralFornecimento
+                $buscaPessoas = "SELECT * FROM pessoas WHERE idPessoa = $idPessoaEmitente";
+                $buscar = mysqli_query($conexao, $buscaPessoas);
+                $dadosPessoa = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
+
+                $geralFornecimentoEntrada = array(
+                    'Cnpj' => $dadosPessoa["cpfCnpj"],
+                    'refProduto' => str_replace("'", "", $refProduto),
+                    'idGeralProduto' => $idGeralProduto,
+                    'valorCompra' => (string) $item->prod->vUnCom
+                );
+                        
+                $geralFornecimentoRetorno = chamaAPI(null, '/cadastros/geralfornecimento', json_encode($geralFornecimentoEntrada), 'PUT');
             }
 
         $produEntrada = array(
