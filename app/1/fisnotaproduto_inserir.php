@@ -28,7 +28,13 @@ foreach ($infNFe->det as $item) {
         $idProduto = $dadosProduto["idProduto"];
 
     } else {
-        $buscaGeralProdutos = "SELECT * FROM geralprodutos WHERE eanProduto = $eanProduto";
+        $nomeProduto = "'" . (string) $item->prod->xProd . "'";
+
+        if($eanProduto == "NULL"){
+            $buscaGeralProdutos = "SELECT * FROM geralprodutos WHERE eanProduto = $eanProduto";
+        } else {
+            $buscaGeralProdutos = "SELECT * FROM geralprodutos WHERE nomeProduto = $nomeProduto";
+        }
         $geralprodutos = mysqli_query($conexaogeral, $buscaGeralProdutos);
         $dadosGeralprodutos = mysqli_fetch_array($geralprodutos, MYSQLI_ASSOC);
         if (mysqli_num_rows($geralprodutos) == 0) {
@@ -36,8 +42,7 @@ foreach ($infNFe->det as $item) {
     
             $geralProdutosEntrada = array(
                     'eanProduto' => str_replace("'", "", $eanProduto),
-                    'nomeProduto' => (string) $item->prod->xProd,
-                    'refProduto' => str_replace("'", "", $refProduto)
+                    'nomeProduto' => (string) $item->prod->xProd
                 );
                     
                 $geralProdutosRetorno = chamaAPI(null, '/cadastros/geralprodutos', json_encode($geralProdutosEntrada), 'PUT');
