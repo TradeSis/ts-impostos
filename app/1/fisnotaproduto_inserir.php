@@ -3,49 +3,78 @@ foreach ($infNFe->det as $item) {
 
     
 
-    $idNota = isset($idNotaInserido) && $idNotaInserido !== "" ? "'" . $idNotaInserido . "'" : "null";
-    $nItem = isset($item['nItem']) && $item['nItem'] !== "" ? "'" . (string) $item['nItem'] . "'" : "null";
-    $quantidade = isset($item->prod->qCom) && $item->prod->qCom !== "" ? "'" . (string) $item->prod->qCom . "'" : "null";
-    $unidCom = isset($item->prod->uCom) && $item->prod->uCom !== "" ? "'" . (string) $item->prod->uCom . "'" : "null";
-    $valorUnidade = isset($item->prod->vUnCom) && $item->prod->vUnCom !== "" ? "'" . (string) $item->prod->vUnCom . "'" : "null";
-    $valorTotal = isset($item->prod->vProd) && $item->prod->vProd !== "" ? "'" . (string) $item->prod->vProd . "'" : "null";
-    $cfop = isset($item->prod->CFOP) && $item->prod->CFOP !== "" ? "'" . (string) $item->prod->CFOP . "'" : "null";
-    $codigoNcm = isset($item->prod->NCM) && $item->prod->NCM !== "" ? "'" . (string) $item->prod->NCM . "'" : "null";
-    $codigoCest = isset($item->prod->CEST) && $item->prod->CEST !== "" ? "'" . (string) $item->prod->CEST . "'" : "null";
-    $eanProduto = isset($item->prod->cEAN) && $item->prod->cEAN !== "" ? "'" . (string) $item->prod->cEAN . "'" : "null";
-    $refProduto = isset($item->prod->cProd) && $item->prod->cProd !== "" ? "'" . (string) $item->prod->cProd . "'" : "null";
+    $idNota = isset($idNotaInserido) && $idNotaInserido !== "" ? "'" . $idNotaInserido . "'" : "NULL";
+    $nItem = isset($item['nItem']) && $item['nItem'] !== "" ? "'" . (string) $item['nItem'] . "'" : "NULL";
+    $quantidade = isset($item->prod->qCom) && $item->prod->qCom !== "" ? "'" . (string) $item->prod->qCom . "'" : "NULL";
+    $unidCom = isset($item->prod->uCom) && $item->prod->uCom !== "" ? "'" . (string) $item->prod->uCom . "'" : "NULL";
+    $valorUnidade = isset($item->prod->vUnCom) && $item->prod->vUnCom !== "" ? "'" . (string) $item->prod->vUnCom . "'" : "NULL";
+    $valorTotal = isset($item->prod->vProd) && $item->prod->vProd !== "" ? "'" . (string) $item->prod->vProd . "'" : "NULL";
+    $cfop = isset($item->prod->CFOP) && $item->prod->CFOP !== "" ? "'" . (string) $item->prod->CFOP . "'" : "NULL";
+    $codigoNcm = isset($item->prod->NCM) && $item->prod->NCM !== "" ? "'" . (string) $item->prod->NCM . "'" : "NULL";
+    $codigoCest = isset($item->prod->CEST) && $item->prod->CEST !== "" ? "'" . (string) $item->prod->CEST . "'" : "NULL";
+    $eanProduto = isset($item->prod->cEAN) && $item->prod->cEAN !== "" ? "'" . (string) $item->prod->cEAN . "'" : "NULL";
+    $refProduto = isset($item->prod->cProd) && $item->prod->cProd !== "" ? "'" . (string) $item->prod->cProd . "'" : "NULL";
 
     
     if ($eanProduto == "'SEM GTIN'" || $eanProduto == "''") {
-        $eanProduto = "null";
-    }
-    if ($eanProduto == "null") {
-        $buscaProduto2 = "SELECT * FROM produtos WHERE idPessoaFornecedor = $idPessoaEmitente AND refProduto = $refProduto";
-    } else {
-        $buscaProduto2 = "SELECT * FROM produtos WHERE eanProduto = $eanProduto";
+        $eanProduto = "NULL";
     }
 
-    $buscar = mysqli_query($conexao, $buscaProduto2);
-    if (mysqli_num_rows($buscar) == 0) {
-
-        $produEntrada = array(
-            'idEmpresa' => $idEmpresa,
-            'eanProduto' => str_replace("'", "", $eanProduto),
-            'nomeProduto' => (string) $item->prod->xProd,
-            'valorCompra' => (string) $item->prod->vUnCom,
-            'precoProduto' => (string) $item->prod->uCom,
-            'codigoNcm' => (string) $item->prod->NCM,
-            'codigoCest' => (string) $item->prod->CEST,
-            'idPessoaFornecedor' => $idPessoaEmitente,
-            'refProduto' => str_replace("'", "", $refProduto)
-        );
-        $produRetorno = chamaAPI(null, '/cadastros/produtos', json_encode($produEntrada), 'PUT');
-        $idProduto = $produRetorno['idProduto'];
-
-    } else {
+    $buscaProduto = "SELECT * FROM produtos WHERE idPessoaFornecedor = $idPessoaEmitente AND refProduto = $refProduto";
+    $buscar = mysqli_query($conexao, $buscaProduto);
+    if (mysqli_num_rows($buscar) == 1) {
 
         $dadosProduto = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
         $idProduto = $dadosProduto["idProduto"];
+
+    } else {
+        $nomeProduto = "'" . (string) $item->prod->xProd . "'";
+
+        if($eanProduto == "NULL"){
+            $buscaGeralProdutos = "SELECT * FROM geralprodutos WHERE eanProduto = $eanProduto";
+        } else {
+            $buscaGeralProdutos = "SELECT * FROM geralprodutos WHERE nomeProduto = $nomeProduto";
+        }
+        $geralprodutos = mysqli_query($conexaogeral, $buscaGeralProdutos);
+        $dadosGeralprodutos = mysqli_fetch_array($geralprodutos, MYSQLI_ASSOC);
+        if (mysqli_num_rows($geralprodutos) == 0) {
+            $dadosEnder = ($campos == "emit") ? $dados->enderEmit : $dados->enderDest;
+    
+                $geralProdutosEntrada = array(
+                    'eanProduto' => str_replace("'", "", $eanProduto),
+                    'nomeProduto' => (string) $item->prod->xProd
+                );
+                        
+                $geralProdutosRetorno = chamaAPI(null, '/cadastros/geralprodutos', json_encode($geralProdutosEntrada), 'PUT');
+                $idGeralProduto = $geralProdutosRetorno['idGeralProduto'];
+
+                //**GeralFornecimento
+                $buscaPessoas = "SELECT * FROM pessoas WHERE idPessoa = $idPessoaEmitente";
+                $buscar = mysqli_query($conexao, $buscaPessoas);
+                $dadosPessoa = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
+
+                $geralFornecimentoEntrada = array(
+                    'Cnpj' => $dadosPessoa["cpfCnpj"],
+                    'refProduto' => str_replace("'", "", $refProduto),
+                    'idGeralProduto' => $idGeralProduto,
+                    'valorCompra' => (string) $item->prod->vUnCom
+                );
+                        
+                $geralFornecimentoRetorno = chamaAPI(null, '/cadastros/geralfornecimento', json_encode($geralFornecimentoEntrada), 'PUT');
+            }
+
+        $produEntrada = array(
+            'idEmpresa' => $idEmpresa,
+            'idGeralProduto' => $idGeralProduto,
+            'idPessoaFornecedor' => $idPessoaEmitente,
+            'refProduto' => str_replace("'", "", $refProduto),
+            'nomeProduto' => (string) $item->prod->xProd,
+            'valorCompra' => (string) $item->prod->vUnCom,
+            'codigoNcm' => (string) $item->prod->NCM,
+            'codigoCest' => (string) $item->prod->CEST
+        );
+        $produRetorno = chamaAPI(null, '/cadastros/produtos', json_encode($produEntrada), 'PUT');
+        $idProduto = $produRetorno['idProduto'];
 
     }
 

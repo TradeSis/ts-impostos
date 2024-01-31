@@ -163,18 +163,38 @@ if ($row_geralPessoa['caracTrib'] == null) {
 
 if (isset($jsonEntrada["idProduto"])) {
   //PRODUTOS
-  $sql_produtos = "SELECT produtos.nomeProduto, produtos.codigoNcm, produtos.codigoNcm, produtos.eanProduto FROM produtos WHERE idProduto = " . $jsonEntrada["idProduto"] . " ";
+  $produtos = array();
+  $sql_produtos = "SELECT * FROM produtos WHERE idProduto = " . $jsonEntrada["idProduto"] . " ";
   $buscar_produtos = mysqli_query($conexao, $sql_produtos);
-  $row_produtos = mysqli_fetch_array($buscar_produtos, MYSQLI_ASSOC);
+
+  while ($row = mysqli_fetch_array($buscar_produtos, MYSQLI_ASSOC)) {
+    $idGeralProduto = $row['idGeralProduto'];
+  
+    $sql2 = "SELECT geralprodutos.* FROM geralprodutos WHERE geralprodutos.idGeralProduto = $idGeralProduto";
+    $rows = 0;
+    $buscar2 = mysqli_query($conexaogeral, $sql2);
+
+    while ($row2 = mysqli_fetch_array($buscar2, MYSQLI_ASSOC)) {
+      $mergedRow = array_merge($row, $row2);
+      array_push($produtos, $mergedRow);
+      $rows = $rows + 1;
+    }
+    
+  }
+  if (isset($jsonEntrada["idProduto"]) && $rows == 1) {
+    $produtos = $produtos[0];
+  }
+  $retornoProdutos = $produtos;
+
   if (isset($LOG_NIVEL)) {
     if ($LOG_NIVEL >= 2) {
-      fwrite($arquivo, $identificacao . "-produtos->" . json_encode($row_produtos) . "\n");
+      fwrite($arquivo, $identificacao . "-produtos->" . json_encode($retornoProdutos) . "\n");
     }
   }
+  $nomeProduto = $retornoProdutos['nomeProduto'];
+  $codigoNcm = $retornoProdutos['codigoNcm'];
+  $eanProduto = $retornoProdutos['eanProduto'];
 
-  $nomeProduto = $row_produtos['nomeProduto'];
-  $codigoNcm = $row_produtos['codigoNcm'];
-  $eanProduto = $row_produtos['eanProduto'];
 }
 
 
@@ -265,20 +285,41 @@ if (isset($LOG_NIVEL)) {
 
 
 
-function atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo)
+function atualizaProduto($conexaogeral, $conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo)
 {
-  //Atualiza Produto
-  $sql_consulta = "SELECT produtos.idProduto FROM produtos WHERE eanProduto = $eanProduto ";
-  $buscar_consulta = mysqli_query($conexao, $sql_consulta);
-  $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
+  //Atualiza Geral Produtos
+  $sql_geralProdutos = "SELECT geralprodutos.idGeralProduto FROM geralprodutos WHERE eanProduto = $eanProduto ";
+  $buscar_geralProdutos = mysqli_query($conexaogeral, $sql_geralProdutos);
+  $row_geralProdutos = mysqli_fetch_array($buscar_geralProdutos, MYSQLI_ASSOC);
 
+  if ($row_geralProdutos !== null) {
+    $idGeralProduto = $row_geralProdutos["idGeralProduto"];
 
-  if ($row_consulta !== null) {
-    $idProduto = $row_consulta["idProduto"];
-    $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest, idGrupo=$idGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
-    WHERE idProduto = $idProduto";
+    $update_geralProdutos = "UPDATE geralprodutos SET idGrupo=$idGrupo, dataAtualizacaoTributaria=CURRENT_TIMESTAMP()
+    WHERE idGeralProduto = $idGeralProduto";
 
-    $atualizar = mysqli_query($conexao, $update_produtos);
+    $atualizar = mysqli_query($conexaogeral, $update_geralProdutos);
+
+//Atualiza Produtos
+    $produtos = array();
+    $sql_produtos = "SELECT produtos.idProduto FROM produtos WHERE idGeralProduto = $idGeralProduto";
+
+    $rows = 0;
+    $buscar = mysqli_query($conexao, $sql_produtos);
+    while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
+      array_push($produtos, $row);
+      $rows = $rows + 1;
+    }
+
+    foreach ($produtos as $produto) {
+      $idProduto = $produto["idProduto"];
+      $update_produtos = "UPDATE produtos SET codigoNcm=$codigoNcm, codigoCest=$codigoCest WHERE idProduto = $idProduto";
+
+      $atualizar2 = mysqli_query($conexao, $update_produtos);
+      if (isset($atualizar2)) {
+        $atualizar2 = "ok";
+      }
+    }
   } else {
     $atualizar = " Produto não encontrado ";
   }
@@ -314,7 +355,7 @@ function adicionaHistorico($conexao, $retornoImendes)
 
 function adicionaRegraFiscal($conexaogeral, $regras, $idGrupo)
 {
-  
+
   $returnRegraFiscal = "";
 
   foreach ($regras as $regra) {
@@ -379,23 +420,21 @@ function adicionaRegraFiscal($conexaogeral, $regras, $idGrupo)
             $idRegra = $row_regra['idRegra'];
           }
 
-            //Verifica se existe operacaofiscal
-            $sql_operacao = "SELECT * FROM fiscaloperacao WHERE idGrupo = $idGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
-            $buscar_operacao = mysqli_query($conexaogeral, $sql_operacao);
-            $row_operacao = mysqli_fetch_array($buscar_operacao, MYSQLI_ASSOC);
+          //Verifica se existe operacaofiscal
+          $sql_operacao = "SELECT * FROM fiscaloperacao WHERE idGrupo = $idGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
+          $buscar_operacao = mysqli_query($conexaogeral, $sql_operacao);
+          $row_operacao = mysqli_fetch_array($buscar_operacao, MYSQLI_ASSOC);
 
-            if ($row_operacao == null) {
-              $sql = " INSERT INTO fiscaloperacao (idGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, idRegra) 
+          if ($row_operacao == null) {
+            $sql = " INSERT INTO fiscaloperacao (idGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, idRegra) 
               VALUES ($idGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $idRegra) ";
 
-              $inserirfiscaloperacao = mysqli_query($conexaogeral, $sql);
-              if($inserirfiscaloperacao==null) {
-                  $returnRegraFiscal = "erro inserir operacao";
-              } 
-              
-            } 
-         }
-        
+            $inserirfiscaloperacao = mysqli_query($conexaogeral, $sql);
+            if ($inserirfiscaloperacao == null) {
+              $returnRegraFiscal = "erro inserir operacao";
+            }
+          }
+        }
       }
     }
   }
@@ -428,7 +467,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
 
 
         foreach ($eanProdutos as $eanProduto) {
-          $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
+          $atualizaProduto = atualizaProduto($conexaogeral, $conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
         }
         $regrafiscal = adicionaRegraFiscal($conexaogeral, $grupo['Regras'], $idGrupo);
         $jsonSaida = array(
@@ -475,7 +514,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
       $regrafiscal = adicionaRegraFiscal($conexaogeral, $grupo['Regras'], $idGrupo);
 
       foreach ($eanProdutos as $eanProduto) {
-        $atualizaProduto = atualizaProduto($conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
+        $atualizaProduto = atualizaProduto($conexaogeral, $conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
       }
 
       //TRY-CATCH
