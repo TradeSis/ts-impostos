@@ -26,7 +26,7 @@ if (isset($jsonEntrada["idEmpresa"])) {
     $idEmpresa = $jsonEntrada["idEmpresa"];
 }
 $conexao = conectaMysql($idEmpresa);
-$conexao2 = conectaMysql(null);
+$conexaogeral = conectaMysql(null);
 
 // Pega XML puro
 if (isset($jsonEntrada['xml'])) {
@@ -64,7 +64,7 @@ if (isset($infNFe)) {
                 }
             } else {
                 $buscaGeralPessoas = "SELECT * FROM geralpessoas WHERE cpfCnpj = $cpfCnpj";
-                $geralpessoas = mysqli_query($conexao2, $buscaGeralPessoas);
+                $geralpessoas = mysqli_query($conexaogeral, $buscaGeralPessoas);
                 $dadosGeralpessoas = mysqli_fetch_array($geralpessoas, MYSQLI_ASSOC);
                 if (mysqli_num_rows($geralpessoas) == 0) {
                     $dadosEnder = ($campos == "emit") ? $dados->enderEmit : $dados->enderDest;
