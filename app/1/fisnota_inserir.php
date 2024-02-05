@@ -117,6 +117,7 @@ if (isset($jsonEntrada['xml'])) {
                 }
             }
 
+            /*
             //Verifica se NFE é relacionada a empresa Padrão
             $sqlEmpresa = "SELECT * FROM empresa WHERE idEmpresa = $idEmpresa";
             $buscaEmpresa = mysqli_query($conexaogeral, $sqlEmpresa);
@@ -131,7 +132,7 @@ if (isset($jsonEntrada['xml'])) {
                     "status" => 400,
                     "retorno" => "Somente NFE da empresa Padrão é permitida"
                 );
-            } else {
+            } else { */
 
             //********************************************NOTA FISCAL
 
@@ -228,7 +229,7 @@ if (isset($jsonEntrada['xml'])) {
 
                 
                 } 
-            } 
+           // } 
         } 
     } 
 } else {
