@@ -65,21 +65,23 @@ if (isset($_GET['operacao'])) {
 	$operacao = $_GET['operacao'];
 
 	if ($operacao == "inserir") {
-
-		$xmlArquivo = file_get_contents($_FILES['file']['tmp_name']);
-
-	//$xml = simplexml_load_string($xmlArquivo);
+		$xmlArquivos = array();
+	
+		foreach ($_FILES['files']['tmp_name'] as $index => $tmpName) {
+			$xmlArquivo = file_get_contents($tmpName);
+			$xmlArquivos[] = $xmlArquivo;
+		}
+	
 		// Envia XML puro
 		$apiEntrada = array(
-			'xml' => $xmlArquivo,
+			'xml' => $xmlArquivos,
 			'idEmpresa' => $_SESSION['idEmpresa'],
 		);
-
+	
 		$nfe = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
-		
+	
 		echo json_encode($nfe);
 		return $nfe;
-		
 	}
 
 	if ($operacao == "buscarNota") {

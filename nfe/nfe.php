@@ -32,7 +32,7 @@ $notas = buscarNota();
 
                         <div class="col-2 text-end">
                             <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
-                                <input type="file" id="arquivo" class="custom-file-upload" name="file" style="color:#567381; display:none">
+                                <input type="file" id="arquivo" class="custom-file-upload" name="file[]" style="color:#567381; display:none" multiple>
                                 <label for="arquivo">
                                     <a class="btn btn-primary">
                                         <i class="bi bi-file-earmark-arrow-down-fill" style="color:#fff"></i>&#32;<h7 style="color: #fff;">Arquivo</h7>
@@ -81,11 +81,14 @@ $notas = buscarNota();
         $(document).ready(function () {
             $('#arquivo').on('change', function() {
                 var fileInput = document.getElementById('arquivo');
-                var file = fileInput.files[0];
+                var files = fileInput.files;
 
-                if (file) {
+                if (files.length > 0) {
                     var formData = new FormData();
-                    formData.append('file', file);
+
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append('files[]', files[i]);
+                    }
 
                     $.ajax({
                         type: 'POST',
