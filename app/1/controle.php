@@ -92,7 +92,7 @@ if ($metodo == "PUT") {
       break;
 
     case "fisnota":
-      include 'fisnota_inserir.php';
+      include 'fisnota_importar.php';
       break;
 
     case "nfepessoa":
@@ -160,7 +160,11 @@ if ($metodo == "POST") {
    case "imendes/saneamento":
         include 'imendes_saneamento.php';
         break;
-  
+
+    case "fisnota":
+          include 'fisnota_processar.php';
+          break;
+    
     default:
       $jsonSaida = json_decode(json_encode(
         array(

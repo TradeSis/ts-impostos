@@ -84,6 +84,17 @@ if (isset($_GET['operacao'])) {
 		return $nfe;
 	}
 
+	if ($operacao == "processarXML") {
+		$apiEntrada = array(
+			'idEmpresa' => $_SESSION['idEmpresa']
+		);
+	
+		$nfe = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'POST');
+	
+		echo json_encode($nfe);
+		return $nfe;
+	}
+
 	if ($operacao == "buscarNota") {
 		$apiEntrada = array(
 			'idEmpresa' => $_SESSION['idEmpresa'],

@@ -26,19 +26,26 @@ $notas = buscarNota();
                             <!-- TITULO -->
                             <h2 class="ts-tituloPrincipal">Notas Fiscais</h2>
                         </div>
-                        <div class="col-7">
+                        <div class="col-6">
                             <!-- FILTROS -->
                         </div>
 
-                        <div class="col-2 text-end">
-                            <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
-                                <input type="file" id="arquivo" class="custom-file-upload" name="file[]" style="color:#567381; display:none" multiple>
-                                <label for="arquivo">
-                                    <a class="btn btn-primary">
-                                        <i class="bi bi-file-earmark-arrow-down-fill" style="color:#fff"></i>&#32;<h7 style="color: #fff;">Arquivo</h7>
-                                    </a>
-                                </label>
-                            </form>
+                        <div class="col-3 text-end">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a id="processar" role="button" class="btn btn-warning" title="Processar XMLs">Processar</a>
+                                </div>
+                                <div class="col-6">
+                                    <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
+                                        <input type="file" id="arquivo" class="custom-file-upload" name="file[]" style="color:#567381; display:none" multiple>
+                                        <label for="arquivo">
+                                            <a class="btn btn-primary">
+                                                <i class="bi bi-file-earmark-arrow-down-fill" style="color:#fff"></i>&#32;<h7 style="color: #fff;">Arquivo</h7>
+                                            </a>
+                                        </label>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="table mt-2 ts-divTabela ts-tableFiltros">
@@ -80,6 +87,7 @@ $notas = buscarNota();
     <script>
         $(document).ready(function () {
             $('#arquivo').on('change', function() {
+                $('body').css('cursor', 'progress');
                 var fileInput = document.getElementById('arquivo');
                 var files = fileInput.files;
 
@@ -98,6 +106,7 @@ $notas = buscarNota();
                         contentType: false,
                         success: function (msg) {
                             console.log(msg);
+                            $('body').css('cursor', 'default');
                             var message = JSON.parse(msg);
                             if (message.retorno === "ok") {
                                 refreshPage('xml');
@@ -128,6 +137,25 @@ $notas = buscarNota();
                         link.href = window.URL.createObjectURL(blob);
                         link.download = filename;
                         link.click();
+                    }
+                });
+            });
+
+            $('#processar').click(function () {
+                $('body').css('cursor', 'progress');
+                $.ajax({
+                    method: "POST",
+                    dataType: 'json',
+                    url: "../database/fisnota.php?operacao=processarXML",
+                    success: function (msg) {
+                        $('body').css('cursor', 'default');
+                        if (msg.retorno === "ok") {
+                            refreshPage('xml');
+                        }
+                        if (msg.status === 400) {
+                            alert(msg.retorno);
+                            refreshPage('xml');
+                        }
                     }
                 });
             });

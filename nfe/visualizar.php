@@ -32,8 +32,11 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
         <div class="container-fluid mt-3">
             <div id="ts-tabs">
                 <div class="tab whiteborder" id="tab-nfe">Dados NF-e</div>
+                <?php if ($notas['idStatusNota'] != 0) {  ?>
                 <div class="tab" id="tab-imposto">Imposto</div>
                 <div class="tab" id="tab-produ">Produtos</div>
+                <?php } ?>
+                
                 <div class="line"></div>
 
                 <div class="tabContent">
@@ -145,6 +148,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                     </div>
                 </div>
 
+                <?php if ($notas['idStatusNota'] != 0) {  ?>
                 <div class="tabContent">
                 <!-- *****************IMPOSTOS***************** -->
                     <div class="row">
@@ -371,6 +375,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                         </table>
                     </div>
                 </div>
+                <?php } ?>
             </div>
         </div>
     </div>

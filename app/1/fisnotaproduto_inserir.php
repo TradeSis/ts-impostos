@@ -3,7 +3,6 @@ foreach ($infNFe->det as $item) {
 
     
 
-    $idNota = isset($idNotaInserido) && $idNotaInserido !== "" ? "'" . $idNotaInserido . "'" : "NULL";
     $nItem = isset($item['nItem']) && $item['nItem'] !== "" ? "'" . (string) $item['nItem'] . "'" : "NULL";
     $quantidade = isset($item->prod->qCom) && $item->prod->qCom !== "" ? "'" . (string) $item->prod->qCom . "'" : "NULL";
     $unidCom = isset($item->prod->uCom) && $item->prod->uCom !== "" ? "'" . (string) $item->prod->uCom . "'" : "NULL";
@@ -38,8 +37,6 @@ foreach ($infNFe->det as $item) {
         $geralprodutos = mysqli_query($conexaogeral, $buscaGeralProdutos);
         $dadosGeralprodutos = mysqli_fetch_array($geralprodutos, MYSQLI_ASSOC);
         if (mysqli_num_rows($geralprodutos) == 0) {
-            $dadosEnder = ($campos == "emit") ? $dados->enderEmit : $dados->enderDest;
-    
                 $geralProdutosEntrada = array(
                     'eanProduto' => str_replace("'", "", $eanProduto),
                     'nomeProduto' => (string) $item->prod->xProd
