@@ -25,22 +25,32 @@ $buscar = mysqli_query($conexao, $sql);
 while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
   $emitente_cpfCnpj = $row['emitente_cpfCnpj'];
   $destinatario_cpfCnpj = $row['destinatario_cpfCnpj'];
+  $idStatusNota = $row['idStatusNota'];
 
-  $sql2_emitente = "SELECT geralpessoas.* FROM geralpessoas WHERE geralpessoas.cpfCnpj = $emitente_cpfCnpj";
-  $buscar2_emitente = mysqli_query($conexaogeral, $sql2_emitente);
+  $sql_emitente = "SELECT geralpessoas.* FROM geralpessoas WHERE geralpessoas.cpfCnpj = $emitente_cpfCnpj";
+  $buscar_emitente = mysqli_query($conexaogeral, $sql_emitente);
 
-  while ($row2_emitente = mysqli_fetch_array($buscar2_emitente, MYSQLI_ASSOC)) {
-      foreach ($row2_emitente as $dadosRow => $dadosEmitente) {
+  while ($row_emitente = mysqli_fetch_array($buscar_emitente, MYSQLI_ASSOC)) {
+      foreach ($row_emitente as $dadosRow => $dadosEmitente) {
           $row["emitente_" . $dadosRow] = $dadosEmitente;
       }
   }
 
-  $sql2_destinatario = "SELECT geralpessoas.* FROM geralpessoas WHERE geralpessoas.cpfCnpj = $destinatario_cpfCnpj";
-  $buscar2_destinatario = mysqli_query($conexaogeral, $sql2_destinatario);
+  $sql_destinatario = "SELECT geralpessoas.* FROM geralpessoas WHERE geralpessoas.cpfCnpj = $destinatario_cpfCnpj";
+  $buscar_destinatario = mysqli_query($conexaogeral, $sql_destinatario);
 
-  while ($row2_destinatario = mysqli_fetch_array($buscar2_destinatario, MYSQLI_ASSOC)) {
-      foreach ($row2_destinatario as $dadosRow => $dadosDestinatario) {
+  while ($row_destinatario = mysqli_fetch_array($buscar_destinatario, MYSQLI_ASSOC)) {
+      foreach ($row_destinatario as $dadosRow => $dadosDestinatario) {
           $row["destinatario_" . $dadosRow] = $dadosDestinatario;
+      }
+  }
+
+  $sql_status = "SELECT fisnotastatus.nomeStatusNota FROM fisnotastatus WHERE fisnotastatus.idStatusNota = $idStatusNota";
+  $buscar_status = mysqli_query($conexaogeral, $sql_status);
+
+  while ($row_status = mysqli_fetch_array($buscar_status, MYSQLI_ASSOC)) {
+      foreach ($row_status as $dadosRow => $dadosStatus) {
+        $row[$dadosRow] = $dadosStatus;
       }
   }
 

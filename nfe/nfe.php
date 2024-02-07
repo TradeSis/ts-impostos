@@ -56,6 +56,7 @@ $notas = buscarNota();
                                     <th>Chave</th>
                                     <th>Valor Total</th>
                                     <th>Emissão</th>
+                                    <th>Status</th>
                                     <th>Ação</th>
                                 </tr>
                             </thead>
@@ -66,6 +67,7 @@ $notas = buscarNota();
                                     <td> <?php echo $nota['chaveNFe'] ?> </td>
                                     <td> <?php echo number_format($nota['valorProdutos'], 2, ',', '.') ?> </td>
                                     <td> <?php echo date('d/m/Y', strtotime($nota['dtEmissao']))  ?> </td>
+                                    <td> <?php echo $nota['nomeStatusNota'] ?> </td>
                                     <td>
                                         <a class="btn btn-info btn-sm" href="visualizar.php?idNota=<?php echo $nota['idNota'] ?>" role="button"><i class="bi bi-eye-fill"></i></a>
                                         <button type="button" class="btn btn-success btn-sm" id="baixar" data-idNota="<?php echo $nota['idNota'] ?>" title="Baixar XML"><i class="bi bi-download"></i></button>

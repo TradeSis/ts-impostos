@@ -2,11 +2,7 @@
 //echo "-ENTRADA->".json_encode($jsonEntrada)."\n";
 
 
-$idEmpresa = null;
-	if (isset($jsonEntrada["idEmpresa"])) {
-    	$idEmpresa = $jsonEntrada["idEmpresa"];
-	}
-$conexao = conectaMysql($idEmpresa);
+$conexao = conectaMysql(null);
 $statusnota = array();
 
 $sql = "SELECT fisnotastatus.idStatusNota, fisnotastatus.nomeStatusNota FROM fisnotastatus";

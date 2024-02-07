@@ -15,13 +15,7 @@ function buscaStatusNota($idStatusNota=null)
 	
 	$statusnota = array();
 
-	$idEmpresa = null;
-	if (isset($_SESSION['idEmpresa'])) {
-    	$idEmpresa = $_SESSION['idEmpresa'];
-	}
-
 	$apiEntrada = array(
-		'idEmpresa' => $idEmpresa,
 		'idStatusNota' => $idStatusNota
 		
 	);
@@ -33,14 +27,9 @@ function buscaStatusNota($idStatusNota=null)
 if (isset($_GET['operacao'])) {
 
 	$operacao = $_GET['operacao'];
-	$idEmpresa = null;
-	if (isset($_SESSION['idEmpresa'])) {
-    	$idEmpresa = $_SESSION['idEmpresa'];
-	}
 
 	if ($operacao=="inserir") {
 		$apiEntrada = array(
-			'idEmpresa' => $idEmpresa,
 			'nomeStatusNota' => $_POST['nomeStatusNota']
 		);
 		$statusnota = chamaAPI(null, '/impostos/fisnotastatus', json_encode($apiEntrada), 'PUT');
@@ -48,7 +37,6 @@ if (isset($_GET['operacao'])) {
 
 	if ($operacao=="alterar") {
 		$apiEntrada = array(
-			'idEmpresa' => $idEmpresa,
 			'idStatusNota' => $_POST['idStatusNota'],
 			'nomeStatusNota' => $_POST['nomeStatusNota']
 		);
@@ -69,7 +57,6 @@ if (isset($_GET['operacao'])) {
 		}
 
         $apiEntrada = array(
-            'idEmpresa' => $_SESSION['idEmpresa'],
             'idStatusNota' => $idStatusNota,
             'nomeStatusNota' => $nomeStatusNota
 		);
