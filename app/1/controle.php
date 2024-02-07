@@ -61,6 +61,10 @@ if ($metodo == "GET") {
       include 'grupoproduto.php';
       break;
 
+    case "fisnotastatus":
+      include 'fisnotastatus.php';
+      break;
+
     default:
       $jsonSaida = json_decode(json_encode(
         array(
@@ -123,6 +127,10 @@ if ($metodo == "PUT") {
       include 'operacaofiscal_inserir.php';
       break;
 
+    case "fisnotastatus":
+      include 'fisnotastatus_inserir.php';
+      break;
+
     default:
       $jsonSaida = json_decode(json_encode(
         array(
@@ -163,6 +171,10 @@ if ($metodo == "POST") {
 
     case "fisnota":
           include 'fisnota_processar.php';
+          break;
+    
+    case "fisnotastatus":
+          include 'fisnotastatus_alterar.php';
           break;
     
     default:
