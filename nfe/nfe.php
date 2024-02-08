@@ -33,7 +33,7 @@ $notas = buscarNota();
                         <div class="col-3 text-end">
                             <div class="row">
                                 <div class="col-6">
-                                    <a id="processar" role="button" class="btn btn-warning" title="Processar XMLs">Processar</a>
+                                    <a role="button" class="btn btn-warning processar-btn" title="Processar todos XMLs">Processar</a>
                                 </div>
                                 <div class="col-6">
                                     <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
@@ -52,11 +52,12 @@ $notas = buscarNota();
                         <table class="table table-hover table-sm">
                             <thead class="ts-headertabelafixo">
                                 <tr>
-                                    <th>Nota Fiscal</th>
-                                    <th>Chave</th>
-                                    <th>Valor Total</th>
-                                    <th>Emissão</th>
-                                    <th>Status</th>
+                                    <th>nNF</th>
+                                    <th>dhEmi</th>
+                                    <th>emit</th>
+                                    <th>emite</th>
+                                    <th>total</th>
+                                    <th>nomeStatusNota</th>
                                     <th>Ação</th>
                                 </tr>
                             </thead>
@@ -64,13 +65,17 @@ $notas = buscarNota();
                             foreach ($notas as $nota) { ?>
                                 <tr>
                                     <td> <?php echo $nota['NF'] ?> </td>
-                                    <td> <?php echo $nota['chaveNFe'] ?> </td>
-                                    <td> <?php echo number_format($nota['valorProdutos'], 2, ',', '.') ?> </td>
                                     <td> <?php echo date('d/m/Y', strtotime($nota['dtEmissao']))  ?> </td>
+                                    <td> <?php echo $nota['emitente_cpfCnpj'] ?> </td>
+                                    <td> <?php echo $nota['emitente_nomeFantasia'] ?> </td>
+                                    <td> <?php echo number_format($nota['vNF'], 2, ',', '.') ?> </td>
                                     <td> <?php echo $nota['nomeStatusNota'] ?> </td>
                                     <td>
                                         <a class="btn btn-info btn-sm" href="visualizar.php?idNota=<?php echo $nota['idNota'] ?>" role="button"><i class="bi bi-eye-fill"></i></a>
                                         <button type="button" class="btn btn-success btn-sm" id="baixar" data-idNota="<?php echo $nota['idNota'] ?>" title="Baixar XML"><i class="bi bi-download"></i></button>
+                                        <?php if($nota['idStatusNota'] == 0){ ?>
+                                        <button type="button" class="btn btn-warning btn-sm processar-btn" data-idNota="<?php echo $nota['idNota'] ?>" title="Processar XML"><i class="bi bi-check-circle-fill"></i></button>
+                                        <?php } ?>
                                     </td>
 
                                 </tr>
@@ -143,12 +148,15 @@ $notas = buscarNota();
                 });
             });
 
-            $('#processar').click(function () {
+            $('.processar-btn').click(function () {
                 $('body').css('cursor', 'progress');
+                var idNota = $(this).attr("data-idNota");
+                
                 $.ajax({
                     method: "POST",
                     dataType: 'json',
                     url: "../database/fisnota.php?operacao=processarXML",
+                    data: { idNota: idNota },
                     success: function (msg) {
                         $('body').css('cursor', 'default');
                         if (msg.retorno === "ok") {

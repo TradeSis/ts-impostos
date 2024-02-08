@@ -4,10 +4,10 @@
 $LOG_CAMINHO = defineCaminhoLog();
 if (isset($LOG_CAMINHO)) {
     $LOG_NIVEL = defineNivelLog();
-    $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "nfe_inserir";
+    $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "nfe_processar";
     if (isset($LOG_NIVEL)) {
         if ($LOG_NIVEL >= 1) {
-            $arquivo = fopen(defineCaminhoLog() . "fisnota_inserir" . date("dmY") . ".log", "a");
+            $arquivo = fopen(defineCaminhoLog() . "fisnota_" . date("dmY") . ".log", "a");
         }
     }
 }
@@ -32,6 +32,9 @@ $conexaogeral = conectaMysql(null);
 if (isset($jsonEntrada['idEmpresa'])) {
 
     $sql_fisnota = "SELECT fisnota.idNota, fisnota.XML, fisnota.idPessoaEmitente FROM fisnota WHERE idStatusNota = 0";
+    if (isset($jsonEntrada["idNota"])) {
+    $sql_fisnota = $sql_fisnota . " and fisnota.idNota = " . $jsonEntrada["idNota"];
+    }
     $buscar_fisnota = mysqli_query($conexao, $sql_fisnota);
     if (mysqli_num_rows($buscar_fisnota) == 0) {
         $jsonSaida = array(

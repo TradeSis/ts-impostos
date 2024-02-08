@@ -129,21 +129,29 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                     </div>
                     <div class="row">
                         <h5>Valores</h5>
-                        <div class="col-md-3">
-                            <label class="form-label ts-label">Base de Cálculo</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['baseCalculo'], 2, ',', '.') ?>" readonly>
+                        <div class="col-md">
+                            <label class="form-label ts-label">vNF</label>
+                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vNF'], 2, ',', '.') ?>" readonly>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label ts-label">Valor Produtos</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['valorProdutos'], 2, ',', '.') ?>" readonly>
+                        <div class="col-md">
+                            <label class="form-label ts-label">vProd</label>
+                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vProd'], 2, ',', '.') ?>" readonly>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label ts-label">PIS</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['pis'], 2, ',', '.') ?>" readonly>
+                        <div class="col-md">
+                            <label class="form-label ts-label">vFrete</label>
+                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vFrete'], 2, ',', '.') ?>" readonly>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label ts-label">COFINS</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['cofins'], 2, ',', '.') ?>" readonly>
+                        <div class="col-md">
+                            <label class="form-label ts-label">vSeg</label>
+                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vSeg'], 2, ',', '.') ?>" readonly>
+                        </div>
+                        <div class="col-md">
+                            <label class="form-label ts-label">vDesc</label>
+                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vDesc'], 2, ',', '.') ?>" readonly>
+                        </div>
+                        <div class="col-md">
+                            <label class="form-label ts-label">vOutro</label>
+                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vOutro'], 2, ',', '.') ?>" readonly>
                         </div>
                     </div>
                 </div>

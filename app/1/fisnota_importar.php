@@ -7,7 +7,7 @@ if (isset($LOG_CAMINHO)) {
     $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "nfe_importar";
     if (isset($LOG_NIVEL)) {
         if ($LOG_NIVEL >= 1) {
-            $arquivo = fopen(defineCaminhoLog() . "fisnota_inserir" . date("dmY") . ".log", "a");
+            $arquivo = fopen(defineCaminhoLog() . "fisnota_" . date("dmY") . ".log", "a");
         }
     }
 }
@@ -97,6 +97,7 @@ if (isset($jsonEntrada['xml'])) {
                                     'cpfCnpj' => $cpfCnpj,
                                     'tipoPessoa' => $tipoPessoa,
                                     'nomePessoa' => (string) $dados->xNome,
+                                    'nomeFantasia' => (string) $dados->xFant,
                                     'IE' => (string) $dados->IE,
                                     'municipio' => (string) $dadosEnder->xMun,
                                     'codigoCidade' => (string) $dadosEnder->cMun,
@@ -148,8 +149,15 @@ if (isset($jsonEntrada['xml'])) {
                     $XMLentrada = isset($xmlContent) && $xmlContent !== "" ? "'" . $xmlContent . "'" : "null";
                     $idStatusNota = '0'; //Aberto
 
-                    $sqlNota = "INSERT INTO fisnota(chaveNFe,naturezaOp,modelo,XML,serie,NF,dtEmissao,idPessoaEmitente,idPessoaDestinatario,idStatusNota) 
-                            VALUES ($chaveNFe,$naturezaOp,$modelo,$XMLentrada,$serie,$NF,$dtEmissao,$idPessoaEmitente,$idPessoaDestinatario,$idStatusNota)";
+                    $vNF = isset($infNFe->total->ICMSTot->vNF) && $infNFe->total->ICMSTot->vNF !== "" ? "'" . (string) $infNFe->total->ICMSTot->vNF . "'" : "null";
+                    $vProd = isset($infNFe->total->ICMSTot->vProd) && $infNFe->total->ICMSTot->vProd !== "" ? "'" . (string) $infNFe->total->ICMSTot->vProd . "'" : "null";
+                    $vFrete = isset($infNFe->total->ICMSTot->vFrete) && $infNFe->total->ICMSTot->vFrete !== "" ? "'" . (string) $infNFe->total->ICMSTot->vFrete . "'" : "null";
+                    $vSeg = isset($infNFe->total->ICMSTot->vSeg) && $infNFe->total->ICMSTot->vSeg !== "" ? "'" . (string) $infNFe->total->ICMSTot->vSeg . "'" : "null";
+                    $vDesc = isset($infNFe->total->ICMSTot->vDesc) && $infNFe->total->ICMSTot->vDesc !== "" ? "'" . (string) $infNFe->total->ICMSTot->vDesc . "'" : "null";
+                    $vOutro = isset($infNFe->total->ICMSTot->vOutro) && $infNFe->total->ICMSTot->vOutro !== "" ? "'" . (string) $infNFe->total->ICMSTot->vOutro . "'" : "null";
+
+                    $sqlNota = "INSERT INTO fisnota(chaveNFe,naturezaOp,modelo,XML,serie,NF,dtEmissao,idPessoaEmitente,idPessoaDestinatario,idStatusNota,vNF,vProd,vFrete,vSeg,vDesc,vOutro) 
+                            VALUES ($chaveNFe,$naturezaOp,$modelo,$XMLentrada,$serie,$NF,$dtEmissao,$idPessoaEmitente,$idPessoaDestinatario,$idStatusNota,$vNF,$vProd,$vFrete,$vSeg,$vDesc,$vOutro)";
 
                     //LOG
                     if (isset($LOG_NIVEL)) {
