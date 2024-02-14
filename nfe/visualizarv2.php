@@ -306,6 +306,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                             </tbody>
                         </table>
                         <div id="pagination"></div>
+                        <div id="impostosdiv"></div>
                     </div>
                 </div>
                 <?php } ?>
@@ -433,20 +434,21 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
             buscar(<?php echo $notas['idNota'] ?>);
         }
 
+
         $(document).on('click', '.ts-click', function() {
             var idNota = $(this).attr("data-idNota");
             var nItem = $(this).attr("data-nItem");
             var idProduto = $(this).attr("data-idProduto");
 
-            var collapseId = 'collapse_' + idNota + "_" + nItem + "_" + idProduto;
+            $('#impostosdiv').html('');
 
-            var conteudoCollapse = "<tr class='collapse-row bg-light'><td colspan='15'><div class='collapse show' id='" + collapseId + "'>" +
-                "<div class='container'>" +
+            var conteudoCollapse = "<div class='container'>" +
+                "<div class='card'>" +
                 "<div class='row'>" +
                 "<h5>ICMS Produto " + nItem + "</h5>" +
                 "<div class='table'>" +
-                "<table class='table table-sm table-hover table-warning'>" +
-                "<thead>" +
+                "<table class='table table-sm table-hover'>" +
+                "<thead class='ts-headertabelafixo'>" +
                 "<tr>" +
                 "<th>imposto</th>" +
                 "<th>nomeImposto</th>" +
@@ -469,15 +471,11 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                 "</table>" +
                 "</div>" +
                 "</div>" +
-                "</div>" +
-                "</div></td></tr>" +
-                "<tr class='collapse-row bg-light'><td colspan='15'><div class='collapse show' id='impostos_" + collapseId + "'>" +
-                "<div class='container'>" +
                 "<div class='row'>" +
                 "<h5>Impostos Produto " + nItem + "</h5>" +
                 "<div class='table'>" +
-                "<table class='table table-sm table-hover table-warning'>" +
-                "<thead>" +
+                "<table class='table table-sm table-hover'>" +
+                "<thead class='ts-headertabelafixo'>" +
                 "<tr>" +
                 "<th>imposto</th>" +
                 "<th>nomeImposto</th>" +
@@ -493,12 +491,9 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                 "</div>" +
                 "</div>" +
                 "</div>" +
-                "</div></td></tr>";
+                "</div>";
 
-            if ($('#' + collapseId).length === 0) {
-                $('.collapse-row').remove();
-                $(this).closest('tr').after(conteudoCollapse);
-                
+                $('#impostosdiv').html(conteudoCollapse);
 
                 $.ajax({
                     type: 'POST',
@@ -508,7 +503,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                         idNota: idNota,
                         nItem: nItem
                     },
-                    success: function(data) {
+                    success: function (data) {
                         var linha = "";
                         for (var i = 0; i < data.length; i++) {
                             var object = data[i];
@@ -541,7 +536,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                         idNota: idNota,
                         nItem: nItem
                     },
-                    success: function(data) {
+                    success: function (data) {
                         var linha = "";
                         for (var i = 0; i < data.length; i++) {
                             var object = data[i];
@@ -558,12 +553,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                         $("#impostos_" + idNota + "_" + nItem + "_" + idProduto).html(linha);
                     }
                 });
-            } else {
-                $('#' + collapseId).collapse('toggle');
-                $('#' + 'impostos_' + collapseId).collapse('toggle');
-                $(this).closest('tr').nextAll('.collapse-row').remove();
-            }
-        });
+            });
     </script>
 
     <!-- LOCAL PARA COLOCAR OS JS -FIM -->

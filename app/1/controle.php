@@ -45,6 +45,10 @@ if ($metodo == "GET") {
       include 'fisnotaproduimposto.php';
       break;
 
+    case "fisnotaproduicms":
+      include 'fisnotaproduicms.php';
+      break;
+
     case "fisnotatotal":
       include 'fisnotatotal.php';
       break;

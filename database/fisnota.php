@@ -138,6 +138,18 @@ if (isset($_GET['operacao'])) {
 		echo json_encode($produ);
 		return $produ;
 	}
+	if ($operacao == "buscarProduICMS") {
+		$apiEntrada = array(
+			'idEmpresa' => $_SESSION['idEmpresa'],
+			'idNota' => $_POST['idNota'],
+			'nItem' => $_POST['nItem']
+		);
+		
+		$produ = chamaAPI(null, '/impostos/fisnotaproduicms', json_encode($apiEntrada), 'GET');
+
+		echo json_encode($produ);
+		return $produ;
+	}
 
 	
 
