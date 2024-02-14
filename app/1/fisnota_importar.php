@@ -51,6 +51,17 @@ if (isset($jsonEntrada['xml'])) {
         return $resposta;
     }
 
+    function validaNota($tpNF, $finNFe)
+    {
+        $resposta = false;
+
+        if ($tpNF == 1 && $finNFe == 1) { 
+            $resposta = true;
+        }
+
+        return $resposta;
+    }
+
     foreach ($xmlArquivos as $xmlContent) {
         $xml = simplexml_load_string($xmlContent);
         $infNFe = $xml->NFe->infNFe;
@@ -65,122 +76,129 @@ if (isset($jsonEntrada['xml'])) {
 
             //********************************************PESSOAS
             if (verificaEmpresa($conexaogeral, $conexao, $idEmpresa, (string) $infNFe->emit->CNPJ, (string) $infNFe->dest->CNPJ)) {
-                foreach ($infNFe->children() as $id => $dados) {
-                    $campos = $dados->getName();
-                    if ($campos == "emit" || $campos == "dest") {
+                if (validaNota((string) $infNFe->ide->tpNF,(string) $infNFe->ide->finNFe)) {
+                    foreach ($infNFe->children() as $id => $dados) {
+                        $campos = $dados->getName();
+                        if ($campos == "emit" || $campos == "dest") {
 
-                        if (isset($dados->CNPJ)) {
-                            $cpfCnpj = isset($dados->CNPJ) && $dados->CNPJ !== "" ? (string) $dados->CNPJ : "null";
-                            $tipoPessoa = "J";
-                        } else {
-                            $cpfCnpj = isset($dados->CPF) && $dados->CPF !== "" ? (string) $dados->CPF : "null";
-                            $tipoPessoa = "F";
-                        }
-
-                        //Verifica se já tem Pessoa
-                        $sql_pessoa = "SELECT pessoas.idPessoa FROM pessoas WHERE cpfCnpj = $cpfCnpj";
-                        $buscar_pessoa = mysqli_query($conexao, $sql_pessoa);
-                        $dadosPessoa = mysqli_fetch_array($buscar_pessoa, MYSQLI_ASSOC);
-                        if (mysqli_num_rows($buscar_pessoa) == 1) {
-                            if ($campos == "emit") {
-                                $idPessoaEmitente = $dadosPessoa["idPessoa"];
-                            } elseif ($campos == "dest") {
-                                $idPessoaDestinatario = $dadosPessoa["idPessoa"];
+                            if (isset($dados->CNPJ)) {
+                                $cpfCnpj = isset($dados->CNPJ) && $dados->CNPJ !== "" ? (string) $dados->CNPJ : "null";
+                                $tipoPessoa = "J";
+                            } else {
+                                $cpfCnpj = isset($dados->CPF) && $dados->CPF !== "" ? (string) $dados->CPF : "null";
+                                $tipoPessoa = "F";
                             }
-                        } else {
-                            $sql_geralpessoas = "SELECT geralpessoas.cpfCnpj FROM geralpessoas WHERE cpfCnpj = $cpfCnpj";
-                            $buscar_geralpessoas = mysqli_query($conexaogeral, $sql_geralpessoas);
-                            if (mysqli_num_rows($buscar_geralpessoas) == 0) {
-                                $dadosEnder = ($campos == "emit") ? $dados->enderEmit : $dados->enderDest;
 
-                                $geralPessoasEntrada = array(
-                                    'cpfCnpj' => $cpfCnpj,
-                                    'tipoPessoa' => $tipoPessoa,
-                                    'nomePessoa' => (string) $dados->xNome,
-                                    'nomeFantasia' => (string) $dados->xFant,
-                                    'IE' => (string) $dados->IE,
-                                    'municipio' => (string) $dadosEnder->xMun,
-                                    'codigoCidade' => (string) $dadosEnder->cMun,
-                                    'codigoEstado' => (string) $dadosEnder->UF,
-                                    'pais' => (string) $dadosEnder->xPais,
-                                    'bairro' => (string) $dadosEnder->xBairro,
-                                    'endereco' => (string) $dadosEnder->xLgr,
-                                    'endNumero' => (string) $dadosEnder->nro,
-                                    'CEP' => (string) $dadosEnder->CEP,
-                                    'telefone' => (string) $dadosEnder->fone,
-                                    'CRT' => (string) $dados->CRT
+                            //Verifica se já tem Pessoa
+                            $sql_pessoa = "SELECT pessoas.idPessoa FROM pessoas WHERE cpfCnpj = $cpfCnpj";
+                            $buscar_pessoa = mysqli_query($conexao, $sql_pessoa);
+                            $dadosPessoa = mysqli_fetch_array($buscar_pessoa, MYSQLI_ASSOC);
+                            if (mysqli_num_rows($buscar_pessoa) == 1) {
+                                if ($campos == "emit") {
+                                    $idPessoaEmitente = $dadosPessoa["idPessoa"];
+                                } elseif ($campos == "dest") {
+                                    $idPessoaDestinatario = $dadosPessoa["idPessoa"];
+                                }
+                            } else {
+                                $sql_geralpessoas = "SELECT geralpessoas.cpfCnpj FROM geralpessoas WHERE cpfCnpj = $cpfCnpj";
+                                $buscar_geralpessoas = mysqli_query($conexaogeral, $sql_geralpessoas);
+                                if (mysqli_num_rows($buscar_geralpessoas) == 0) {
+                                    $dadosEnder = ($campos == "emit") ? $dados->enderEmit : $dados->enderDest;
+
+                                    $geralPessoasEntrada = array(
+                                        'cpfCnpj' => $cpfCnpj,
+                                        'tipoPessoa' => $tipoPessoa,
+                                        'nomePessoa' => (string) $dados->xNome,
+                                        'nomeFantasia' => (string) $dados->xFant,
+                                        'IE' => (string) $dados->IE,
+                                        'municipio' => (string) $dadosEnder->xMun,
+                                        'codigoCidade' => (string) $dadosEnder->cMun,
+                                        'codigoEstado' => (string) $dadosEnder->UF,
+                                        'pais' => (string) $dadosEnder->xPais,
+                                        'bairro' => (string) $dadosEnder->xBairro,
+                                        'endereco' => (string) $dadosEnder->xLgr,
+                                        'endNumero' => (string) $dadosEnder->nro,
+                                        'CEP' => (string) $dadosEnder->CEP,
+                                        'telefone' => (string) $dadosEnder->fone,
+                                        'CRT' => (string) $dados->CRT
+                                    );
+
+                                    $geralPessoasRetorno = chamaAPI(null, '/cadastros/geralpessoas', json_encode($geralPessoasEntrada), 'PUT');
+                                }
+
+                                $pessoasEntrada = array(
+                                    'idEmpresa' => $idEmpresa,
+                                    'cpfCnpj' => $cpfCnpj
                                 );
 
-                                $geralPessoasRetorno = chamaAPI(null, '/cadastros/geralpessoas', json_encode($geralPessoasEntrada), 'PUT');
+                                $pessoasRetorno = chamaAPI(null, '/cadastros/pessoas', json_encode($pessoasEntrada), 'PUT');
+
+                                if ($campos == "emit") {
+                                    $idPessoaEmitente = $pessoasRetorno["idPessoa"];
+                                } elseif ($campos == "dest") {
+                                    $idPessoaDestinatario = $pessoasRetorno["idPessoa"];
+                                }
+
                             }
-
-                            $pessoasEntrada = array(
-                                'idEmpresa' => $idEmpresa,
-                                'cpfCnpj' => $cpfCnpj
-                            );
-
-                            $pessoasRetorno = chamaAPI(null, '/cadastros/pessoas', json_encode($pessoasEntrada), 'PUT');
-
-                            if ($campos == "emit") {
-                                $idPessoaEmitente = $pessoasRetorno["idPessoa"];
-                            } elseif ($campos == "dest") {
-                                $idPessoaDestinatario = $pessoasRetorno["idPessoa"];
-                            }
-
                         }
                     }
-                }
 
-                //********************************************NOTA FISCAL
-                $chaveNFe = isset($infNFe['Id']) && $infNFe['Id'] !== "" && $infNFe['Id'] !== "" ? "'" . str_replace("NFe", "", $infNFe['Id']) . "'" : "null";
-                $buscaNFE = "SELECT fisnota.chaveNFe FROM fisnota WHERE chaveNFe = $chaveNFe";
-                $resultado = mysqli_query($conexao, $buscaNFE);
-                if (mysqli_num_rows($resultado) > 0) {
-                    $jsonSaida = array(
-                        "status" => 400,
-                        "retorno" => "NFe ja cadastrada"
-                    );
-                } else {
-                    $NF = isset($infNFe->ide->nNF) && $infNFe->ide->nNF !== "" ? "'" . (string) $infNFe->ide->nNF . "'" : "null";
-                    $serie = isset($infNFe->ide->serie) && $infNFe->ide->serie !== "" ? "'" . (string) $infNFe->ide->serie . "'" : "null";
-                    $dtEmissao = isset($infNFe->ide->dhEmi) && $infNFe->ide->dhEmi !== "" ? "'" . date('Y-m-d', strtotime($infNFe->ide->dhEmi)) . "'" : "null";
-                    $naturezaOp = isset($infNFe->ide->natOp) && $infNFe->ide->natOp !== "" ? "'" . (string) $infNFe->ide->natOp . "'" : "null";
-                    $modelo = isset($infNFe->ide->mod) && $infNFe->ide->mod !== "" ? "'" . (string) $infNFe->ide->mod . "'" : "null";
-                    $XMLentrada = isset($xmlContent) && $xmlContent !== "" ? "'" . $xmlContent . "'" : "null";
-                    $idStatusNota = '0'; //Aberto
-
-                    $vNF = isset($infNFe->total->ICMSTot->vNF) && $infNFe->total->ICMSTot->vNF !== "" ? "'" . (string) $infNFe->total->ICMSTot->vNF . "'" : "null";
-                    $vProd = isset($infNFe->total->ICMSTot->vProd) && $infNFe->total->ICMSTot->vProd !== "" ? "'" . (string) $infNFe->total->ICMSTot->vProd . "'" : "null";
-                    $vFrete = isset($infNFe->total->ICMSTot->vFrete) && $infNFe->total->ICMSTot->vFrete !== "" ? "'" . (string) $infNFe->total->ICMSTot->vFrete . "'" : "null";
-                    $vSeg = isset($infNFe->total->ICMSTot->vSeg) && $infNFe->total->ICMSTot->vSeg !== "" ? "'" . (string) $infNFe->total->ICMSTot->vSeg . "'" : "null";
-                    $vDesc = isset($infNFe->total->ICMSTot->vDesc) && $infNFe->total->ICMSTot->vDesc !== "" ? "'" . (string) $infNFe->total->ICMSTot->vDesc . "'" : "null";
-                    $vOutro = isset($infNFe->total->ICMSTot->vOutro) && $infNFe->total->ICMSTot->vOutro !== "" ? "'" . (string) $infNFe->total->ICMSTot->vOutro . "'" : "null";
-
-                    $sqlNota = "INSERT INTO fisnota(chaveNFe,naturezaOp,modelo,XML,serie,NF,dtEmissao,idPessoaEmitente,idPessoaDestinatario,idStatusNota,vNF,vProd,vFrete,vSeg,vDesc,vOutro) 
-                            VALUES ($chaveNFe,$naturezaOp,$modelo,$XMLentrada,$serie,$NF,$dtEmissao,$idPessoaEmitente,$idPessoaDestinatario,$idStatusNota,$vNF,$vProd,$vFrete,$vSeg,$vDesc,$vOutro)";
-
-                    //LOG
-                    if (isset($LOG_NIVEL)) {
-                        if ($LOG_NIVEL >= 3) {
-                            fwrite($arquivo, $identificacao . "-SQL_Nota->" . $sqlNota . "\n");
-                        }
-                    }
-                    //LOG
-
-                    $atualizarNota = mysqli_query($conexao, $sqlNota);
-
-                    if ($atualizarNota) {
+                    //********************************************NOTA FISCAL
+                    $chaveNFe = isset($infNFe['Id']) && $infNFe['Id'] !== "" && $infNFe['Id'] !== "" ? "'" . str_replace("NFe", "", $infNFe['Id']) . "'" : "null";
+                    $buscaNFE = "SELECT fisnota.chaveNFe FROM fisnota WHERE chaveNFe = $chaveNFe";
+                    $resultado = mysqli_query($conexao, $buscaNFE);
+                    if (mysqli_num_rows($resultado) > 0) {
                         $jsonSaida = array(
-                            "status" => 200,
-                            "retorno" => "ok"
+                            "status" => 400,
+                            "retorno" => "NFe ja cadastrada"
                         );
                     } else {
-                        $jsonSaida = array(
-                            "status" => 501,
-                            "retorno" => "erro no mysql"
-                        );
-                        return;
+                        $NF = isset($infNFe->ide->nNF) && $infNFe->ide->nNF !== "" ? "'" . (string) $infNFe->ide->nNF . "'" : "null";
+                        $serie = isset($infNFe->ide->serie) && $infNFe->ide->serie !== "" ? "'" . (string) $infNFe->ide->serie . "'" : "null";
+                        $dtEmissao = isset($infNFe->ide->dhEmi) && $infNFe->ide->dhEmi !== "" ? "'" . date('Y-m-d', strtotime($infNFe->ide->dhEmi)) . "'" : "null";
+                        $naturezaOp = isset($infNFe->ide->natOp) && $infNFe->ide->natOp !== "" ? "'" . (string) $infNFe->ide->natOp . "'" : "null";
+                        $modelo = isset($infNFe->ide->mod) && $infNFe->ide->mod !== "" ? "'" . (string) $infNFe->ide->mod . "'" : "null";
+                        $XMLentrada = isset($xmlContent) && $xmlContent !== "" ? "'" . $xmlContent . "'" : "null";
+                        $idStatusNota = '0'; //Aberto
+
+                        $vNF = isset($infNFe->total->ICMSTot->vNF) && $infNFe->total->ICMSTot->vNF !== "" ? "'" . (string) $infNFe->total->ICMSTot->vNF . "'" : "null";
+                        $vProd = isset($infNFe->total->ICMSTot->vProd) && $infNFe->total->ICMSTot->vProd !== "" ? "'" . (string) $infNFe->total->ICMSTot->vProd . "'" : "null";
+                        $vFrete = isset($infNFe->total->ICMSTot->vFrete) && $infNFe->total->ICMSTot->vFrete !== "" ? "'" . (string) $infNFe->total->ICMSTot->vFrete . "'" : "null";
+                        $vSeg = isset($infNFe->total->ICMSTot->vSeg) && $infNFe->total->ICMSTot->vSeg !== "" ? "'" . (string) $infNFe->total->ICMSTot->vSeg . "'" : "null";
+                        $vDesc = isset($infNFe->total->ICMSTot->vDesc) && $infNFe->total->ICMSTot->vDesc !== "" ? "'" . (string) $infNFe->total->ICMSTot->vDesc . "'" : "null";
+                        $vOutro = isset($infNFe->total->ICMSTot->vOutro) && $infNFe->total->ICMSTot->vOutro !== "" ? "'" . (string) $infNFe->total->ICMSTot->vOutro . "'" : "null";
+
+                        $sqlNota = "INSERT INTO fisnota(chaveNFe,naturezaOp,modelo,XML,serie,NF,dtEmissao,idPessoaEmitente,idPessoaDestinatario,idStatusNota,vNF,vProd,vFrete,vSeg,vDesc,vOutro) 
+                                VALUES ($chaveNFe,$naturezaOp,$modelo,$XMLentrada,$serie,$NF,$dtEmissao,$idPessoaEmitente,$idPessoaDestinatario,$idStatusNota,$vNF,$vProd,$vFrete,$vSeg,$vDesc,$vOutro)";
+
+                        //LOG
+                        if (isset($LOG_NIVEL)) {
+                            if ($LOG_NIVEL >= 3) {
+                                fwrite($arquivo, $identificacao . "-SQL_Nota->" . $sqlNota . "\n");
+                            }
+                        }
+                        //LOG
+
+                        $atualizarNota = mysqli_query($conexao, $sqlNota);
+
+                        if ($atualizarNota) {
+                            $jsonSaida = array(
+                                "status" => 200,
+                                "retorno" => "ok"
+                            );
+                        } else {
+                            $jsonSaida = array(
+                                "status" => 501,
+                                "retorno" => "erro no mysql"
+                            );
+                            return;
+                        }
                     }
+                } else {
+                    $jsonSaida = array(
+                        "status" => 400,
+                        "retorno" => "NFE fora do padrão"
+                    );
                 }
             } else {
                 $jsonSaida = array(

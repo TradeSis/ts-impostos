@@ -67,7 +67,7 @@ $notas = buscarNota();
                                     <td> <?php echo $nota['NF'] ?> </td>
                                     <td> <?php echo date('d/m/Y', strtotime($nota['dtEmissao']))  ?> </td>
                                     <td> <?php echo $nota['emitente_cpfCnpj'] ?> </td>
-                                    <td> <?php echo $nota['emitente_nomeFantasia'] ?> </td>
+                                    <td> <?php echo ($nota['emitente_nomeFantasia'] != null) ? $nota['emitente_nomeFantasia'] : $nota['emitente_nomePessoa']; ?> </td>
                                     <td> <?php echo number_format($nota['vNF'], 2, ',', '.') ?> </td>
                                     <td> <?php echo $nota['nomeStatusNota'] ?> </td>
                                     <td>
