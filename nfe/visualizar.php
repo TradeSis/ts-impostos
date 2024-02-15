@@ -313,8 +313,6 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
         </div>
     </div>
 
-    <?php include 'modalVisualizarProdu'; ?>
-   
 
     <!-- LOCAL PARA COLOCAR OS JS -->
 
@@ -371,7 +369,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
 
     <script>
         var currentPage = 1;
-        var rowsPerPage = 5;
+        var rowsPerPage = 10;
 
         buscar(<?php echo $notas['idNota'] ?>);
 
@@ -442,8 +440,6 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
 
             var conteudoCollapse = "<tr class='collapse-row bg-light'><td colspan='15'><div class='collapse show' id='" + collapseId + "'>" +
                 "<div class='container'>" +
-                "<div class='row'>" +
-                "<h5>ICMS Produto " + nItem + "</h5>" +
                 "<div class='table'>" +
                 "<table class='table table-sm table-hover table-warning'>" +
                 "<thead>" +
@@ -467,16 +463,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                 "</thead>" +
                 "<tbody id='icms_" + idNota + "_" + nItem + "_" + idProduto + "' class='fonteCorpo'></tbody>" +
                 "</table>" +
-                "</div>" +
-                "</div>" +
-                "</div>" +
-                "</div></td></tr>" +
-                "<tr class='collapse-row bg-light'><td colspan='15'><div class='collapse show' id='impostos_" + collapseId + "'>" +
-                "<div class='container'>" +
-                "<div class='row'>" +
-                "<h5>Impostos Produto " + nItem + "</h5>" +
-                "<div class='table'>" +
-                "<table class='table table-sm table-hover table-warning'>" +
+                "<table class='table table-sm table-hover table-warning' style='margin-top: -10px;'>" +
                 "<thead>" +
                 "<tr>" +
                 "<th>imposto</th>" +
@@ -490,7 +477,6 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                 "</thead>" +
                 "<tbody id='impostos_" + idNota + "_" + nItem + "_" + idProduto + "' class='fonteCorpo'></tbody>" +
                 "</table>" +
-                "</div>" +
                 "</div>" +
                 "</div>" +
                 "</div></td></tr>";
@@ -548,10 +534,10 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                             linha += "<tr>";
                             linha += "<td>" + (object.imposto !== null ? object.imposto : "") + "</td>";
                             linha += "<td>" + (object.nomeImposto !== null ? object.nomeImposto : "") + "</td>";
-                            linha += "<td>" + (object.cEnq !== null ? parseFloat(object.cEnq).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
-                            linha += "<td>" + (object.CST !== null ? parseFloat(object.CST).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td>" + (object.cEnq !== null ? object.cEnq : "") + "</td>";
+                            linha += "<td>" + (object.CST !== null ? object.CST : "") + "</td>";
                             linha += "<td>" + (object.vBC !== null ? parseFloat(object.vBC).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
-                            linha += "<td>" + (object.percentual !== null ? parseFloat(object.percentual).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td>" + (object.percentual !== null ? (parseFloat(object.percentual)).toLocaleString('pt-BR').replace(',', '.') + "%" : "") + "</td>";
                             linha += "<td>" + (object.valor !== null ? parseFloat(object.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
                             linha += "</tr>";
                         }

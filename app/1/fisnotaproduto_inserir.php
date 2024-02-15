@@ -93,10 +93,18 @@ foreach ($infNFe->det as $item) {
         $vTotTribIMPOSTO = isset($item->imposto->vTotTrib) && $item->imposto->vTotTrib !== "" ? "'" . (string) $item->imposto->vTotTrib . "'" : "null";
         foreach ($item->imposto->children() as $filho) {
             $imposto = "'" . $filho->getName() . "'";
-            $nomeImposto = $filho->children()->count() > 0 ? $filho->children()->getName() : null;
-            
-            $campos = $filho->$nomeImposto;
-            $nomeImposto = "'" . $nomeImposto . "'";
+            if ($filho->getName() === "IPI") {
+                foreach ($filho->children() as $ipi) {
+                    if ($ipi->getName() !== "cEnq") {
+                        $nomeImposto = "'" . $ipi->getName() . "'";
+                        $campos = $ipi;
+                    }
+                }
+            } else {
+                $nomeImposto = $filho->children()->count() > 0 ? $filho->children()->getName() : null;
+                $campos = $filho->$nomeImposto;
+                $nomeImposto = "'" . $nomeImposto . "'";
+            }
 
             if ($imposto == "'ICMS'" ) {
                 $orig = isset($campos->orig) ? "'" . (string) $campos->orig . "'" : "null";
@@ -118,7 +126,7 @@ foreach ($infNFe->det as $item) {
 
             } else {
 
-                $cEnq = isset($campos->cEnq) ? "'" . (string) $campos->cEnq . "'" : "null";
+                $cEnq = isset($filho->cEnq) ? "'" . (string) $filho->cEnq . "'" : "null";
                 $CST = isset($campos->CST) ? "'" . (string) $campos->CST . "'" : "null";
                 $vBC = isset($campos->vBC) ? "'" . (string) $campos->vBC . "'" : "null";
 

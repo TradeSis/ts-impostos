@@ -60,8 +60,29 @@ if (isset($LOG_NIVEL)) {
 $rows = 0;
 $buscar = mysqli_query($conexao, $sql);
 while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
-    array_push($impostos, $row);
-    $rows = $rows + 1;
+    if (isset($jsonEntrada["nItem"]) && isset($jsonEntrada["idNota"])) {
+        if ($row['idNota'] === null || $row['nItem'] === null) {
+            continue;
+        }
+        
+        $impostos[] = $row;
+        
+        $calculadoRow = $row;
+        if ($calculadoRow['imposto'] !== null) {
+            $calculadoRow['imposto'] = "calculado_" . $calculadoRow['imposto'];
+        }
+        foreach ($calculadoRow as $key => $value) {
+            if (is_numeric($value) && $key !== 'idNota' && $key !== 'nItem' && $value !== null) {
+                $calculadoRow[$key] *= 2; 
+            }
+        }
+        $impostos[] = $calculadoRow;
+        
+        $rows += 2; 
+    } else {
+        array_push($impostos, $row);
+        $rows = $rows + 1;
+    }
 }
 
 /* if (isset($jsonEntrada["idNota"]) && $rows==1) {
