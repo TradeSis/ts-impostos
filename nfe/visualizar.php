@@ -131,27 +131,27 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                         <h6>Valores</h6>
                         <div class="col-md">
                             <label class="form-label ts-label">vNF</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vNF'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($notas['vNF'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vProd</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vProd'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($notas['vProd'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vFrete</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vFrete'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($notas['vFrete'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vSeg</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vSeg'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($notas['vSeg'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vDesc</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vDesc'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($notas['vDesc'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vOutro</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($notas['vOutro'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($notas['vOutro'], 2, ',', '.') ?>" readonly>
                         </div>
                     </div>
                 </div>
@@ -163,76 +163,76 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                         <h6>ICMS</h6>
                         <div class="col-md">
                             <label class="form-label ts-label">vBC</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vBC'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vBC'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vICMS</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vICMS'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vICMS'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vICMSDeson</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vICMSDeson'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vICMSDeson'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vICMSUFDest</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vICMSUFDest'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vICMSUFDest'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vICMSUFRemet</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vICMSUFRemet'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vICMSUFRemet'], 2, ',', '.') ?>" readonly>
                         </div>
                     </div>
                     <div class="row mt-2">
                         <h6>FCP</h6>
                         <div class="col-md">
                             <label class="form-label ts-label">vFCP</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vFCP'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vFCP'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vFCPUFDest</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vFCPUFDest'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vFCPUFDest'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vFCPSTRet</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vFCPSTRet'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vFCPSTRet'], 2, ',', '.') ?>" readonly>
                         </div>
                     </div>
                     <div class="row mt-2">
                         <h6>ICMS ST</h6>
                         <div class="col-md">
                             <label class="form-label ts-label">vBCST</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vBCST'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vBCST'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vST</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vST'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vST'], 2, ',', '.') ?>" readonly>
                         </div>
                     </div>
                     <div class="row mt-2">
                         <h6>ICMS Monofasico</h6>
                         <div class="col-md">
                             <label class="form-label ts-label">qBCMono</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['qBCMono'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['qBCMono'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vICMSMono</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vICMSMono'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vICMSMono'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">qBCMonoReten</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['qBCMonoReten'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['qBCMonoReten'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vICMSMonoReten</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vICMSMonoReten'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vICMSMonoReten'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">qBCMonoRet</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['qBCMonoRet'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['qBCMonoRet'], 2, ',', '.') ?>" readonly>
                         </div>
                         <div class="col-md">
                             <label class="form-label ts-label">vICMSMonoRet</label>
-                            <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vICMSMonoRet'], 2, ',', '.') ?>" readonly>
+                            <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vICMSMonoRet'], 2, ',', '.') ?>" readonly>
                         </div>
                     </div>
                     <div class="row mt-2">
@@ -240,7 +240,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                             <h6>Imposto Importacao</h6>
                             <div class="col-md">
                                 <label class="form-label ts-label">vII</label>
-                                <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vII'], 2, ',', '.') ?>" readonly>
+                                <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vII'], 2, ',', '.') ?>" readonly>
                             </div>
                         </div>
                         <div class="col-md">
@@ -248,11 +248,11 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                                 <h6>IPI</h6>
                                 <div class="col-md">
                                     <label class="form-label ts-label">vIPI</label>
-                                    <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vIPI'], 2, ',', '.') ?>" readonly>
+                                    <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vIPI'], 2, ',', '.') ?>" readonly>
                                 </div>
                                 <div class="col-md">
                                     <label class="form-label ts-label">vIPIDevol</label>
-                                    <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vIPIDevol'], 2, ',', '.') ?>" readonly>
+                                    <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vIPIDevol'], 2, ',', '.') ?>" readonly>
                                 </div>
                             </div>
                         </div>
@@ -260,21 +260,21 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                             <h6>PIS</h6>
                             <div class="col-md">
                                 <label class="form-label ts-label">vPIS</label>
-                                <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vPIS'], 2, ',', '.') ?>" readonly>
+                                <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vPIS'], 2, ',', '.') ?>" readonly>
                             </div>
                         </div>
                         <div class="col-md">
                             <h6>COFINS</h6>
                             <div class="col-md">
                                 <label class="form-label ts-label">vCOFINS</label>
-                                <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vCOFINS'], 2, ',', '.') ?>" readonly>
+                                <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vCOFINS'], 2, ',', '.') ?>" readonly>
                             </div>
                         </div>
                         <div class="col-md">
                             <h6>Valor Estimado Impostos</h6>
                             <div class="col-md">
                                 <label class="form-label ts-label">vTotTrib</label>
-                                <input type="text" class="form-control ts-input" value="<?php echo number_format($impostoTotal['vTotTrib'], 2, ',', '.') ?>" readonly>
+                                <input type="text" class="form-control ts-input ts-value" value="<?php echo number_format($impostoTotal['vTotTrib'], 2, ',', '.') ?>" readonly>
                             </div>
                         </div>
                     </div>
@@ -441,7 +441,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
             var conteudoCollapse = "<tr class='collapse-row bg-light'><td colspan='15'><div class='collapse show' id='" + collapseId + "'>" +
                 "<div class='container'>" +
                 "<div class='table'>" +
-                "<table class='table table-sm table-hover table-warning'>" +
+                "<table class='table table-sm table-hover table-warning ts-tablecenter'>" +
                 "<thead>" +
                 "<tr>" +
                 "<th>imposto</th>" +
@@ -463,7 +463,7 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                 "</thead>" +
                 "<tbody id='icms_" + idNota + "_" + nItem + "_" + idProduto + "' class='fonteCorpo'></tbody>" +
                 "</table>" +
-                "<table class='table table-sm table-hover table-warning' style='margin-top: -10px;'>" +
+                "<table class='table table-sm table-hover table-warning ts-tablecenter' style='margin-top: -10px;'>" +
                 "<thead>" +
                 "<tr>" +
                 "<th>imposto</th>" +
@@ -499,21 +499,21 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                         for (var i = 0; i < data.length; i++) {
                             var object = data[i];
                             linha += "<tr>";
-                            linha += "<td>" + (object.imposto !== null ? object.imposto : "") + "</td>";
-                            linha += "<td>" + (object.nomeImposto !== null ? object.nomeImposto : "") + "</td>";
-                            linha += "<td>" + (object.vTotTrib !== null ? object.vTotTrib : "") + "</td>";
-                            linha += "<td>" + (object.orig !== null ? object.orig : "") + "</td>";
-                            linha += "<td>" + (object.CSOSN !== null ? object.CSOSN : "") + "</td>";
-                            linha += "<td>" + (object.modBCST !== null ? object.modBCST : "") + "</td>";
-                            linha += "<td>" + (object.pMVAST !== null ? parseFloat(object.pMVAST).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
-                            linha += "<td>" + (object.vBCST !== null ? parseFloat(object.vBCST).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
-                            linha += "<td>" + (object.pICMSST !== null ? parseFloat(object.pICMSST).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
-                            linha += "<td>" + (object.vICMSST !== null ? parseFloat(object.vICMSST).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
-                            linha += "<td>" + (object.CST !== null ? object.CST : "") + "</td>";
-                            linha += "<td>" + (object.modBC !== null ? object.modBC : "") + "</td>";
-                            linha += "<td>" + (object.vBC !== null ? parseFloat(object.vBC).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
-                            linha += "<td>" + (object.pICMS !== null ? parseFloat(object.pICMS).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
-                            linha += "<td>" + (object.vICMS !== null ? parseFloat(object.vICMS).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td style='text-align: left;'>" + (object.imposto !== null ? object.imposto : "") + "</td>";
+                            linha += "<td style='text-align: left;'>" + (object.nomeImposto !== null ? object.nomeImposto : "") + "</td>";
+                            linha += "<td style='text-align: center;'>" + (object.vTotTrib !== null ? object.vTotTrib : "") + "</td>";
+                            linha += "<td style='text-align: center;'>" + (object.orig !== null ? object.orig : "") + "</td>";
+                            linha += "<td style='text-align: center;'>" + (object.CSOSN !== null ? object.CSOSN : "") + "</td>";
+                            linha += "<td style='text-align: center;'>" + (object.modBCST !== null ? object.modBCST : "") + "</td>";
+                            linha += "<td style='text-align: right;'>" + (object.pMVAST !== null ? parseFloat(object.pMVAST).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td style='text-align: right;'>" + (object.vBCST !== null ? parseFloat(object.vBCST).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td style='text-align: right;'>" + (object.pICMSST !== null ? parseFloat(object.pICMSST).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td style='text-align: right;'>" + (object.vICMSST !== null ? parseFloat(object.vICMSST).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td style='text-align: center;'>" + (object.CST !== null ? object.CST : "") + "</td>";
+                            linha += "<td style='text-align: center;'>" + (object.modBC !== null ? object.modBC : "") + "</td>";
+                            linha += "<td style='text-align: right;'>" + (object.vBC !== null ? parseFloat(object.vBC).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td style='text-align: right;'>" + (object.pICMS !== null ? parseFloat(object.pICMS).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td style='text-align: right;'>" + (object.vICMS !== null ? parseFloat(object.vICMS).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
                             linha += "</tr>";
                         }
                         $("#icms_" + idNota + "_" + nItem + "_" + idProduto).html(linha);
@@ -532,13 +532,13 @@ $impostoTotal = buscarNotaImpostos($_GET['idNota']);
                         for (var i = 0; i < data.length; i++) {
                             var object = data[i];
                             linha += "<tr>";
-                            linha += "<td>" + (object.imposto !== null ? object.imposto : "") + "</td>";
-                            linha += "<td>" + (object.nomeImposto !== null ? object.nomeImposto : "") + "</td>";
-                            linha += "<td>" + (object.cEnq !== null ? object.cEnq : "") + "</td>";
-                            linha += "<td>" + (object.CST !== null ? object.CST : "") + "</td>";
-                            linha += "<td>" + (object.vBC !== null ? parseFloat(object.vBC).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
-                            linha += "<td>" + (object.percentual !== null ? (parseFloat(object.percentual)).toLocaleString('pt-BR').replace(',', '.') + "%" : "") + "</td>";
-                            linha += "<td>" + (object.valor !== null ? parseFloat(object.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td style='text-align: left;'>" + (object.imposto !== null ? object.imposto : "") + "</td>";
+                            linha += "<td style='text-align: left;'>" + (object.nomeImposto !== null ? object.nomeImposto : "") + "</td>";
+                            linha += "<td style='text-align: center;'>" + (object.cEnq !== null ? object.cEnq : "") + "</td>";
+                            linha += "<td style='text-align: center;'>" + (object.CST !== null ? object.CST : "") + "</td>";
+                            linha += "<td style='text-align: right;'>" + (object.vBC !== null ? parseFloat(object.vBC).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
+                            linha += "<td style='text-align: right;'>" + (object.percentual !== null ? (parseFloat(object.percentual)).toLocaleString('pt-BR').replace(',', '.') + "%" : "") + "</td>";
+                            linha += "<td style='text-align: right;'>" + (object.valor !== null ? parseFloat(object.valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : "") + "</td>";
                             linha += "</tr>";
                         }
                         $("#impostos_" + idNota + "_" + nItem + "_" + idProduto).html(linha);
