@@ -65,21 +65,41 @@ if (isset($_GET['operacao'])) {
 	$operacao = $_GET['operacao'];
 
 	if ($operacao == "inserir") {
-
-		$xmlArquivo = file_get_contents($_FILES['file']['tmp_name']);
-
-	//$xml = simplexml_load_string($xmlArquivo);
+		$xmlArquivos = array();
+	
+		foreach ($_FILES['files']['tmp_name'] as $index => $tmpName) {
+			$xmlArquivo = file_get_contents($tmpName);
+			$xmlArquivos[] = $xmlArquivo;
+		}
+	
 		// Envia XML puro
 		$apiEntrada = array(
-			'xml' => $xmlArquivo,
+			'xml' => $xmlArquivos,
 			'idEmpresa' => $_SESSION['idEmpresa'],
 		);
-
+	
 		$nfe = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
-		
+	
 		echo json_encode($nfe);
 		return $nfe;
-		
+	}
+
+	if ($operacao == "processarXML") {
+		$idNota = isset($_POST["idNota"]) ? $_POST["idNota"] : null;
+
+        if ($idNota == "") {
+			$idNota = null;
+		}
+
+		$apiEntrada = array(
+			'idEmpresa' => $_SESSION['idEmpresa'],
+			'idNota' => $idNota
+		);
+	
+		$nfe = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'POST');
+	
+		echo json_encode($nfe);
+		return $nfe;
 	}
 
 	if ($operacao == "buscarNota") {
@@ -114,6 +134,18 @@ if (isset($_GET['operacao'])) {
 		);
 		
 		$produ = chamaAPI(null, '/impostos/fisnotaproduimposto', json_encode($apiEntrada), 'GET');
+
+		echo json_encode($produ);
+		return $produ;
+	}
+	if ($operacao == "buscarProduICMS") {
+		$apiEntrada = array(
+			'idEmpresa' => $_SESSION['idEmpresa'],
+			'idNota' => $_POST['idNota'],
+			'nItem' => $_POST['nItem']
+		);
+		
+		$produ = chamaAPI(null, '/impostos/fisnotaproduicms', json_encode($apiEntrada), 'GET');
 
 		echo json_encode($produ);
 		return $produ;

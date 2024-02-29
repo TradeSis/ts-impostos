@@ -45,6 +45,10 @@ if ($metodo == "GET") {
       include 'fisnotaproduimposto.php';
       break;
 
+    case "fisnotaproduicms":
+      include 'fisnotaproduicms.php';
+      break;
+
     case "fisnotatotal":
       include 'fisnotatotal.php';
       break;
@@ -59,6 +63,10 @@ if ($metodo == "GET") {
 
     case "grupoproduto":
       include 'grupoproduto.php';
+      break;
+
+    case "fisnotastatus":
+      include 'fisnotastatus.php';
       break;
 
     default:
@@ -92,7 +100,7 @@ if ($metodo == "PUT") {
       break;
 
     case "fisnota":
-      include 'fisnota_inserir.php';
+      include 'fisnota_importar.php';
       break;
 
     case "nfepessoa":
@@ -121,6 +129,10 @@ if ($metodo == "PUT") {
 
     case "operacaofiscal":
       include 'operacaofiscal_inserir.php';
+      break;
+
+    case "fisnotastatus":
+      include 'fisnotastatus_inserir.php';
       break;
 
     default:
@@ -160,7 +172,15 @@ if ($metodo == "POST") {
    case "imendes/saneamento":
         include 'imendes_saneamento.php';
         break;
-  
+
+    case "fisnota":
+          include 'fisnota_processar.php';
+          break;
+    
+    case "fisnotastatus":
+          include 'fisnotastatus_alterar.php';
+          break;
+    
     default:
       $jsonSaida = json_decode(json_encode(
         array(

@@ -5,7 +5,7 @@
 $LOG_CAMINHO = defineCaminhoLog();
 if (isset($LOG_CAMINHO)) {
     $LOG_NIVEL = defineNivelLog();
-    $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "fisnotaproduimposto";
+    $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "fisnotaproduicms";
     if (isset($LOG_NIVEL)) {
         if ($LOG_NIVEL >= 1) {
             $arquivo = fopen(defineCaminhoLog() . "fisnota_" . date("dmY") . ".log", "a");
@@ -29,22 +29,22 @@ if (isset($jsonEntrada["idEmpresa"])) {
 $conexao = conectaMysql($idEmpresa);
 $impostos = array();
 
-$sql = "SELECT fisnotaproduimposto.*, produtos.nomeProduto FROM fisnotaproduimposto 
-        LEFT JOIN fisnotaproduto ON fisnotaproduto.idNota = fisnotaproduimposto.idNota and fisnotaproduto.nItem = fisnotaproduimposto.nItem
+$sql = "SELECT fisnotaproduicms.*, produtos.nomeProduto FROM fisnotaproduicms 
+        LEFT JOIN fisnotaproduto ON fisnotaproduto.idNota = fisnotaproduicms.idNota and fisnotaproduto.nItem = fisnotaproduicms.nItem
         LEFT JOIN produtos ON fisnotaproduto.idProduto = produtos.idProduto ";
 $where = " where ";
 if (isset($jsonEntrada["idNota"])) {
-    $sql = $sql . $where . " fisnotaproduimposto.idNota = " . $jsonEntrada["idNota"];
+    $sql = $sql . $where . " fisnotaproduicms.idNota = " . $jsonEntrada["idNota"];
     $where = " and ";
 }
 
 if (isset($jsonEntrada["nItem"])) {
-    $sql = $sql . $where . " fisnotaproduimposto.nItem = " . $jsonEntrada["nItem"];
+    $sql = $sql . $where . " fisnotaproduicms.nItem = " . $jsonEntrada["nItem"];
     $where = " and ";
 }
 
 if (isset($jsonEntrada["imposto"])) {
-    $sql = $sql . $where . " fisnotaproduimposto.imposto = " . "'" . $jsonEntrada["imposto"] . "'";
+    $sql = $sql . $where . " fisnotaproduicms.imposto = " . "'" . $jsonEntrada["imposto"] . "'";
     $where = " and ";
 }
 

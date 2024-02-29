@@ -39,6 +39,11 @@ include_once(__DIR__ . '/../header.php');
                                               echo " active ";
                                             } ?>" href="?tab=configuracao&stab=fisprocesso" role="tab">Processo</a>
           </li>
+          <li class="nav-item ">
+            <a class="nav-link ts-tabConfig <?php if ($stab == "fisnotastatus") {
+                                              echo " active ";
+                                            } ?>" href="?tab=configuracao&stab=fisnotastatus" role="tab">Status Notas</a>
+          </li>
 
 
         </ul>
@@ -55,6 +60,9 @@ include_once(__DIR__ . '/../header.php');
         }
         if ($stab == "fisprocesso") {
           $ssrc = "fisprocesso.php";
+        }
+        if ($stab == "fisnotastatus") {
+          $ssrc = "fisnotastatus.php";
         }
 
         if ($ssrc !== "") {

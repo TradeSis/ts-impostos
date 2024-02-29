@@ -26,29 +26,38 @@ $notas = buscarNota();
                             <!-- TITULO -->
                             <h2 class="ts-tituloPrincipal">Notas Fiscais</h2>
                         </div>
-                        <div class="col-7">
+                        <div class="col-6">
                             <!-- FILTROS -->
                         </div>
 
-                        <div class="col-2 text-end">
-                            <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
-                                <input type="file" id="arquivo" class="custom-file-upload" name="file" style="color:#567381; display:none">
-                                <label for="arquivo">
-                                    <a class="btn btn-primary">
-                                        <i class="bi bi-file-earmark-arrow-down-fill" style="color:#fff"></i>&#32;<h7 style="color: #fff;">Arquivo</h7>
-                                    </a>
-                                </label>
-                            </form>
+                        <div class="col-3 text-end">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a role="button" class="btn btn-warning processar-btn" title="Processar todos XMLs">Processar</a>
+                                </div>
+                                <div class="col-6">
+                                    <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
+                                        <input type="file" id="arquivo" class="custom-file-upload" name="file[]" style="color:#567381; display:none" multiple>
+                                        <label for="arquivo">
+                                            <a class="btn btn-primary">
+                                                <i class="bi bi-file-earmark-arrow-down-fill" style="color:#fff"></i>&#32;<h7 style="color: #fff;">Arquivo</h7>
+                                            </a>
+                                        </label>
+                                    </form>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="table mt-2 ts-divTabela ts-tableFiltros">
                         <table class="table table-hover table-sm">
                             <thead class="ts-headertabelafixo">
                                 <tr>
-                                    <th>Nota Fiscal</th>
-                                    <th>Chave</th>
-                                    <th>Valor Total</th>
-                                    <th>Emissão</th>
+                                    <th>nNF</th>
+                                    <th>dhEmi</th>
+                                    <th>emit</th>
+                                    <th>emite</th>
+                                    <th>total</th>
+                                    <th>nomeStatusNota</th>
                                     <th>Ação</th>
                                 </tr>
                             </thead>
@@ -56,12 +65,17 @@ $notas = buscarNota();
                             foreach ($notas as $nota) { ?>
                                 <tr>
                                     <td> <?php echo $nota['NF'] ?> </td>
-                                    <td> <?php echo $nota['chaveNFe'] ?> </td>
-                                    <td> <?php echo number_format($nota['valorProdutos'], 2, ',', '.') ?> </td>
                                     <td> <?php echo date('d/m/Y', strtotime($nota['dtEmissao']))  ?> </td>
+                                    <td> <?php echo $nota['emitente_cpfCnpj'] ?> </td>
+                                    <td> <?php echo ($nota['emitente_nomeFantasia'] != null) ? $nota['emitente_nomeFantasia'] : $nota['emitente_nomePessoa']; ?> </td>
+                                    <td> <?php echo number_format($nota['vNF'], 2, ',', '.') ?> </td>
+                                    <td> <?php echo $nota['nomeStatusNota'] ?> </td>
                                     <td>
                                         <a class="btn btn-info btn-sm" href="visualizar.php?idNota=<?php echo $nota['idNota'] ?>" role="button"><i class="bi bi-eye-fill"></i></a>
                                         <button type="button" class="btn btn-success btn-sm" id="baixar" data-idNota="<?php echo $nota['idNota'] ?>" title="Baixar XML"><i class="bi bi-download"></i></button>
+                                        <?php if($nota['idStatusNota'] == 0){ ?>
+                                        <button type="button" class="btn btn-warning btn-sm processar-btn" data-idNota="<?php echo $nota['idNota'] ?>" title="Processar XML"><i class="bi bi-check-circle-fill"></i></button>
+                                        <?php } ?>
                                     </td>
 
                                 </tr>
@@ -80,12 +94,16 @@ $notas = buscarNota();
     <script>
         $(document).ready(function () {
             $('#arquivo').on('change', function() {
+                $('body').css('cursor', 'progress');
                 var fileInput = document.getElementById('arquivo');
-                var file = fileInput.files[0];
+                var files = fileInput.files;
 
-                if (file) {
+                if (files.length > 0) {
                     var formData = new FormData();
-                    formData.append('file', file);
+
+                    for (var i = 0; i < files.length; i++) {
+                        formData.append('files[]', files[i]);
+                    }
 
                     $.ajax({
                         type: 'POST',
@@ -95,6 +113,7 @@ $notas = buscarNota();
                         contentType: false,
                         success: function (msg) {
                             console.log(msg);
+                            $('body').css('cursor', 'default');
                             var message = JSON.parse(msg);
                             if (message.retorno === "ok") {
                                 refreshPage('xml');
@@ -125,6 +144,28 @@ $notas = buscarNota();
                         link.href = window.URL.createObjectURL(blob);
                         link.download = filename;
                         link.click();
+                    }
+                });
+            });
+
+            $('.processar-btn').click(function () {
+                $('body').css('cursor', 'progress');
+                var idNota = $(this).attr("data-idNota");
+                
+                $.ajax({
+                    method: "POST",
+                    dataType: 'json',
+                    url: "../database/fisnota.php?operacao=processarXML",
+                    data: { idNota: idNota },
+                    success: function (msg) {
+                        $('body').css('cursor', 'default');
+                        if (msg.retorno === "ok") {
+                            refreshPage('xml');
+                        }
+                        if (msg.status === 400) {
+                            alert(msg.retorno);
+                            refreshPage('xml');
+                        }
                     }
                 });
             });
