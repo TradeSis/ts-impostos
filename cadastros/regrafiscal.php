@@ -1,4 +1,5 @@
 <?php
+//Lucas 29022024 - id862 Empresa Administradora
 // lucas 15012024 criado
 include_once(__DIR__ . '/../header.php');
 
@@ -26,12 +27,15 @@ include_once(__DIR__ . '/../header.php');
             <div class="col-6 col-lg-6">
                 <h2 class="ts-tituloPrincipal">Regra Fiscal</h2>
             </div>
-
+            
             <div class="col-6 col-lg-6">
                 <div class="input-group">
                     <input type="text" class="form-control ts-input" id="buscaCodigoGrupo" placeholder="Buscar por cÃ³digo">
                     <button class="btn btn-primary rounded" type="button" id="buscar"><i class="bi bi-search"></i></button>
+                    <!-- Lucas 29022024 - condição Administradora -->
+                    <?php if ($_SESSION['administradora'] == 1) { ?>
                     <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirRegraFiscalModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
+                    <?php } ?>
                 </div>
             </div>
 
@@ -200,7 +204,10 @@ include_once(__DIR__ . '/../header.php');
                         <th>cSOSN</th>
                         <th>aliqIcmsInterna</th>
                         <th>aliqIcmsInterestadual</th>
+                        <!-- Lucas 29022024 - condição Administradora -->
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         <th></th>
+                        <?php } ?>
                     </tr>
                 </thead>
 
@@ -255,8 +262,10 @@ include_once(__DIR__ . '/../header.php');
                         linha = linha + "<td>" + object.cSOSN + "</td>";
                         linha = linha + "<td>" + object.aliqIcmsInterna + "</td>";
                         linha = linha + "<td>" + object.aliqIcmsInterestadual + "</td>";
+                        // Lucas 29022024 - condição Administradora
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         linha = linha + "<td>" + "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#modalRegraFiscal' data-idRegra='" + object.idRegra + "'><i class='bi bi-eye'></i></button> ";
-
+                        <?php } ?>
                         linha = linha + "</tr>";
                     }
                     $("#dados").html(linha);

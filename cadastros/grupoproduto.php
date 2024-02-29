@@ -1,4 +1,5 @@
 <?php
+//Lucas 29022024 - id862 Empresa Administradora
 // lucas 27122023 criado
 include_once(__DIR__ . '/../header.php');
 
@@ -27,11 +28,15 @@ include_once(__DIR__ . '/../header.php');
                 <h2 class="ts-tituloPrincipal">Grupo Produto</h2>
             </div>
 
+            
             <div class="col-6 col-lg-6">
                 <div class="input-group">
                     <input type="text" class="form-control ts-input" id="buscaGrupoProduto" placeholder="Buscar por cÃ³digo ou nome">
                     <button class="btn btn-primary rounded" type="button" id="buscar"><i class="bi bi-search"></i></button>
+                    <!-- Lucas 29022024 - condição Administradora -->
+                    <?php if ($_SESSION['administradora'] == 1) { ?> 
                     <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirGrupoProdutoModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
+                    <?php } ?>
                 </div>
             </div>
 
@@ -250,7 +255,10 @@ include_once(__DIR__ . '/../header.php');
                         <th>nomeGrupo</th>
                         <th>codigoNcm</th>
                         <th>codigoCest</th>
+                        <!-- Lucas 29022024 - condição Administradora -->
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         <th></th>
+                        <?php } ?>
                     </tr>
                 </thead>
 
@@ -301,8 +309,10 @@ include_once(__DIR__ . '/../header.php');
                         linha = linha + "<td>" + object.nomeGrupo + "</td>";
                         linha = linha + "<td>" + object.codigoNcm + "</td>";
                         linha = linha + "<td>" + object.codigoCest + "</td>";
+                        // Lucas 29022024 - condição Administradora 
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         linha = linha + "<td>" + "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#visualizarGrupoProdutoModal' data-codigoGrupo='" + object.codigoGrupo + "'><i class='bi bi-eye'></i></button> ";
-
+                        <?php } ?>
                         linha = linha + "</tr>";
                     }
                     $("#dados").html(linha);
