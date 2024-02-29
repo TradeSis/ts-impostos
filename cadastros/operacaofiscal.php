@@ -1,4 +1,5 @@
 <?php
+//Lucas 29022024 - id862 Empresa Administradora
 // lucas 15012024 criado
 include_once(__DIR__ . '/../header.php');
 include_once(__DIR__ . '/../database/regrafiscal.php');
@@ -38,7 +39,10 @@ $grupoprodutos = buscaCodigoGrupos();
                 <div class="input-group">
                     <input type="text" class="form-control ts-input" id="buscaCodigoGrupo" placeholder="Buscar por cÃ³digo">
                     <button class="btn btn-primary rounded" type="button" id="buscar"><i class="bi bi-search"></i></button>
+                    <!-- Lucas 29022024 - condição Administradora -->
+                    <?php if ($_SESSION['administradora'] == 1) { ?>
                     <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirOperacaoFiscalModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
+                    <?php } ?>
                 </div>
             </div>
 
@@ -138,7 +142,10 @@ $grupoprodutos = buscaCodigoGrupos();
                         <th>codigoCaracTrib</th>
                         <th>finalidade</th>
                         <th>idRegra</th>
+                        <!-- Lucas 29022024 - condição Administradora -->
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         <th></th>
+                        <?php } ?>
                     </tr>
                 </thead>
 
@@ -192,7 +199,10 @@ $grupoprodutos = buscaCodigoGrupos();
                         linha = linha + "<td>" + object.codigoCaracTrib + "</td>";
                         linha = linha + "<td>" + object.finalidade + "</td>";
                         linha = linha + "<td>" + object.idRegra + "</td>";
+                        // Lucas 29022024 - condição Administradora
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         linha = linha + "<td>" + "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#modalRegraFiscal' data-idRegra='" + object.idRegra + "'><i class='bi bi-eye'></i></button> ";
+                        <?php } ?>
                         linha = linha + "</tr>";
                     }
                     $("#dados").html(linha);

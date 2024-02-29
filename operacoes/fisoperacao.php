@@ -43,14 +43,6 @@ if (isset($_SESSION['filtro_operacao'])) {
 
     <div class="container-fluid">
 
-        <nav class="ts-menuFiltros" style="margin-top: -45px;">
-            <label class="pl-2" for="">Filtrar por:</label>
-
-            <div class="col-sm text-end mt-2">
-                <a onClick="limpar()" role=" button" class="btn btn-sm bg-info text-white">Limpar</a>
-            </div>
-        </nav>
-
         <div class="row">
             <!-- MENSAGENS/ALERTAS -->
         </div>
@@ -60,9 +52,7 @@ if (isset($_SESSION['filtro_operacao'])) {
 
         <div class="row align-items-center">
             <div class="col-6 order-4 col-sm-6 col-md mt-1-6 order-md-4 col-lg-1 order-lg-1 mt-3 text-start">
-                <button type="button" class="ts-btnFiltros btn btn-sm"><span class="material-symbols-outlined">
-                        filter_alt
-                    </span></button>
+                <button class="btn btn-outline-secondary ts-btnFiltros" type="button"><i class="bi bi-funnel"></i></button>
             </div>
 
             <div class="col-10 order-1 col-sm-11 col-md mt-1-11 order-md-1 col-lg-2 order-lg-2 mt-4">
@@ -84,9 +74,20 @@ if (isset($_SESSION['filtro_operacao'])) {
 
             <div class="col-2 order-2 col-sm-1 col-md mt-1-1 order-md-2 col-lg-2 order-lg-4">
             </div>
-            <div class="col-6 order-5 col-sm-6 col-md mt-1-6 order-md-4 col-lg-2 order-lg-5 mt-1 text-end">
-                <button type="button" class="btn btn-success mr-4" data-bs-toggle="modal"
-                    data-bs-target="#inserirModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
+            <?php if ($_SESSION['administradora'] == 1) { ?>
+                <div class="col-6 order-5 col-sm-6 col-md mt-1-6 order-md-4 col-lg-2 order-lg-5 mt-1 text-end">
+                    <button type="button" class="btn btn-success mr-4" data-bs-toggle="modal"
+                        data-bs-target="#inserirModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
+                </div>
+            <?php }  ?>
+            
+        </div>
+
+        <div class="ts-menuFiltros mt-2 px-3">
+            <label>Filtrar por:</label>
+
+            <div class="col-sm text-end mt-2">
+                <a onClick="limpar()" role=" button" class="btn btn-sm bg-info text-white">Limpar</a>
             </div>
         </div>
 
@@ -161,7 +162,9 @@ if (isset($_SESSION['filtro_operacao'])) {
                         <th>idGrupoOper</th>
                         <th>idEntSai</th>
                         <th>xfop</th>
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         <th colspan="2">Ação</th>
+                        <?php } ?>
                     </tr>
                 </thead>
 
@@ -381,8 +384,10 @@ if (isset($_SESSION['filtro_operacao'])) {
                         linha += "<td>" + object.idEntSai + "</td>";
                         linha += "<td>" + object.xfop + "</td>";
                         linha += "<td class='text-center' id='botao'>";
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         linha += "<button type='button' class='btn btn-warning btn-sm' data-toggle='modal' data-target='#alterarmodal' data-idOperacao='" + object.idOperacao + "'><i class='bi bi-pencil-square'></i></button>" 
                         linha += "<a class='btn btn-danger btn-sm' href='fisoperacao_excluir.php?idOperacao=" + object.idOperacao + "' role='button'><i class='bi bi-trash'></i></i></a>"
+                        <?php } ?>
                         linha += "</td>";
                         linha += "</tr>";
 

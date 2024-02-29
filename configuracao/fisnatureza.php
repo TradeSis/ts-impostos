@@ -1,4 +1,5 @@
 <?php
+//Lucas 29022024 - id862 Empresa Administradora
 //Lucas 13102023 novo padrao
 // gabriel 060623 15:06
 include_once(__DIR__ . '/../header.php');
@@ -30,7 +31,7 @@ $naturezas = buscaNatureza();
                 <!-- TITULO -->
                 <h2 class="ts-tituloPrincipal">Naturezas Fiscais</h2>
             </div>
-            <div class="col-7">
+            <div class="col">
                 <!-- FILTROS -->
                 <div class="input-group">
                     <input type="text" class="form-control ts-input" id="buscaDemanda" placeholder="Buscar por id ou titulo">
@@ -41,10 +42,12 @@ $naturezas = buscaNatureza();
                     </span>
                 </div>
             </div>
-
+            <!-- Lucas 29022024 - condição Administradora -->
+            <?php if ($_SESSION['administradora'] == 1) { ?>
             <div class="col-2 text-end">
                 <a href="fisnatureza_inserir.php" role="button" class="btn btn-success"><i class="bi bi-plus-square"></i>&nbsp Novo</a>
             </div>
+            <?php } ?>
         </div>
 
 
@@ -53,8 +56,10 @@ $naturezas = buscaNatureza();
                 <thead class="ts-headertabelafixo">
                     <tr>
                         <th>Natureza</th>
+                        <!-- Lucas 29022024 - condição Administradora -->
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         <th>AÃ§Ã£o</th>
-
+                        <?php } ?>
                     </tr>
                 </thead>
 
@@ -63,10 +68,13 @@ $naturezas = buscaNatureza();
                 ?>
                     <tr>
                         <td><?php echo $natureza['nomeNatureza'] ?></td>
+                        <!-- Lucas 29022024 - condição Administradora -->
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         <td>
                             <a class="btn btn-warning btn-sm" href="fisnatureza_alterar.php?idNatureza=<?php echo $natureza['idNatureza'] ?>" role="button"><i class="bi bi-pencil-square"></i></a>
                             <a class="btn btn-danger btn-sm" href="fisnatureza_excluir.php?idNatureza=<?php echo $natureza['idNatureza'] ?>" role="button"><i class="bi bi-trash3"></i></a>
                         </td>
+                        <?php } ?>
                     </tr>
                 <?php } ?>
 
