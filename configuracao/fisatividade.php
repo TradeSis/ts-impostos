@@ -1,4 +1,5 @@
 <?php
+//Lucas 29022024 - id862 Empresa Administradora
 //Lucas 13102023 novo padrao
 // gabriel 060623 15:06
 include_once(__DIR__ . '/../header.php');
@@ -29,7 +30,7 @@ $atividades = buscaAtividade();
                 <!-- TITULO -->
                 <h2 class="ts-tituloPrincipal">Atividades Fiscais</h2>
             </div>
-            <div class="col-7">
+            <div class="col">
                 <!-- FILTROS -->
                 <div class="input-group">
                     <input type="text" class="form-control ts-input" id="buscaDemanda" placeholder="Buscar por id ou titulo">
@@ -40,10 +41,13 @@ $atividades = buscaAtividade();
                     </span>
                 </div>
             </div>
-
+            <!-- Lucas 29022024 - condição Administradora -->
+            <?php if ($_SESSION['administradora'] == 1) { ?>
             <div class="col-2 text-end">
                 <a href="fisatividade_inserir.php" role="button" class="btn btn-success"><i class="bi bi-plus-square"></i>&nbsp Novo</a>
             </div>
+            <?php } ?>
+
         </div>
 
 
@@ -52,8 +56,10 @@ $atividades = buscaAtividade();
                 <thead class="ts-headertabelafixo">
                     <tr>
                         <th>Atividade</th>
+                        <!-- Lucas 29022024 - condição Administradora -->
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         <th>AÃ§Ã£o</th>
-
+                        <?php } ?>
                     </tr>
                 </thead>
 
@@ -62,10 +68,13 @@ $atividades = buscaAtividade();
                 ?>
                     <tr>
                         <td><?php echo $atividade['nomeAtividade'] ?></td>
+                        <!-- Lucas 29022024 - condição Administradora -->
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         <td>
                             <a class="btn btn-warning btn-sm" href="fisatividade_alterar.php?idAtividade=<?php echo $atividade['idAtividade'] ?>" role="button"><i class="bi bi-pencil-square"></i></a>
                             <a class="btn btn-danger btn-sm" href="fisatividade_excluir.php?idAtividade=<?php echo $atividade['idAtividade'] ?>" role="button"><i class="bi bi-trash3"></i></a>
                         </td>
+                        <?php } ?>
                     </tr>
                 <?php } ?>
 

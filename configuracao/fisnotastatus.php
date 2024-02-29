@@ -1,4 +1,5 @@
 <?php
+//Lucas 29022024 - id862 Empresa Administradora
 //Helio 05102023 padrao novo
 //Lucas 04042023 criado
 include_once(__DIR__ . '/../header.php');
@@ -23,19 +24,28 @@ include_once(__DIR__ . '/../header.php');
         <div class="row">
             <BR> <!-- BOTOES AUXILIARES -->
         </div>
-        <div class="row d-flex align-items-center justify-content-center mt-1 pt-1 ">
+        <div class="row align-items-center">
 
-            <div class="col-6 col-lg-6">
+            <div class="col-3 text-start">
                 <h2 class="ts-tituloPrincipal">Status Notas</h2>
             </div>
      
-            <div class="col-6 col-lg-6">
+            <div class="col">
                 <div class="input-group">
                     <input type="text" class="form-control ts-input" id="buscaStatus" placeholder="Buscar por Status">
-                    <button class="btn btn-primary rounded" type="button" id="buscar"><i class="bi bi-search"></i></button>
-                    <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirStatusModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" id="buscar" type="button">
+                            <span style="font-size: 20px;font-family: 'Material Symbols Outlined'!important;" class="material-symbols-outlined">search</span>
+                        </button>
+                    </span>
                 </div>
             </div>
+            <!-- Lucas 29022024 - condição Administradora -->
+            <?php if ($_SESSION['administradora'] == 1) { ?>
+            <div class="col-2 text-end">
+                <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirStatusModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
+            </div>
+            <?php } ?>
 
         </div>
 
@@ -45,7 +55,10 @@ include_once(__DIR__ . '/../header.php');
                     <tr class="ts-headerTabelaLinhaCima">
                         <th>ID</th>
                         <th>Status</th>
+                        <!-- Lucas 29022024 - condição Administradora -->
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         <th colspan="2">AÃ§Ã£o</th>
+                        <?php } ?>
                     </tr>
                 </thead>
 
@@ -145,8 +158,10 @@ include_once(__DIR__ . '/../header.php');
                         linha = linha + "<tr>";
                         linha = linha + "<td>" + object.idStatusNota + "</td>";
                         linha = linha + "<td>" + object.nomeStatusNota + "</td>";
-
+                        // Lucas 29022024 - condição Administradora
+                        <?php if ($_SESSION['administradora'] == 1) { ?>
                         linha = linha + "<td>" + "<button type='button' class='btn btn-warning btn-sm' data-bs-toggle='modal' data-bs-target='#alterarStatusModal' data-idStatusNota='" + object.idStatusNota + "'><i class='bi bi-pencil-square'></i></button> "
+                        <?php } ?>
                         linha = linha + "</tr>";
                     }
                     $("#dados").html(linha);
