@@ -64,25 +64,7 @@ end.
 
 do on error undo:
     find fiscalgrupo where fiscalgrupo.idGrupo = ttentrada.idGrupo exclusive no-error.
-    /* fiscalgrupo.codigoGrupo  = ttentrada.codigoGrupo. INDICE UNICO*/
-    /* fiscalgrupo.nomeGrupo  = ttentrada.nomeGrupo.
-    fiscalgrupo.codigoNcm  = ttentrada.codigoNcm.
-    fiscalgrupo.codigoCest  = ttentrada.codigoCest.
-    fiscalgrupo.impostoImportacao  = ttentrada.impostoImportacao.
-    fiscalgrupo.piscofinscstEnt  = ttentrada.piscofinscstEnt.
-    fiscalgrupo.piscofinscstSai  = ttentrada.piscofinscstSai.
-    fiscalgrupo.aliqPis  = ttentrada.aliqPis.
-    fiscalgrupo.aliqCofins  = ttentrada.aliqCofins.
-    fiscalgrupo.nri  = ttentrada.nri.
-    fiscalgrupo.ampLegal  = ttentrada.ampLegal.
-    fiscalgrupo.redPIS  = ttentrada.redPIS.
-    fiscalgrupo.redCofins  = ttentrada.redCofins.
-    fiscalgrupo.ipicstEnt  = ttentrada.ipicstEnt.
-    fiscalgrupo.ipicstSai  = ttentrada.ipicstSai.
-    fiscalgrupo.aliqipi  = ttentrada.aliqipi.
-    fiscalgrupo.codenq  = ttentrada.codenq.
-    fiscalgrupo.ipiex  = ttentrada.ipiex. */
-    BUFFER-COPY ttentrada TO fiscalgrupo.
+    BUFFER-COPY ttentrada EXCEPT codigoGrupo TO fiscalgrupo.
 end.
 
 create ttsaida.

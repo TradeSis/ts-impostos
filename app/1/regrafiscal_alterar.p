@@ -64,35 +64,7 @@ end.
 
 do on error undo:
     find fiscalregra where fiscalregra.idRegra = ttentrada.idRegra exclusive no-error.
-    /* fiscalregra.codRegra = ttentrada.codRegra. INDICE UNICO*/
-    /* fiscalregra.codExcecao = ttentrada.codExcecao. INDICE UNICO*/
-    /* fiscalregra.dtVigIni = ttentrada.dtVigIni.
-    fiscalregra.dtVigFin = ttentrada.dtVigFin.
-    fiscalregra.cFOPCaracTrib = ttentrada.cFOPCaracTrib.
-    fiscalregra.cST = ttentrada.cST.
-    fiscalregra.cSOSN = ttentrada.cSOSN.
-    fiscalregra.aliqIcmsInterna = ttentrada.aliqIcmsInterna.
-    fiscalregra.aliqIcmsInterestadual = ttentrada.aliqIcmsInterestadual.
-    fiscalregra.reducaoBcIcms = ttentrada.reducaoBcIcms.
-    fiscalregra.reducaoBcIcmsSt = ttentrada.reducaoBcIcmsSt.
-    fiscalregra.redBcICMsInterestadual = ttentrada.redBcICMsInterestadual.
-    fiscalregra.aliqIcmsSt = ttentrada.aliqIcmsSt.
-    fiscalregra.iVA = ttentrada.iVA.
-    fiscalregra.iVAAjust = ttentrada.iVAAjust.
-    fiscalregra.fCP = ttentrada.fCP.
-    fiscalregra.codBenef = ttentrada.codBenef.
-    fiscalregra.pDifer = ttentrada.pDifer.
-    fiscalregra.pIsencao = ttentrada.pIsencao.
-    fiscalregra.antecipado = ttentrada.antecipado.
-    fiscalregra.desonerado = ttentrada.desonerado.
-    fiscalregra.pICMSDeson = ttentrada.pICMSDeson .
-    fiscalregra.isento = ttentrada.isento.         
-    fiscalregra.tpCalcDifal = ttentrada.tpCalcDifal.
-    fiscalregra.ampLegal = ttentrada.ampLegal.
-    fiscalregra.Protocolo = ttentrada.Protocolo.
-    fiscalregra.Convenio = ttentrada.Convenio.
-    fiscalregra.regraGeral = ttentrada.regraGeral. */
-    BUFFER-COPY ttentrada TO fiscalregra.
+    BUFFER-COPY ttentrada EXCEPT codRegra codExcecao TO fiscalregra.
 end.
 
 create ttsaida.
