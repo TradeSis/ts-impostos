@@ -66,7 +66,7 @@ do on error undo:
     find fiscalregra where fiscalregra.idRegra = ttentrada.idRegra exclusive no-error.
     /* fiscalregra.codRegra = ttentrada.codRegra. INDICE UNICO*/
     /* fiscalregra.codExcecao = ttentrada.codExcecao. INDICE UNICO*/
-    fiscalregra.dtVigIni = ttentrada.dtVigIni.
+    /* fiscalregra.dtVigIni = ttentrada.dtVigIni.
     fiscalregra.dtVigFin = ttentrada.dtVigFin.
     fiscalregra.cFOPCaracTrib = ttentrada.cFOPCaracTrib.
     fiscalregra.cST = ttentrada.cST.
@@ -91,7 +91,8 @@ do on error undo:
     fiscalregra.ampLegal = ttentrada.ampLegal.
     fiscalregra.Protocolo = ttentrada.Protocolo.
     fiscalregra.Convenio = ttentrada.Convenio.
-    fiscalregra.regraGeral = ttentrada.regraGeral.
+    fiscalregra.regraGeral = ttentrada.regraGeral. */
+    BUFFER-COPY ttentrada TO fiscalregra.
 end.
 
 create ttsaida.
