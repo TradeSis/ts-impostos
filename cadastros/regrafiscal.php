@@ -59,11 +59,11 @@ include_once(__DIR__ . '/../header.php');
                                 <div class="row">
                                     <div class="col-md">
                                         <label class="form-label ts-label">codRegra</label>
-                                        <input type="text" class="form-control ts-input" name="codRegra">
+                                        <input type="text" class="form-control ts-input" name="codRegra" required>
                                     </div>
                                     <div class="col-md">
                                         <label class="form-label ts-label">codExcecao</label>
-                                        <input type="text" class="form-control ts-input" name="codExcecao">
+                                        <input type="text" class="form-control ts-input" name="codExcecao" required>
                                     </div>
                                     <div class="col-md">
                                         <label class="form-label ts-label">dtVigIni</label>
@@ -206,14 +206,12 @@ include_once(__DIR__ . '/../header.php');
                             <div class="row">
                                 <div class="col-md">
                                     <label class="form-label ts-label">codRegra</label>
-                                    <input type="text" class="form-control ts-input" name="codRegra" id="codRegra_regrafiscal_alterar">
+                                    <input type="text" class="form-control ts-input" name="codRegra" id="codRegra_regrafiscal_alterar" readonly>
                                     <input type="hidden" class="form-control ts-input" name="idRegra" id="idRegra_regrafiscal_alterar">
                                 </div>
-                            </div>
-                            <div class="row mt-3">
                                 <div class="col-md">
                                     <label class="form-label ts-label">codExcecao</label>
-                                    <input type="text" class="form-control ts-input" name="codExcecao" id="codExcecao_regrafiscal_alterar">
+                                    <input type="text" class="form-control ts-input" name="codExcecao" id="codExcecao_regrafiscal_alterar" readonly>
                                 </div>
                                 <div class="col-md">
                                     <label class="form-label ts-label">dtVigIni</label>
@@ -223,6 +221,8 @@ include_once(__DIR__ . '/../header.php');
                                     <label class="form-label ts-label">dtVigFin</label>
                                     <input type="date" class="form-control ts-input" name="dtVigFin" id="dtVigFin_regrafiscal_alterar">
                                 </div>
+                            </div>
+                            <div class="row mt-3">
                                 <div class="col-md">
                                     <label class="form-label ts-label">cFOPCaracTrib</label>
                                     <input type="text" class="form-control ts-input" name="cFOPCaracTrib" id="cFOPCaracTrib_regrafiscal_alterar">

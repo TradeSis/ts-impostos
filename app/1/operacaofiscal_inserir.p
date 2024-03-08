@@ -8,12 +8,7 @@ def var hentrada as handle.             /* HANDLE ENTRADA */
 def var hsaida   as handle.             /* HANDLE SAIDA */
 
 def temp-table ttentrada no-undo serialize-name "fiscaloperacao"   /* JSON ENTRADA */
-    field idGrupo like fiscaloperacao.idGrupo
-    field codigoEstado like fiscaloperacao.codigoEstado
-    field cFOP like fiscaloperacao.cFOP
-    field codigoCaracTrib like fiscaloperacao.codigoCaracTrib
-    field finalidade like fiscaloperacao.finalidade
-    field idRegra like fiscaloperacao.idRegra.
+    LIKE fiscaloperacao.
  
 
 def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CASO ERRO */
@@ -40,7 +35,7 @@ then do:
     return.
 end.
 
-if ttentrada.idGrupo = ?
+if ttentrada.idGrupo = ? OR ttentrada.codigoEstado = ? OR ttentrada.cFOP = ? OR ttentrada.codigoCaracTrib = ? OR ttentrada.finalidade = ?
 then do:
     create ttsaida.
     ttsaida.tstatus = 400.
@@ -76,12 +71,7 @@ end.
 
 do on error undo:
     create fiscaloperacao.
-    fiscaloperacao.idGrupo = ttentrada.idGrupo.
-    fiscaloperacao.codigoEstado = ttentrada.codigoEstado.
-    fiscaloperacao.cFOP = ttentrada.cFOP.
-    fiscaloperacao.codigoCaracTrib = ttentrada.codigoCaracTrib.
-    fiscaloperacao.finalidade = ttentrada.finalidade.
-    fiscaloperacao.idRegra = ttentrada.idRegra.
+    BUFFER-COPY ttentrada EXCEPT idoperacaofiscal TO fiscaloperacao.
 end.
 
 create ttsaida.

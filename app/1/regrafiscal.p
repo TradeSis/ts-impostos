@@ -12,35 +12,7 @@ def temp-table ttentrada no-undo serialize-name "fiscalregra"   /* JSON ENTRADA 
     field codRegra like fiscalregra.codRegra.
 
 def temp-table ttfiscalregra  no-undo serialize-name "fiscalregra"  /* JSON SAIDA */
-    field idRegra like fiscalregra.idRegra
-    field codRegra like fiscalregra.codRegra
-    field codExcecao like fiscalregra.codExcecao
-    field dtVigIni like fiscalregra.dtVigIni
-    field dtVigFin like fiscalregra.dtVigFin
-    field cFOPCaracTrib like fiscalregra.cFOPCaracTrib
-    field cST like fiscalregra.cST
-    field cSOSN like fiscalregra.cSOSN
-    field aliqIcmsInterna like fiscalregra.aliqIcmsInterna
-    field aliqIcmsInterestadual like fiscalregra.aliqIcmsInterestadual
-    field reducaoBcIcms like fiscalregra.reducaoBcIcms
-    field reducaoBcIcmsSt like fiscalregra.reducaoBcIcmsSt
-    field redBcICMsInterestadual like fiscalregra.redBcICMsInterestadual
-    field aliqIcmsSt like fiscalregra.aliqIcmsSt
-    field iVA like fiscalregra.iVA
-    field iVAAjust like fiscalregra.iVAAjust
-    field fCP like fiscalregra.fCP
-    field codBenef like fiscalregra.codBenef
-    field pDifer like fiscalregra.pDifer
-    field pIsencao like fiscalregra.pIsencao
-    field antecipado like fiscalregra.antecipado
-    field desonerado like fiscalregra.desonerado
-    field pICMSDeson like fiscalregra.pICMSDeson
-    field isento like fiscalregra.isento
-    field tpCalcDifal like fiscalregra.tpCalcDifal
-    field ampLegal like fiscalregra.ampLegal
-    field Protocolo like fiscalregra.Protocolo
-    field Convenio like fiscalregra.Convenio
-    field regraGeral like fiscalregra.regraGeral.
+    LIKE fiscalregra.
 
 def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CASO ERRO */
     field tstatus        as int serialize-name "status"
@@ -59,7 +31,7 @@ then do:
     if vidRegra = ? then vidRegra = 0.
 end.
 
-IF ttentrada.idRegra <> ? OR (ttentrada.idRegra = ? AND ttentrada.codRegra = ? /* AND ttentrada.codigo = ? */ )
+IF ttentrada.idRegra <> ? OR (ttentrada.idRegra = ? AND ttentrada.codRegra = ?)
 THEN DO:
     for each fiscalregra where
         (if vidRegra = 0
@@ -108,34 +80,6 @@ put unformatted string(vlcSaida).
 PROCEDURE criaRegras.
 
     create ttfiscalregra.
-    ttfiscalregra.idRegra = fiscalregra.idRegra.
-    ttfiscalregra.codRegra = fiscalregra.codRegra.
-    ttfiscalregra.codExcecao = fiscalregra.codExcecao.
-    ttfiscalregra.dtVigIni = fiscalregra.dtVigIni.
-    ttfiscalregra.dtVigFin = fiscalregra.dtVigFin.
-    ttfiscalregra.cFOPCaracTrib = fiscalregra.cFOPCaracTrib.
-    ttfiscalregra.cST = fiscalregra.cST.
-    ttfiscalregra.cSOSN = fiscalregra.cSOSN.
-    ttfiscalregra.aliqIcmsInterna = fiscalregra.aliqIcmsInterna.
-    ttfiscalregra.aliqIcmsInterestadual = fiscalregra.aliqIcmsInterestadual.
-    ttfiscalregra.reducaoBcIcms = fiscalregra.reducaoBcIcms.
-    ttfiscalregra.reducaoBcIcmsSt = fiscalregra.reducaoBcIcmsSt.
-    ttfiscalregra.redBcICMsInterestadual = fiscalregra.redBcICMsInterestadual.
-    ttfiscalregra.aliqIcmsSt = fiscalregra.aliqIcmsSt.
-    ttfiscalregra.iVA = fiscalregra.iVA.
-    ttfiscalregra.iVAAjust = fiscalregra.iVAAjust.
-    ttfiscalregra.fCP = fiscalregra.fCP.
-    ttfiscalregra.codBenef = fiscalregra.codBenef.
-    ttfiscalregra.pDifer = fiscalregra.pDifer.
-    ttfiscalregra.pIsencao = fiscalregra.pIsencao.
-    ttfiscalregra.antecipado = fiscalregra.antecipado.
-    ttfiscalregra.desonerado = fiscalregra.desonerado.
-    ttfiscalregra.pICMSDeson = fiscalregra.pICMSDeson.
-    ttfiscalregra.isento = fiscalregra.isento.
-    ttfiscalregra.tpCalcDifal = fiscalregra.tpCalcDifal.
-    ttfiscalregra.ampLegal = fiscalregra.ampLegal.
-    ttfiscalregra.Protocolo = fiscalregra.Protocolo.
-    ttfiscalregra.Convenio = fiscalregra.Convenio.
-    ttfiscalregra.regraGeral = fiscalregra.regraGeral.
+    BUFFER-COPY fiscalregra TO ttfiscalregra.
 
 END.

@@ -8,35 +8,7 @@ def var hentrada as handle.             /* HANDLE ENTRADA */
 def var hsaida   as handle.             /* HANDLE SAIDA */
 
 def temp-table ttentrada no-undo serialize-name "fiscalregra"   /* JSON ENTRADA */
-    field idRegra like fiscalregra.idRegra
-    field codRegra like fiscalregra.codRegra
-    field codExcecao like fiscalregra.codExcecao
-    field dtVigIni like fiscalregra.dtVigIni
-    field dtVigFin like fiscalregra.dtVigFin
-    field cFOPCaracTrib like fiscalregra.cFOPCaracTrib
-    field cST like fiscalregra.cST
-    field cSOSN like fiscalregra.cSOSN
-    field aliqIcmsInterna like fiscalregra.aliqIcmsInterna
-    field aliqIcmsInterestadual like fiscalregra.aliqIcmsInterestadual
-    field reducaoBcIcms like fiscalregra.reducaoBcIcms
-    field reducaoBcIcmsSt like fiscalregra.reducaoBcIcmsSt
-    field redBcICMsInterestadual like fiscalregra.redBcICMsInterestadual
-    field aliqIcmsSt like fiscalregra.aliqIcmsSt
-    field iVA like fiscalregra.iVA
-    field iVAAjust like fiscalregra.iVAAjust
-    field fCP like fiscalregra.fCP
-    field codBenef like fiscalregra.codBenef
-    field pDifer like fiscalregra.pDifer
-    field pIsencao like fiscalregra.pIsencao
-    field antecipado like fiscalregra.antecipado
-    field desonerado like fiscalregra.desonerado
-    field pICMSDeson like fiscalregra.pICMSDeson
-    field isento like fiscalregra.isento
-    field tpCalcDifal like fiscalregra.tpCalcDifal
-    field ampLegal like fiscalregra.ampLegal
-    field Protocolo like fiscalregra.Protocolo
-    field Convenio like fiscalregra.Convenio
-    field regraGeral like fiscalregra.regraGeral.
+    LIKE fiscalregra.
 
 def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CASO ERRO */
     field tstatus        as int serialize-name "status"
@@ -92,8 +64,8 @@ end.
 
 do on error undo:
     find fiscalregra where fiscalregra.idRegra = ttentrada.idRegra exclusive no-error.
-    fiscalregra.codRegra = ttentrada.codRegra.
-    fiscalregra.codExcecao = ttentrada.codExcecao.
+    /* fiscalregra.codRegra = ttentrada.codRegra. INDICE UNICO*/
+    /* fiscalregra.codExcecao = ttentrada.codExcecao. INDICE UNICO*/
     fiscalregra.dtVigIni = ttentrada.dtVigIni.
     fiscalregra.dtVigFin = ttentrada.dtVigFin.
     fiscalregra.cFOPCaracTrib = ttentrada.cFOPCaracTrib.

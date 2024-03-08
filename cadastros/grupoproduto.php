@@ -160,7 +160,7 @@ include_once(__DIR__ . '/../header.php');
                                 </div>
                                 <div class="col-md">
                                     <label class="form-label ts-label">nomeGrupo</label>
-                                    <input type="text" class="form-control ts-input" name="nomeGrupo">
+                                    <input type="text" class="form-control ts-input" name="nomeGrupo" required>
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label ts-label">codigoNcm</label>

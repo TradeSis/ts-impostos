@@ -11,13 +11,7 @@ def temp-table ttentrada no-undo serialize-name "fiscaloperacao"   /* JSON ENTRA
     field idoperacaofiscal  like fiscaloperacao.idoperacaofiscal.
 
 def temp-table ttfiscaloperacao  no-undo serialize-name "fiscaloperacao"  /* JSON SAIDA */
-    field idoperacaofiscal  like fiscaloperacao.idoperacaofiscal
-    field idGrupo  like fiscaloperacao.idGrupo
-    field codigoEstado  like fiscaloperacao.codigoEstado
-    field cFOP   like fiscaloperacao.cFOP
-    field codigoCaracTrib  like fiscaloperacao.codigoCaracTrib
-    field finalidade  like fiscaloperacao.finalidade
-    field idRegra  like fiscaloperacao.idRegra.
+    LIKE  fiscaloperacao.
 
 def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CASO ERRO */
     field tstatus        as int serialize-name "status"
