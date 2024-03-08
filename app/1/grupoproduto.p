@@ -26,17 +26,17 @@ hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
-vcodigoGrupo = ?.
+vcodigoGrupo = "".
 if avail ttentrada
 then do:
     vcodigoGrupo = ttentrada.codigoGrupo.  
-    if vcodigoGrupo = "" then vcodigoGrupo = ?. 
+    if vcodigoGrupo = ? then vcodigoGrupo = "". 
 end.
  
 IF ttentrada.codigoGrupo <> ? OR (ttentrada.codigoGrupo = ? AND ttentrada.buscaGrupoProduto = ?)
 THEN DO:
       for EACH fiscalgrupo WHERE
-      (if vcodigoGrupo = ?
+      (if vcodigoGrupo = ""
         then true /* TODOS */
         ELSE fiscalgrupo.codigoGrupo = vcodigoGrupo) 
         no-lock.
@@ -49,7 +49,7 @@ END.
 IF ttentrada.buscaGrupoProduto <> ? 
 THEN DO: 
       for each fiscalgrupo WHERE 
-        fiscalgrupo.codigoGrupo MATCHES "*" + ttentrada.buscaGrupoProduto + "*" OR 
+        fiscalgrupo.codigoGrupo = ttentrada.buscaGrupoProduto OR 
         fiscalgrupo.nomeGrupo MATCHES "*" + ttentrada.buscaGrupoProduto + "*"
         no-lock.
         
