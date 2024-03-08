@@ -22,59 +22,27 @@ if (isset($LOG_NIVEL)) {
 //LOG
 
 
-$conexao = conectaMysql(null);
+$operacao = array();
 
-$regra = array();
+$progr = new chamaprogress();
+$retorno = $progr->executarprogress("impostos/app/1/regrafiscal",json_encode($jsonEntrada));
+fwrite($arquivo,$identificacao."-RETORNO->".$retorno."\n");
+$operacao = json_decode($retorno,true);
+if (isset($operacao["conteudoSaida"][0])) { // Conteudo Saida - Caso de erro
+    $operacao = $operacao["conteudoSaida"][0];
+} else {
+  
+   if (!isset($operacao["fiscalregra"][1]) && ($jsonEntrada['idRegra'] != null) && ($jsonEntrada['codRegra'] != null)) {  // Verifica se tem mais de 1 registro
+    $operacao = $operacao["fiscalregra"][0]; // Retorno sem array
+  } elseif($jsonEntrada['idRegra'] != null){
+    $operacao = $operacao["fiscalregra"][0];
+  } else {
+    $operacao = $operacao["fiscalregra"];  
+  }
 
-$sql = "SELECT * ,'' AS dtVigIniFormatada ,'' AS dtVigFinFormatada FROM fiscalregra  ";
-
-if (isset($jsonEntrada["idRegra"])) {
-    $sql = $sql . " where fiscalregra.idRegra = " . "'" . $jsonEntrada["idRegra"] . "'";
-}
-if (isset($jsonEntrada["codRegra"])) {
-    $sql = $sql . " where fiscalregra.codRegra = " . "'" . $jsonEntrada["codRegra"] . "'";
-}
-$where = " where ";
-if (isset($jsonEntrada["codigo"])) {
-    $sql = $sql . $where . " fiscalregra.codRegra IS NOT NULL ";
-    $where = " and ";
-}
-
-
-//echo "-SQL->" . $sql . "\n";
-//LOG
-if (isset($LOG_NIVEL)) {
-    if ($LOG_NIVEL >= 3) {
-        fwrite($arquivo, $identificacao . "-SQL->" . $sql . "\n");
-    }
-}
-//LOG
-
-$rows = 0;
-$buscar = mysqli_query($conexao, $sql);
-while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
-    array_push($regra, $row);
-
-    if (isset($regra[$rows]["dtVigIni"])) {
-        $dtVigIniFormatada = date('d/m/Y', strtotime($regra[$rows]["dtVigIni"]));
-        $regra[$rows]["dtVigIniFormatada"] = $dtVigIniFormatada;
-    }
-    if (isset($regra[$rows]["dtVigFin"])) {
-        $dtVigFinFormatada = date('d/m/Y', strtotime($regra[$rows]["dtVigFin"]));
-        $regra[$rows]["dtVigFinFormatada"] = $dtVigFinFormatada;
-    }
-
-    $rows = $rows + 1;
 }
 
-
-if (isset($jsonEntrada["idRegra"]) && $rows == 1) {
-    $regra = $regra[0];
-}
-if (isset($jsonEntrada["codRegra"]) && $rows == 1) {
-    $regra = $regra[0];
-}
-$jsonSaida = $regra;
+$jsonSaida = $operacao;
 
 //echo "-SAIDA->".json_encode($jsonSaida)."\n";
 
@@ -85,3 +53,8 @@ if (isset($LOG_NIVEL)) {
     }
 }
 //LOG
+
+fclose($arquivo);
+
+
+?>

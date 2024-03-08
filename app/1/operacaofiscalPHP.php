@@ -7,7 +7,7 @@ if (isset($LOG_CAMINHO)) {
     $identificacao = date("dmYHis") . "-PID" . getmypid() . "-" . "operacao fiscal";
     if (isset($LOG_NIVEL)) {
         if ($LOG_NIVEL >= 1) {
-            $arquivo = fopen(defineCaminhoLog() . "impostos_" . date("dmY") . ".log", "a");
+            $arquivo = fopen(defineCaminhoLog() . "operacao_fiscal_" . date("dmY") . ".log", "a");
         }
     }
 }
@@ -21,25 +21,37 @@ if (isset($LOG_NIVEL)) {
 }
 //LOG
 
+$conexao = conectaMysql(null);
 
 $operacao = array();
 
-$progr = new chamaprogress();
-$retorno = $progr->executarprogress("impostos/app/1/operacaofiscal",json_encode($jsonEntrada));
-fwrite($arquivo,$identificacao."-RETORNO->".$retorno."\n");
-$operacao = json_decode($retorno,true);
-if (isset($operacao["conteudoSaida"][0])) { // Conteudo Saida - Caso de erro
-    $operacao = $operacao["conteudoSaida"][0];
-} else {
-  
-   if (!isset($operacao["fiscaloperacao"][1]) && ($jsonEntrada['idoperacaofiscal'] != null)) {  // Verifica se tem mais de 1 registro
-    $operacao = $operacao["fiscaloperacao"][0]; // Retorno sem array
-  } else {
-    $operacao = $operacao["fiscaloperacao"];  
-  }
+$sql = "SELECT * FROM fiscaloperacao  ";
 
+if (isset($jsonEntrada["idoperacaofiscal"])) {
+    $sql = $sql . " where fiscaloperacao.idoperacaofiscal = " . "'" . $jsonEntrada["idoperacaofiscal"] . "'" ;
 }
 
+
+//echo "-SQL->" . $sql . "\n";
+//LOG
+if (isset($LOG_NIVEL)) {
+    if ($LOG_NIVEL >= 3) {
+        fwrite($arquivo, $identificacao . "-SQL->" . $sql . "\n");
+    }
+}
+//LOG
+
+$rows = 0;
+$buscar = mysqli_query($conexao, $sql);
+while ($row = mysqli_fetch_array($buscar, MYSQLI_ASSOC)) {
+    array_push($operacao, $row);
+    $rows = $rows + 1;
+}
+
+
+if (isset($jsonEntrada["idoperacaofiscal"]) && $rows == 1) {
+    $operacao = $operacao[0];
+}
 $jsonSaida = $operacao;
 
 //echo "-SAIDA->".json_encode($jsonSaida)."\n";
@@ -51,8 +63,3 @@ if (isset($LOG_NIVEL)) {
     }
 }
 //LOG
-
-fclose($arquivo);
-
-
-?>

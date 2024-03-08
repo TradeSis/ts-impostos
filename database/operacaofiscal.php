@@ -1,5 +1,5 @@
 <?php
-
+// lucas 08032024 - id876 passagem para progress
 if (session_status() === PHP_SESSION_NONE) {
 	session_start();
 }
@@ -26,35 +26,20 @@ if (isset($_GET['operacao'])) {
 
 	}
 
-	if ($operacao == "buscar") {
-
-		$idRegraFiscal = $_POST["idRegraFiscal"];
-
-		if ($idRegraFiscal == ""){
-			$idRegraFiscal = null;
-		}
-
-	
-		$apiEntrada = array(
-			'idRegraFiscal' => $idRegraFiscal,
-		);
-		
-		$regra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'GET');
-
-		echo json_encode($regra);
-		return $regra;
-	}
+	// lucas 08032024 - id876 removido operacao buscar (sem uso)
 
 	if ($operacao == "filtrar") {
-
+		// lucas 08032024 - id876 alterado teste de entrada
+		$idoperacaofiscal = isset($_POST["idoperacaofiscal"])  && $_POST["idoperacaofiscal"] !== "" && $_POST["idoperacaofiscal"] !== "null" ? $_POST["buscaGrupoProduto"]  : null;
+	
 		$apiEntrada = array(
-			'idoperacaofiscal' => null,
+			'idoperacaofiscal' => $idoperacaofiscal
 		);
 		
-		$regra = chamaAPI(null, '/impostos/operacaofiscal', json_encode($apiEntrada), 'GET');
+		$operacao = chamaAPI(null, '/impostos/operacaofiscal', json_encode($apiEntrada), 'GET');
 
-		echo json_encode($regra);
-		return $regra;
+		echo json_encode($operacao);
+		return $operacao;
 
 	}
 

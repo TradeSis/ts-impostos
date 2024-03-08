@@ -20,11 +20,11 @@
                     </div>
                     <div class="col-md">
                         <label class="form-label ts-label">dtVigIni</label>
-                        <input type="text" class="form-control ts-input" name="dtVigIni" id="dtVigIni_regrafiscal" readonly>
+                        <input type="date" class="form-control ts-input" name="dtVigIni" id="dtVigIni_regrafiscal" readonly>
                     </div>
                     <div class="col-md">
                         <label class="form-label ts-label">dtVigFin</label>
-                        <input type="text" class="form-control ts-input" name="dtVigFin" id="dtVigFin_regrafiscal" readonly>
+                        <input type="date" class="form-control ts-input" name="dtVigFin" id="dtVigFin_regrafiscal" readonly>
                     </div>
                     <div class="col-md">
                         <label class="form-label ts-label">cFOPCaracTrib</label>

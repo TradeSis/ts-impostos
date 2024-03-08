@@ -1,4 +1,5 @@
 <?php
+// lucas 08032024 - id876 passagem para progress
 //Lucas 29022024 - id862 Empresa Administradora
 // lucas 27122023 criado
 include_once(__DIR__ . '/../header.php');
@@ -245,6 +246,112 @@ include_once(__DIR__ . '/../header.php');
             </div>
         </div>
 
+        <!-- lucas 08032024 - id876 modal alteração -->
+        <!-- ALterar -->
+        <div class="modal fade bd-example-modal-lg" id="alterarGrupoProdutoModal" tabindex="-1" aria-labelledby="alterarGrupoProdutoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Alterar Grupo - </h5>&nbsp;<h5 class="modal-title" id="textoAlterarCodigoGrupo"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="form-alterarGrupoProduto">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label class="form-label ts-label">codigoGrupo</label>
+                                <input type="text" class="form-control ts-input" name="codigoGrupo" id="codigoGrupo_alterar" readonly>
+                                <input type="hidden" class="form-control ts-input" name="idGrupo" id="idGrupo_alterar" readonly>
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">nomeGrupo</label>
+                                <input type="text" class="form-control ts-input" name="nomeGrupo" id="nomeGrupo_alterar">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label ts-label">codigoNcm</label>
+                                <input type="text" class="form-control ts-input" name="codigoNcm" id="codigoNcm_alterar">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md">
+                                <label class="form-label ts-label">codigoCest</label>
+                                <input type="text" class="form-control ts-input" name="codigoCest" id="codigoCest_alterar">
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">impostoImportacao</label>
+                                <input type="text" class="form-control ts-input" name="impostoImportacao" id="impostoImportacao_alterar">
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">piscofinscstEnt</label>
+                                <input type="text" class="form-control ts-input" name="piscofinscstEnt" id="piscofinscstEnt_alterar">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md">
+                                <label class="form-label ts-label">piscofinscstSai</label>
+                                <input type="text" class="form-control ts-input" name="piscofinscstSai" id="piscofinscstSai_alterar">
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">aliqPis</label>
+                                <input type="text" class="form-control ts-input" name="aliqPis" id="aliqPis_alterar">
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">aliqCofins</label>
+                                <input type="text" class="form-control ts-input" name="aliqCofins" id="aliqCofins_alterar">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md">
+                                <label class="form-label ts-label">nri</label>
+                                <input type="text" class="form-control ts-input" name="nri" id="nri_alterar">
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">ampLegal</label>
+                                <input type="text" class="form-control ts-input" name="ampLegal" id="ampLegal_alterar">
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">redPIS</label>
+                                <input type="text" class="form-control ts-input" name="redPIS" id="redPIS_alterar">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md">
+                                <label class="form-label ts-label">redCofins</label>
+                                <input type="text" class="form-control ts-input" name="redCofins" id="redCofins_alterar">
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">ipicstEnt</label>
+                                <input type="text" class="form-control ts-input" name="ipicstEnt" id="ipicstEnt_alterar">
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">ipicstSai</label>
+                                <input type="text" class="form-control ts-input" name="ipicstSai" id="ipicstSai_alterar">
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md">
+                                <label class="form-label ts-label">aliqipi</label>
+                                <input type="text" class="form-control ts-input" name="aliqipi" id="aliqipi_alterar">
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">codenq</label>
+                                <input type="text" class="form-control ts-input" name="codenq" id="codenq_alterar">
+                            </div>
+                            <div class="col-md">
+                                <label class="form-label ts-label">ipiex</label>
+                                <input type="text" class="form-control ts-input" name="ipiex" id="ipiex_alterar">
+                            </div>
+                        </div>
+
+                    </div><!--body-->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" id="btn-formInserir">Salvar</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
 
         <div class="table mt-2 ts-divTabela ts-tableFiltros text-center">
             <table class="table table-sm table-hover">
@@ -287,7 +394,7 @@ include_once(__DIR__ . '/../header.php');
             $.ajax({
                 type: 'POST',
                 dataType: 'html',
-                url: '<?php echo URLROOT ?>/impostos/database/grupoproduto.php?operacao=filtrar',
+                url: '<?php echo URLROOT ?>/impostos/database/grupoproduto.php?operacao=buscar',
                 beforeSend: function() {
                     $("#dados").html("Carregando...");
                 },
@@ -311,7 +418,10 @@ include_once(__DIR__ . '/../header.php');
                         linha = linha + "<td>" + object.codigoCest + "</td>";
                         // Lucas 29022024 - condição Administradora 
                         <?php if ($_SESSION['administradora'] == 1) { ?>
-                        linha = linha + "<td>" + "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#visualizarGrupoProdutoModal' data-codigoGrupo='" + object.codigoGrupo + "'><i class='bi bi-eye'></i></button> ";
+                        linha = linha + "<td>"
+                        linha += "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#visualizarGrupoProdutoModal' data-codigoGrupo='" + object.codigoGrupo + "'><i class='bi bi-eye'></i></button> ";
+                        linha += "<button type='button' class='btn btn-warning btn-sm' data-bs-toggle='modal' data-bs-target='#alterarGrupoProdutoModal' data-codigoGrupo='" + object.codigoGrupo + "'><i class='bi bi-pencil-square'></i></button> ";
+                        linha = linha + "</td>"
                         <?php } ?>
                         linha = linha + "</tr>";
                     }
@@ -373,6 +483,49 @@ include_once(__DIR__ . '/../header.php');
         });
 
 
+        $(document).on('click', 'button[data-bs-target="#alterarGrupoProdutoModal"]', function() {
+            var codigoGrupo = $(this).attr("data-codigoGrupo");
+
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: '<?php echo URLROOT ?>/impostos/database/grupoproduto.php?operacao=buscar',
+                data: {
+                    codigoGrupo: codigoGrupo
+                },
+                success: function(data) {
+                    //alert(data)
+                    $('#idGrupo_alterar').val(data.idGrupo);
+                    $('#codigoGrupo_alterar').val(data.codigoGrupo);
+                    $v2codigoGrupo = data.codigoGrupo;
+                    var texto = $("#textoAlterarCodigoGrupo");
+                    texto.html($v2codigoGrupo);
+
+                    $('#nomeGrupo_alterar').val(data.nomeGrupo);
+                    $('#codigoNcm_alterar').val(data.codigoNcm);
+                    $('#codigoCest_alterar').val(data.codigoCest);
+                    $('#impostoImportacao_alterar').val(data.impostoImportacao);
+                    $('#piscofinscstEnt_alterar').val(data.piscofinscstEnt);
+                    $('#piscofinscstSai_alterar').val(data.piscofinscstSai);
+                    $('#aliqPis_alterar').val(data.aliqPis);
+                    $('#aliqCofins_alterar').val(data.aliqCofins);
+                    $('#nri_alterar').val(data.nri);
+                    $('#ampLegal_alterar').val(data.ampLegal);
+                    $('#redPIS_alterar').val(data.redPIS);
+                    $('#redCofins_alterar').val(data.redCofins);
+                    $('#ipicstEnt_alterar').val(data.ipicstEnt);
+                    $('#ipicstSai_alterar').val(data.ipicstSai);
+                    $('#aliqipi_alterar').val(data.aliqipi);
+                    $('#codenq_alterar').val(data.codenq);
+                    $('#ipiex_alterar').val(data.ipiex);
+                    $('#alterarGrupoProdutoModal').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    alert("ERRO=" + JSON.stringify(error));
+                }
+            });
+        });
+
         $(document).ready(function() {
             $("#form-inserirGrupoProduto").submit(function(event) {
                 event.preventDefault();
@@ -390,6 +543,21 @@ include_once(__DIR__ . '/../header.php');
                 });
             });
 
+            $("#form-alterarGrupoProduto").submit(function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: "../database/grupoproduto.php?operacao=alterar",
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: refreshPage,
+                    error: function(xhr, status, error) {
+                        alert("ERRO=" + JSON.stringify(error));
+                    }
+                });
+            });
 
 
             function refreshPage() {

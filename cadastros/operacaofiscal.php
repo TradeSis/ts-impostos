@@ -35,15 +35,18 @@ $grupoprodutos = buscaCodigoGrupos();
                 <h2 class="ts-tituloPrincipal">Opera√ß√£o Fiscal</h2>
             </div>
 
-            <div class="col-6 col-lg-6">
+            <div class="col-6 col-lg-6 d-none">
                 <div class="input-group">
                     <input type="text" class="form-control ts-input" id="buscaCodigoGrupo" placeholder="Buscar por c√≥digo">
                     <button class="btn btn-primary rounded" type="button" id="buscar"><i class="bi bi-search"></i></button>
-                    <!-- Lucas 29022024 - condiÁ„o Administradora -->
-                    <?php if ($_SESSION['administradora'] == 1) { ?>
-                    <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirOperacaoFiscalModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
-                    <?php } ?>
                 </div>
+            </div>
+
+            <div class="col-6 col-lg-6 text-end">
+                <!-- Lucas 29022024 - condiÁ„o Administradora -->
+                <?php if ($_SESSION['administradora'] == 1) { ?>
+                    <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirOperacaoFiscalModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
+                <?php } ?>
             </div>
 
         </div>
@@ -69,7 +72,7 @@ $grupoprodutos = buscaCodigoGrupos();
                                         <?php
                                         foreach ($grupoprodutos as $grupoproduto) {
                                         ?>
-                                            <option value="<?php echo $grupoproduto['codigoGrupo'] ?>">
+                                            <option value="<?php echo $grupoproduto['idGrupo'] ?>">
                                                 <?php echo $grupoproduto['codigoGrupo'] ?>
                                             </option>
                                         <?php } ?>
@@ -114,7 +117,7 @@ $grupoprodutos = buscaCodigoGrupos();
                                         <?php
                                         foreach ($regrasfiscais as $regrasfiscal) {
                                         ?>
-                                            <option value="<?php echo $regrasfiscal['codRegra'] ?>">
+                                            <option value="<?php echo $regrasfiscal['idRegra'] ?>">
                                                 <?php echo $regrasfiscal['codRegra'] ?>
                                             </option>
                                         <?php } ?>
@@ -166,7 +169,7 @@ $grupoprodutos = buscaCodigoGrupos();
         buscar($("#buscaCodigoGrupo").val());
 
         function limpar() {
-            buscar(null, null, null, null);
+            buscar(null);
             window.location.reload();
         }
 
@@ -233,8 +236,8 @@ $grupoprodutos = buscaCodigoGrupos();
                 success: function(data) {
                     $('#codRegra_regrafiscal').val(data.codRegra);
                     $('#codExcecao_regrafiscal').val(data.codExcecao);
-                    $('#dtVigIni_regrafiscal').val(data.dtVigIniFormatada);
-                    $('#dtVigFin_regrafiscal').val(data.dtVigFinFormatada);
+                    $('#dtVigIni_regrafiscal').val(data.dtVigIni);
+                    $('#dtVigFin_regrafiscal').val(data.dtVigFin);
                     $('#cFOPCaracTrib_regrafiscal').val(data.cFOPCaracTrib);
                     $('#cST_regrafiscal').val(data.cST);
                     $('#cSOSN_regrafiscal').val(data.cSOSN);
@@ -268,6 +271,7 @@ $grupoprodutos = buscaCodigoGrupos();
 
             });
         });
+
 
         $(document).ready(function() {
             $("#form-inserirOperacaoFiscal").submit(function(event) {

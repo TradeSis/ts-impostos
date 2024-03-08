@@ -180,7 +180,15 @@ if ($metodo == "POST") {
     case "fisnotastatus":
           include 'fisnotastatus_alterar.php';
           break;
+
+    case "grupoproduto":
+      include 'grupoproduto_alterar.php';
+      break;
     
+    case "regrafiscal":
+      include 'regrafiscal_alterar.php';
+      break;
+
     default:
       $jsonSaida = json_decode(json_encode(
         array(

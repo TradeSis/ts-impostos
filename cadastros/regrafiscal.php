@@ -1,4 +1,5 @@
 <?php
+// lucas 08032024 - id876 passagem para progress
 //Lucas 29022024 - id862 Empresa Administradora
 // lucas 15012024 criado
 include_once(__DIR__ . '/../header.php');
@@ -27,14 +28,14 @@ include_once(__DIR__ . '/../header.php');
             <div class="col-6 col-lg-6">
                 <h2 class="ts-tituloPrincipal">Regra Fiscal</h2>
             </div>
-            
+
             <div class="col-6 col-lg-6">
                 <div class="input-group">
                     <input type="text" class="form-control ts-input" id="buscaCodigoGrupo" placeholder="Buscar por cÃ³digo">
                     <button class="btn btn-primary rounded" type="button" id="buscar"><i class="bi bi-search"></i></button>
                     <!-- Lucas 29022024 - condição Administradora -->
                     <?php if ($_SESSION['administradora'] == 1) { ?>
-                    <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirRegraFiscalModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
+                        <button type="button" class="ms-4 btn btn-success" data-bs-toggle="modal" data-bs-target="#inserirRegraFiscalModal"><i class="bi bi-plus-square"></i>&nbsp Novo</button>
                     <?php } ?>
                 </div>
             </div>
@@ -191,6 +192,151 @@ include_once(__DIR__ . '/../header.php');
                 </div>
             </div>
         </div>
+        <!-- lucas 08032024 - id876 modal de alteração -->
+        <!-- Alterar -->
+        <div class="modal fade" id="alterarRegraFiscal" tabindex="-1" aria-labelledby="alterarRegraFiscalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Alterar Regra Fiscal</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="form-alterarRegraFiscal">
+                            <div class="row">
+                                <div class="col-md">
+                                    <label class="form-label ts-label">codRegra</label>
+                                    <input type="text" class="form-control ts-input" name="codRegra" id="codRegra_regrafiscal_alterar">
+                                    <input type="hidden" class="form-control ts-input" name="idRegra" id="idRegra_regrafiscal_alterar">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md">
+                                    <label class="form-label ts-label">codExcecao</label>
+                                    <input type="text" class="form-control ts-input" name="codExcecao" id="codExcecao_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">dtVigIni</label>
+                                    <input type="date" class="form-control ts-input" name="dtVigIni" id="dtVigIni_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">dtVigFin</label>
+                                    <input type="date" class="form-control ts-input" name="dtVigFin" id="dtVigFin_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">cFOPCaracTrib</label>
+                                    <input type="text" class="form-control ts-input" name="cFOPCaracTrib" id="cFOPCaracTrib_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">cST</label>
+                                    <input type="text" class="form-control ts-input" name="cST" id="cST_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">cSOSN</label>
+                                    <input type="text" class="form-control ts-input" name="cSOSN" id="cSOSN_regrafiscal_alterar">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md">
+                                    <label class="form-label ts-label">aliqIcmsInterna</label>
+                                    <input type="text" class="form-control ts-input" name="aliqIcmsInterna" id="aliqIcmsInterna_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">aliqIcmsInterestadual</label>
+                                    <input type="text" class="form-control ts-input" name="aliqIcmsInterestadual" id="aliqIcmsInterestadual_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">reducaoBcIcms</label>
+                                    <input type="text" class="form-control ts-input" name="reducaoBcIcms" id="reducaoBcIcms_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">reducaoBcIcmsSt</label>
+                                    <input type="text" class="form-control ts-input" name="reducaoBcIcmsSt" id="reducaoBcIcmsSt_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">redBcICMsInterestadual</label>
+                                    <input type="text" class="form-control ts-input" name="redBcICMsInterestadual" id="redBcICMsInterestadual_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">aliqIcmsSt</label>
+                                    <input type="text" class="form-control ts-input" name="aliqIcmsSt" id="aliqIcmsSt_regrafiscal_alterar">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md">
+                                    <label class="form-label ts-label">iVA</label>
+                                    <input type="text" class="form-control ts-input" name="iVA" id="iVA_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">iVAAjust</label>
+                                    <input type="text" class="form-control ts-input" name="iVAAjust" id="iVAAjust_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">fCP</label>
+                                    <input type="text" class="form-control ts-input" name="fCP" id="fCP_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">codBenef</label>
+                                    <input type="text" class="form-control ts-input" name="codBenef" id="codBenef_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">pDifer</label>
+                                    <input type="text" class="form-control ts-input" name="pDifer" id="pDifer_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">pIsencao</label>
+                                    <input type="text" class="form-control ts-input" name="pIsencao" id="pIsencao_regrafiscal_alterar">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md">
+                                    <label class="form-label ts-label">antecipado</label>
+                                    <input type="text" class="form-control ts-input" name="antecipado" id="antecipado_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">desonerado</label>
+                                    <input type="text" class="form-control ts-input" name="desonerado" id="desonerado_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">pICMSDeson</label>
+                                    <input type="text" class="form-control ts-input" name="pICMSDeson" id="pICMSDeson_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">isento</label>
+                                    <input type="text" class="form-control ts-input" name="isento" id="isento_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">tpCalcDifal</label>
+                                    <input type="text" class="form-control ts-input" name="tpCalcDifal" id="tpCalcDifal_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md-5">
+                                    <label class="form-label ts-label">ampLegal</label>
+                                    <input type="text" class="form-control ts-input" name="ampLegal" id="ampLegal_regrafiscal_regrafiscal_alterar">
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md">
+                                    <label class="form-label ts-label">Protocolo</label>
+                                    <input type="text" class="form-control ts-input" name="Protocolo" id="Protocolo_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">Convenio</label>
+                                    <input type="text" class="form-control ts-input" name="Convenio" id="Convenio_regrafiscal_alterar">
+                                </div>
+                                <div class="col-md">
+                                    <label class="form-label ts-label">regraGeral</label>
+                                    <input type="text" class="form-control ts-input" name="regraGeral" id="regraGeral_regrafiscal_alterar">
+                                </div>
+                            </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success" id="btn-formInserir">Salvar</button>
+                    </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
 
         <div class="table mt-2 ts-divTabela ts-tableFiltros text-center">
             <table class="table table-sm table-hover">
@@ -206,7 +352,7 @@ include_once(__DIR__ . '/../header.php');
                         <th>aliqIcmsInterestadual</th>
                         <!-- Lucas 29022024 - condição Administradora -->
                         <?php if ($_SESSION['administradora'] == 1) { ?>
-                        <th></th>
+                            <th></th>
                         <?php } ?>
                     </tr>
                 </thead>
@@ -237,7 +383,7 @@ include_once(__DIR__ . '/../header.php');
             $.ajax({
                 type: 'POST',
                 dataType: 'html',
-                url: '../database/regrafiscal.php?operacao=filtrar',
+                url: '../database/regrafiscal.php?operacao=buscar',
                 beforeSend: function() {
                     $("#dados").html("Carregando...");
                 },
@@ -264,7 +410,10 @@ include_once(__DIR__ . '/../header.php');
                         linha = linha + "<td>" + object.aliqIcmsInterestadual + "</td>";
                         // Lucas 29022024 - condição Administradora
                         <?php if ($_SESSION['administradora'] == 1) { ?>
-                        linha = linha + "<td>" + "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#modalRegraFiscal' data-idRegra='" + object.idRegra + "'><i class='bi bi-eye'></i></button> ";
+                            linha += "<td>";
+                            linha += "<button type='button' class='btn btn-info btn-sm' data-bs-toggle='modal' data-bs-target='#modalRegraFiscal' data-idRegra='" + object.idRegra + "'><i class='bi bi-eye'></i></button> ";
+                            linha += "<button type='button' class='btn btn-warning btn-sm' data-bs-toggle='modal' data-bs-target='#alterarRegraFiscal' data-idRegra='" + object.idRegra + "'><i class='bi bi-pencil-square'></i></button> ";
+                            linha += "<td>";
                         <?php } ?>
                         linha = linha + "</tr>";
                     }
@@ -296,8 +445,8 @@ include_once(__DIR__ . '/../header.php');
                 success: function(data) {
                     $('#codRegra_regrafiscal').val(data.codRegra);
                     $('#codExcecao_regrafiscal').val(data.codExcecao);
-                    $('#dtVigIni_regrafiscal').val(data.dtVigIniFormatada);
-                    $('#dtVigFin_regrafiscal').val(data.dtVigFinFormatada);
+                    $('#dtVigIni_regrafiscal').val(data.dtVigIni);
+                    $('#dtVigFin_regrafiscal').val(data.dtVigFin);
                     $('#cFOPCaracTrib_regrafiscal').val(data.cFOPCaracTrib);
                     $('#cST_regrafiscal').val(data.cST);
                     $('#cSOSN_regrafiscal').val(data.cSOSN);
@@ -332,12 +481,78 @@ include_once(__DIR__ . '/../header.php');
             });
         });
 
+        $(document).on('click', 'button[data-bs-target="#alterarRegraFiscal"]', function() {
+            var idRegra = $(this).attr("data-idRegra");
+            //alert(idRegra)
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                url: '../database/regrafiscal.php?operacao=buscar',
+                data: {
+                    idRegra: idRegra
+                },
+                success: function(data) {
+                    $('#idRegra_regrafiscal_alterar').val(data.idRegra);
+                    $('#codRegra_regrafiscal_alterar').val(data.codRegra);
+                    $('#codExcecao_regrafiscal_alterar').val(data.codExcecao);
+                    $('#dtVigIni_regrafiscal_alterar').val(data.dtVigIni);
+                    $('#dtVigFin_regrafiscal_alterar').val(data.dtVigFin);
+                    $('#cFOPCaracTrib_regrafiscal_alterar').val(data.cFOPCaracTrib);
+                    $('#cST_regrafiscal_alterar').val(data.cST);
+                    $('#cSOSN_regrafiscal_alterar').val(data.cSOSN);
+                    $('#aliqIcmsInterna_regrafiscal_alterar').val(data.aliqIcmsInterna);
+                    $('#aliqIcmsInterestadual_regrafiscal_alterar').val(data.aliqIcmsInterestadual);
+                    $('#reducaoBcIcms_regrafiscal_alterar').val(data.reducaoBcIcms);
+                    $('#reducaoBcIcmsSt_regrafiscal_alterar').val(data.reducaoBcIcmsSt);
+                    $('#redBcICMsInterestadual_regrafiscal_alterar').val(data.redBcICMsInterestadual);
+                    $('#aliqIcmsSt_regrafiscal_alterar').val(data.aliqIcmsSt);
+                    $('#iVA_regrafiscal_alterar').val(data.iVA);
+                    $('#iVAAjust_regrafiscal_alterar').val(data.iVAAjust);
+                    $('#fCP_regrafiscal_alterar').val(data.fCP);
+                    $('#codBenef_regrafiscal_alterar').val(data.codBenef);
+                    $('#pDifer_regrafiscal_alterar').val(data.pDifer);
+                    $('#pIsencao_regrafiscal_alterar').val(data.pIsencao);
+                    $('#antecipado_regrafiscal_alterar').val(data.antecipado);
+                    $('#desonerado_regrafiscal_alterar').val(data.desonerado);
+                    $('#pICMSDeson_regrafiscal_alterar').val(data.pICMSDeson);
+                    $('#isento_regrafiscal_alterar').val(data.isento);
+                    $('#tpCalcDifal_regrafiscal_alterar').val(data.tpCalcDifal);
+                    $('#ampLegal_regrafiscal_regrafiscal_alterar').val(data.ampLegal);
+                    $('#Protocolo_regrafiscal_alterar').val(data.Protocolo);
+                    $('#Convenio_regrafiscal_alterar').val(data.Convenio);
+                    $('#regraGeral_regrafiscal_alterar').val(data.regraGeral);
+
+                    $('#alterarRegraFiscal').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    alert("ERRO=" + JSON.stringify(error));
+                }
+
+            });
+        });
+
         $(document).ready(function() {
             $("#form-inserirRegraFiscal").submit(function(event) {
                 event.preventDefault();
                 var formData = new FormData(this);
                 $.ajax({
                     url: "../database/regrafiscal.php?operacao=inserir",
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: refreshPage,
+                    error: function(xhr, status, error) {
+                        alert("ERRO=" + JSON.stringify(error));
+                    }
+                });
+            });
+
+            $("#form-alterarRegraFiscal").submit(function(event) {
+                event.preventDefault();
+                var formData = new FormData(this);
+                $.ajax({
+                    url: "../database/regrafiscal.php?operacao=alterar",
                     type: 'POST',
                     data: formData,
                     processData: false,
