@@ -33,25 +33,17 @@ then do:
     if vcodigoGrupo = "" then vcodigoGrupo = ?. 
 end.
  
-IF ttentrada.codigoGrupo <> ?
+IF ttentrada.codigoGrupo <> ? OR (ttentrada.codigoGrupo = ? AND ttentrada.buscaGrupoProduto = ?)
 THEN DO:
-      for EACH fiscalgrupo WHERE 
-        fiscalgrupo.codigoGrupo = vcodigoGrupo
+      for EACH fiscalgrupo WHERE
+      (if vcodigoGrupo = ?
+        then true /* TODOS */
+        ELSE fiscalgrupo.codigoGrupo = vcodigoGrupo) 
         no-lock.
         
         RUN criaGrupos.
 
     end. 
-END.
-
-IF ttentrada.codigoGrupo = ? AND ttentrada.buscaGrupoProduto = ?
-THEN DO:
-    for each fiscalgrupo 
-        no-lock.
-
-        RUN criaGrupos. 
-
-    end.
 END.
 
 IF ttentrada.buscaGrupoProduto <> ? 
