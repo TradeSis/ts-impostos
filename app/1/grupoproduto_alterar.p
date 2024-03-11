@@ -14,7 +14,7 @@ def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CA
     field tstatus        as int serialize-name "status"
     field descricaoStatus      as char.
 
-
+DEF BUFFER bfiscalgrupo FOR fiscalgrupo.
 
 hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
@@ -61,10 +61,33 @@ then do:
     return.
 end.
 
+IF ttentrada.codigoGrupo <> ? AND ttentrada.codigoGrupo <> fiscalgrupo.codigoGrupo
+THEN DO:
+    find bfiscalgrupo where bfiscalgrupo.codigoGrupo = ttentrada.codigoGrupo no-lock no-error.
+    IF avail bfiscalgrupo
+    then do:
+        create ttsaida.
+        ttsaida.tstatus = 400.
+        ttsaida.descricaoStatus = "Grupo já cadastrado".
+
+        hsaida  = temp-table ttsaida:handle.
+
+        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
+        message string(vlcSaida).
+        return.
+    end.    
+    
+END.
 
 do on error undo:
     find fiscalgrupo where fiscalgrupo.idGrupo = ttentrada.idGrupo exclusive no-error.
-    BUFFER-COPY ttentrada EXCEPT codigoGrupo TO fiscalgrupo.
+    BUFFER-COPY ttentrada 
+            EXCEPT idGrupo codigoGrupo
+            TO fiscalgrupo.
+    IF ttentrada.codigoGrupo <> ? 
+    THEN DO:
+        fiscalgrupo.codigoGrupo = ttentrada.codigoGrupo.
+    END.
 end.
 
 create ttsaida.

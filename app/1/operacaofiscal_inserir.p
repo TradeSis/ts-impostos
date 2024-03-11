@@ -48,12 +48,13 @@ then do:
     return.
 end.
 
-find fiscaloperacao where fiscaloperacao.idGrupo = ttentrada.idGrupo AND
-fiscaloperacao.codigoEstado = ttentrada.codigoEstado AND
-fiscaloperacao.cFOP = ttentrada.cFOP AND
-fiscaloperacao.codigoCaracTrib = ttentrada.codigoCaracTrib AND
-fiscaloperacao.finalidade = ttentrada.finalidade
-no-lock no-error.
+find fiscaloperacao where 
+        fiscaloperacao.idGrupo = ttentrada.idGrupo AND
+        fiscaloperacao.codigoEstado = ttentrada.codigoEstado AND
+        fiscaloperacao.cFOP = ttentrada.cFOP AND
+        fiscaloperacao.codigoCaracTrib = ttentrada.codigoCaracTrib AND
+        fiscaloperacao.finalidade = ttentrada.finalidade
+    no-lock no-error.
 
 if avail fiscaloperacao
 then do:
