@@ -42,7 +42,7 @@ foreach ($infNFe->det as $item) {
                     'nomeProduto' => (string) $item->prod->xProd
                 );
                         
-                $geralProdutosRetorno = chamaAPI(null, '/cadastros/geralprodutos', json_encode($geralProdutosEntrada), 'PUT');
+                $geralProdutosRetorno = chamaAPI(null, '/sistema/geralprodutos', json_encode($geralProdutosEntrada), 'PUT');
                 $idGeralProduto = $geralProdutosRetorno['idGeralProduto'];
 
                 //**GeralFornecimento
@@ -57,7 +57,7 @@ foreach ($infNFe->det as $item) {
                     'valorCompra' => (string) $item->prod->vUnCom
                 );
                         
-                $geralFornecimentoRetorno = chamaAPI(null, '/cadastros/geralfornecimento', json_encode($geralFornecimentoEntrada), 'PUT');
+                $geralFornecimentoRetorno = chamaAPI(null, '/sistema/geralfornecimento', json_encode($geralFornecimentoEntrada), 'PUT');
             }
 
         $produEntrada = array(
