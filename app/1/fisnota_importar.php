@@ -123,7 +123,7 @@ if (isset($jsonEntrada['xml'])) {
                                         'CRT' => (string) $dados->CRT
                                     );
 
-                                    $geralPessoasRetorno = chamaAPI(null, '/cadastros/geralpessoas', json_encode($geralPessoasEntrada), 'PUT');
+                                    $geralPessoasRetorno = chamaAPI(null, '/sistema/geralpessoas', json_encode($geralPessoasEntrada), 'PUT');
                                 }
 
                                 $pessoasEntrada = array(
