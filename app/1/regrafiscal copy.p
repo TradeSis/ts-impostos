@@ -9,8 +9,7 @@ def var hsaida   as handle.             /* HANDLE SAIDA */
 
 def temp-table ttentrada no-undo serialize-name "fiscalregra"   /* JSON ENTRADA */
     field idRegra like fiscalregra.idRegra
-    field codRegra like fiscalregra.codRegra
-    field codExcecao like fiscalregra.codExcecao.
+    field codRegra like fiscalregra.codRegra.
 
 def temp-table ttfiscalregra  no-undo serialize-name "fiscalregra"  /* JSON SAIDA */
     LIKE fiscalregra.
@@ -45,10 +44,10 @@ THEN DO:
     end.
 END.
 
-IF ttentrada.codRegra <> ? AND ttentrada.codExcecao <> ?
+IF ttentrada.codRegra <> ?
 THEN DO:
       for each fiscalregra WHERE 
-        fiscalregra.codRegra = ttentrada.codRegra AND fiscalregra.codExcecao = ttentrada.codExcecao
+        fiscalregra.codRegra = ttentrada.codRegra
         no-lock.
         
         RUN criaRegras.

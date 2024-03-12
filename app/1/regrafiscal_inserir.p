@@ -12,9 +12,10 @@ def temp-table ttentrada no-undo serialize-name "fiscalregra"   /* JSON ENTRADA 
 
 def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CASO ERRO */
     field tstatus        as int serialize-name "status"
-    field descricaoStatus      as char.
-
-
+    field descricaoStatus      as CHAR serialize-name "retorno"
+    field idregra      AS INT SERIALIZE-NAME "idRegra".
+    
+def VAR vidregra AS INT.
 
 hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
@@ -61,15 +62,18 @@ then do:
     return.
 end.
 
-
+vidregra = 0.
 do on error undo:
-    create fiscalregra.
+    create fiscalregra.   
+    vidregra = fiscalregra.idregra.
     BUFFER-COPY ttentrada EXCEPT idRegra TO fiscalregra.
 end.
+
 
 create ttsaida.
 ttsaida.tstatus = 200.
 ttsaida.descricaoStatus = "Regra criada com sucesso".
+ttsaida.idregra = vidregra.
 
 hsaida  = temp-table ttsaida:handle.
 

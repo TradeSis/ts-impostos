@@ -376,75 +376,49 @@ function adicionaRegraFiscal($conexaogeral, $regras, $idGrupo)
           $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigIni'])) : "null";
           $dtVigFin = isset($CaracTrib['dtVigFin']) && $CaracTrib['dtVigFin'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigFin'])) : "null";
 
-          $apiEntrada = array(
-            'idRegra' => null,
-            'codRegra' => 3324,//$CaracTrib['codRegra'],
-            'codExcecao' => 4,//$CaracTrib['codExcecao'],
-          );
-          //echo 'apiEntrada -> ' . json_encode($apiEntrada);
-          $buscaregras = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'GET');
-          foreach ($buscaregras as $buscaregra) {
-          //echo 'retorno Progress -> ' . json_encode($buscaregra);
+          //Verifica se existe regrafiscal
+          $sql_regra = "SELECT fiscalregra.idRegra, fiscalregra.codRegra, fiscalregra.codExcecao FROM fiscalregra WHERE codRegra = $codRegra AND codExcecao = $codExcecao ";
+          $buscar_regra = mysqli_query($conexaogeral, $sql_regra);
+          $row_regra = mysqli_fetch_array($buscar_regra, MYSQLI_ASSOC);
 
-          if(isset($buscaregra["idRegra"])){
-            echo " SIM ";
-            // se tiver vai guardar o id em uma variavel 
-            $idRegra = $buscaregra['idRegra'];
-            }else{
-              echo " NÂO ";
-              //se não tem vai chamar a api de progress de adicionar
-              $apiEntrada = array(
-                'codRegra' => "1442",//$CaracTrib['codRegra'],
-                'codExcecao' => "1482",//$CaracTrib['codExcecao'],
-                'dtVigIni' =>  null,//$dtVigIni,// formato de data diferente
-                'dtVigFin' =>  null,//$dtVigFin,
-                'cFOPCaracTrib' =>  $CaracTrib['cFOP'],
-                'cST' => $CaracTrib['cST'],
-                'cSOSN' => $CaracTrib['cSOSN'],
-                'aliqIcmsInterna' => $CaracTrib['aliqIcmsInterna'],
-                'aliqIcmsInterestadual' => $CaracTrib['aliqIcmsInterestadual'],
-                'reducaoBcIcms' => $CaracTrib['reducaoBcIcms'],
-                'reducaoBcIcmsSt' => $CaracTrib['reducaoBcIcmsSt'],
-                'redBcICMsInterestadual' => $CaracTrib['redBcICMsInterestadual'],
-                'aliqIcmsSt' => $CaracTrib['aliqIcmsSt'],
-                'iVA' => $CaracTrib['iVA'],
-                'iVAAjust' => $CaracTrib['iVAAjust'],
-                'fCP' => $CaracTrib['fCP'],
-                'codBenef' => $CaracTrib['codBenef'],
-                'pDifer' => $CaracTrib['pDifer'],
-                'pIsencao' => $CaracTrib['pIsencao'],
-                'antecipado' => $CaracTrib['antecipado'],
-                'desonerado' => $CaracTrib['desonerado'],
-                'pICMSDeson' => $CaracTrib['pICMSDeson'],
-                'isento' => $CaracTrib['isento'],
-                'tpCalcDifal' => $CaracTrib['tpCalcDifal'],
-                'ampLegal' => $CaracTrib['ampLegal'],
-                'Protocolo' => "",//$CaracTrib['Protocolo'],
-                'Convenio' => "",//$CaracTrib['Convenio'],
-                'regraGeral' => $CaracTrib['regraGeral'],
-              );
-              $inserirRegra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'PUT');
-              //echo ' RETORNO INSERIR -> ' . json_encode($inserirRegra);
-              $idRegra = $inserirRegra['idRegra'];
-              echo ' IDREGRA -> ' . json_encode($idRegra);
-            } 
+          if ($row_regra == null) {
+            $apiEntrada = array(
+              'codRegra' => $CaracTrib['codRegra'],
+              'codExcecao' => $CaracTrib['codExcecao'],
+              'dtVigIni' =>  $dtVigIni,
+              'dtVigFin' =>  $dtVigFin,
+              'cFOPCaracTrib' =>  $CaracTrib['cFOP'],
+              'cST' => $CaracTrib['cST'],
+              'cSOSN' =>  $CaracTrib['cSOSN'],
+              'aliqIcmsInterna' => $CaracTrib['aliqIcmsInterna'],
+              'aliqIcmsInterestadual' => $CaracTrib['aliqIcmsInterestadual'],
+              'reducaoBcIcms' => $CaracTrib['reducaoBcIcms'],
+              'reducaoBcIcmsSt' => $CaracTrib['reducaoBcIcmsSt'],
+              'redBcICMsInterestadual' => $CaracTrib['redBcICMsInterestadual'],
+              'aliqIcmsSt' => $CaracTrib['aliqIcmsSt'],
+              'iVA' => $CaracTrib['iVA'],
+              'iVAAjust' => $CaracTrib['iVAAjust'],
+              'fCP' => $CaracTrib['fCP'],
+              'codBenef' => $CaracTrib['codBenef'],
+              'pDifer' => $CaracTrib['pDifer'],
+              'pIsencao' => $CaracTrib['pIsencao'],
+              'antecipado' => $CaracTrib['antecipado'],
+              'desonerado' => $CaracTrib['desonerado'],
+              'pICMSDeson' => $CaracTrib['pICMSDeson'],
+              'isento' => $CaracTrib['isento'],
+              'tpCalcDifal' => $CaracTrib['tpCalcDifal'],
+              'ampLegal' => $ampLegal = str_replace("'", "", $CaracTrib['ampLegal']),
+              'ampLegal_formatada' => $ampLegal,
+              //'Protocolo' => $CaracTrib['Protocolo'],
+              //'Convenio' => $CaracTrib['Convenio'],
+              'regraGeral' => $CaracTrib['regraGeral'],
+            );
+
+            $inserirRegra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'PUT');
+            $idRegra = $inserirRegra['idRegra'];
+          } else {
+            $idRegra = $row_regra['idRegra'];
           }
-          
-          $apiEntrada = array(
-            "idoperacaofiscal"=> null,
-            "idGrupo"=> $idGrupo,
-            "codigoEstado"=> $codigoEstado,
-            "cFOP"=> 45, //$cFOP,
-            "codigoCaracTrib"=> $codigoCaracTrib,
-            "finalidade"=> $finalidade 
-          );
-          //echo 'apiEntrada -> ' . json_encode($apiEntrada);
-          $buscaoperacao = chamaAPI(null, '/impostos/operacaofiscal', json_encode($apiEntrada), 'GET');
-          
-          echo 'BUSCA OPERACAO -> ' . json_encode($buscaoperacao);
-          return;
-          //idoperacaofiscal
-     
 
           //Verifica se existe operacaofiscal
           $sql_operacao = "SELECT * FROM fiscaloperacao WHERE idGrupo = $idGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
