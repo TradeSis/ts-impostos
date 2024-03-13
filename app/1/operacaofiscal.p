@@ -8,7 +8,13 @@ def var hentrada as handle.             /* HANDLE ENTRADA */
 def var hsaida   as handle.             /* HANDLE SAIDA */
 
 def temp-table ttentrada no-undo serialize-name "fiscaloperacao"   /* JSON ENTRADA */
-    field idoperacaofiscal  like fiscaloperacao.idoperacaofiscal.
+    field idoperacaofiscal  like fiscaloperacao.idoperacaofiscal INITIAL ?
+    field idGrupo  like fiscaloperacao.idGrupo INITIAL ?
+    field codigoEstado  like fiscaloperacao.codigoEstado INITIAL ?
+    field cFOP  like fiscaloperacao.cFOP INITIAL ?
+    field codigoCaracTrib  like fiscaloperacao.codigoCaracTrib INITIAL ?
+    field finalidade  like fiscaloperacao.finalidade INITIAL ?.
+    
 
 def temp-table ttfiscaloperacao  no-undo serialize-name "fiscaloperacao"  /* JSON SAIDA */
     LIKE  fiscaloperacao.
@@ -30,26 +36,39 @@ then do:
     vidoperacaofiscal = ttentrada.idoperacaofiscal.
     if vidoperacaofiscal = ? then vidoperacaofiscal = 0. 
 end.
-
-for each fiscaloperacao where
-    (if vidoperacaofiscal = 0 
-    then true /* TODOS */
-    ELSE fiscaloperacao.idoperacaofiscal = vidoperacaofiscal)
-    no-lock.
+ 
+ 
+IF ttentrada.idoperacaofiscal <>? OR (ttentrada.idGrupo = ? AND ttentrada.codigoEstado = ? AND ttentrada.cFOP = ? AND ttentrada.codigoCaracTrib = ? AND ttentrada.finalidade = ?)
+THEN DO:
         
-    create ttfiscaloperacao.
-    ttfiscaloperacao.idoperacaofiscal = fiscaloperacao.idoperacaofiscal.
-    ttfiscaloperacao.idGrupo   = fiscaloperacao.idGrupo.
-    ttfiscaloperacao.codigoEstado   = fiscaloperacao.codigoEstado.
-    ttfiscaloperacao.cFOP   = fiscaloperacao.cFOP.
-    ttfiscaloperacao.codigoCaracTrib   = fiscaloperacao.codigoCaracTrib.
-    ttfiscaloperacao.finalidade   = fiscaloperacao.finalidade.
-    ttfiscaloperacao.idRegra   = fiscaloperacao.idRegra.
-end.
-    
+    for each fiscaloperacao where
+        (if vidoperacaofiscal = 0 
+        then true /* TODOS */
+        ELSE fiscaloperacao.idoperacaofiscal = vidoperacaofiscal)
+        no-lock.
+            
+        RUN criaOperacao.
+    end.
+END.
+
+
+IF ttentrada.idGrupo <> ? AND ttentrada.codigoEstado <> ? AND ttentrada.cFOP <> ? AND ttentrada.codigoCaracTrib <> ? AND ttentrada.finalidade <> ?
+THEN DO:
+      for each fiscaloperacao WHERE 
+        fiscaloperacao.idGrupo = ttentrada.idGrupo AND
+        fiscaloperacao.codigoEstado = ttentrada.codigoEstado AND
+        fiscaloperacao.cFOP = ttentrada.cFOP AND
+        fiscaloperacao.codigoCaracTrib = ttentrada.codigoCaracTrib AND
+        fiscaloperacao.finalidade = ttentrada.finalidade
+        no-lock.
+        
+        RUN criaOperacao. 
+
+    end. 
+END.    
+
 
 find first ttfiscaloperacao no-error.
-
 if not avail ttfiscaloperacao
 then do:
     create ttsaida.
@@ -68,3 +87,16 @@ hsaida  = TEMP-TABLE ttfiscaloperacao:handle.
 
 lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
 put unformatted string(vlcSaida).
+
+PROCEDURE criaOperacao.
+
+     create ttfiscaloperacao.
+     ttfiscaloperacao.idoperacaofiscal = fiscaloperacao.idoperacaofiscal.
+     ttfiscaloperacao.idGrupo   = fiscaloperacao.idGrupo.
+     ttfiscaloperacao.codigoEstado   = fiscaloperacao.codigoEstado.
+     ttfiscaloperacao.cFOP   = fiscaloperacao.cFOP.
+     ttfiscaloperacao.codigoCaracTrib   = fiscaloperacao.codigoCaracTrib.
+     ttfiscaloperacao.finalidade   = fiscaloperacao.finalidade.
+     ttfiscaloperacao.idRegra   = fiscaloperacao.idRegra.
+
+END.

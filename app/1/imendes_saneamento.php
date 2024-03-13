@@ -375,91 +375,100 @@ function adicionaRegraFiscal($conexaogeral, $regras, $idGrupo)
           $codExcecao = isset($CaracTrib['codExcecao']) && $CaracTrib['codExcecao'] !== "null"    ? "'" . $CaracTrib['codExcecao'] . "'" : "null";
           $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigIni'])) : "null";
           $dtVigFin = isset($CaracTrib['dtVigFin']) && $CaracTrib['dtVigFin'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigFin'])) : "null";
-
+        /* ===== PARAMETROS DE TESTE =====  */
+          //$codRegra = "8000";
+          //$codExcecao = "8100";
+        /* ===== PARAMETROS DE TESTE =====  */  
           $apiEntrada = array(
             'idRegra' => null,
-            'codRegra' => 3324,//$CaracTrib['codRegra'],
-            'codExcecao' => 4,//$CaracTrib['codExcecao'],
+            'codRegra' => $codRegra,
+            'codExcecao' => $codExcecao
           );
-          //echo 'apiEntrada -> ' . json_encode($apiEntrada);
+        
           $buscaregras = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'GET');
-          foreach ($buscaregras as $buscaregra) {
-          //echo 'retorno Progress -> ' . json_encode($buscaregra);
+         
+          
+          if(isset($buscaregras[0])){
+            $idRegra = $buscaregras[0]["idRegra"];
+          }else{
+           if($dtVigIni == "null"){
+            $dtVigIni_formatada = null;
+           }else{
+            $dtVigIni_formatada = date('Y-m-d', strtotime($dtVigIni));
+           }
 
-          if(isset($buscaregra["idRegra"])){
-            echo " SIM ";
-            // se tiver vai guardar o id em uma variavel 
-            $idRegra = $buscaregra['idRegra'];
-            }else{
-              echo " NÂO ";
-              //se não tem vai chamar a api de progress de adicionar
-              $apiEntrada = array(
-                'codRegra' => "1442",//$CaracTrib['codRegra'],
-                'codExcecao' => "1482",//$CaracTrib['codExcecao'],
-                'dtVigIni' =>  null,//$dtVigIni,// formato de data diferente
-                'dtVigFin' =>  null,//$dtVigFin,
-                'cFOPCaracTrib' =>  $CaracTrib['cFOP'],
-                'cST' => $CaracTrib['cST'],
-                'cSOSN' => $CaracTrib['cSOSN'],
-                'aliqIcmsInterna' => $CaracTrib['aliqIcmsInterna'],
-                'aliqIcmsInterestadual' => $CaracTrib['aliqIcmsInterestadual'],
-                'reducaoBcIcms' => $CaracTrib['reducaoBcIcms'],
-                'reducaoBcIcmsSt' => $CaracTrib['reducaoBcIcmsSt'],
-                'redBcICMsInterestadual' => $CaracTrib['redBcICMsInterestadual'],
-                'aliqIcmsSt' => $CaracTrib['aliqIcmsSt'],
-                'iVA' => $CaracTrib['iVA'],
-                'iVAAjust' => $CaracTrib['iVAAjust'],
-                'fCP' => $CaracTrib['fCP'],
-                'codBenef' => $CaracTrib['codBenef'],
-                'pDifer' => $CaracTrib['pDifer'],
-                'pIsencao' => $CaracTrib['pIsencao'],
-                'antecipado' => $CaracTrib['antecipado'],
-                'desonerado' => $CaracTrib['desonerado'],
-                'pICMSDeson' => $CaracTrib['pICMSDeson'],
-                'isento' => $CaracTrib['isento'],
-                'tpCalcDifal' => $CaracTrib['tpCalcDifal'],
-                'ampLegal' => $CaracTrib['ampLegal'],
-                'Protocolo' => "",//$CaracTrib['Protocolo'],
-                'Convenio' => "",//$CaracTrib['Convenio'],
-                'regraGeral' => $CaracTrib['regraGeral'],
-              );
-              $inserirRegra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'PUT');
-              //echo ' RETORNO INSERIR -> ' . json_encode($inserirRegra);
-              $idRegra = $inserirRegra['idRegra'];
-              echo ' IDREGRA -> ' . json_encode($idRegra);
-            } 
+           if($dtVigFin == "null"){
+            $dtVigFin_formatada = null;
+           }else{
+            $dtVigFin_formatada = date('Y-m-d', strtotime($dtVigFin));
+           }
+           
+            $apiEntrada = array(
+              'codRegra' => $codRegra,
+              'codExcecao' => $codExcecao,
+              'dtVigIni' =>  $dtVigIni_formatada,
+              'dtVigFin' =>  $dtVigFin_formatada,
+              'cFOPCaracTrib' =>  $CaracTrib['cFOP'],
+              'cST' => $CaracTrib['cST'],
+              'cSOSN' => $CaracTrib['cSOSN'],
+              'aliqIcmsInterna' => $CaracTrib['aliqIcmsInterna'],
+              'aliqIcmsInterestadual' => $CaracTrib['aliqIcmsInterestadual'],
+              'reducaoBcIcms' => $CaracTrib['reducaoBcIcms'],
+              'reducaoBcIcmsSt' => $CaracTrib['reducaoBcIcmsSt'],
+              'redBcICMsInterestadual' => $CaracTrib['redBcICMsInterestadual'],
+              'aliqIcmsSt' => $CaracTrib['aliqIcmsSt'],
+              'iVA' => $CaracTrib['iVA'],
+              'iVAAjust' => $CaracTrib['iVAAjust'],
+              'fCP' => $CaracTrib['fCP'],
+              'codBenef' => $CaracTrib['codBenef'],
+              'pDifer' => $CaracTrib['pDifer'],
+              'pIsencao' => $CaracTrib['pIsencao'],
+              'antecipado' => $CaracTrib['antecipado'],
+              'desonerado' => $CaracTrib['desonerado'],
+              'pICMSDeson' => $CaracTrib['pICMSDeson'],
+              'isento' => $CaracTrib['isento'],
+              'tpCalcDifal' => $CaracTrib['tpCalcDifal'],
+              'ampLegal' => $CaracTrib['ampLegal'],
+              'Protocolo' => "",//$CaracTrib['Protocolo'],
+              'Convenio' => "",//$CaracTrib['Convenio'],
+              'regraGeral' => $CaracTrib['regraGeral'],
+            );
+
+            $inserirRegra = chamaAPI(null, '/impostos/regrafiscal', json_encode($apiEntrada), 'PUT');
+            $idRegra = $inserirRegra['idRegra'];
           }
           
+        //OPERAÇÂO
+        /* ===== PARAMETROS DE TESTE =====  */
+          //$idGrupo = 800;
+          //$codigoEstado = "RS";
+          //$cFOP = "8000";
+          //$codigoCaracTrib = "N";
+          //$finalidade = "0";
+        /* ===== PARAMETROS DE TESTE =====  */ 
           $apiEntrada = array(
-            "idoperacaofiscal"=> null,
             "idGrupo"=> $idGrupo,
             "codigoEstado"=> $codigoEstado,
-            "cFOP"=> 45, //$cFOP,
+            "cFOP"=> $cFOP,
             "codigoCaracTrib"=> $codigoCaracTrib,
             "finalidade"=> $finalidade 
           );
-          //echo 'apiEntrada -> ' . json_encode($apiEntrada);
-          $buscaoperacao = chamaAPI(null, '/impostos/operacaofiscal', json_encode($apiEntrada), 'GET');
           
-          echo 'BUSCA OPERACAO -> ' . json_encode($buscaoperacao);
-          return;
-          //idoperacaofiscal
-     
+          $buscaoperacao = chamaAPI(null, '/impostos/operacaofiscal', json_encode($apiEntrada), 'GET');
+          if ($buscaoperacao == null) {
+            $apiEntrada = array(
+              "idGrupo"=> $idGrupo,
+              "codigoEstado"=> $codigoEstado,
+              "cFOP"=> $cFOP,
+              "codigoCaracTrib"=> $codigoCaracTrib,
+              "finalidade"=> $finalidade,  
+              "idRegra" => $idRegra
+            );
 
-          //Verifica se existe operacaofiscal
-          $sql_operacao = "SELECT * FROM fiscaloperacao WHERE idGrupo = $idGrupo AND codigoEstado = $codigoEstado AND cFOP = $cFOP AND codigoCaracTrib = $codigoCaracTrib AND finalidade = $finalidade";
-          $buscar_operacao = mysqli_query($conexaogeral, $sql_operacao);
-          $row_operacao = mysqli_fetch_array($buscar_operacao, MYSQLI_ASSOC);
-
-          if ($row_operacao == null) {
-            $sql = " INSERT INTO fiscaloperacao (idGrupo, codigoEstado, cFOP, codigoCaracTrib, finalidade, idRegra) 
-              VALUES ($idGrupo, $codigoEstado, $cFOP, $codigoCaracTrib, $finalidade, $idRegra) ";
-
-            $inserirfiscaloperacao = mysqli_query($conexaogeral, $sql);
-            if ($inserirfiscaloperacao == null) {
-              $returnRegraFiscal = "erro inserir operacao";
-            }
+            $inserirOperacaoFiscal = chamaAPI(null, '/impostos/operacaofiscal', json_encode($apiEntrada), 'PUT');
+          
           }
+          
         }
       }
     }
@@ -475,22 +484,26 @@ $historico = adicionaHistorico($conexao, $retornoImendes);
 
 foreach ($retornoImendes['Grupos'] as $grupo) {
   if (is_array($grupo) && isset($grupo['codigo'])) {
+    /* ===== PARAMETROS DE TESTE =====  */
+    //$codigoGrupo = "800";
+    /* ===== PARAMETROS DE TESTE =====  */ 
 
     $codigoGrupo = $grupo['codigo'];
     $eanProdutos = $grupo['prodEan'];
-
-    //Verifica se jÃ¡ tem codigoGrupo
-    $sql_consulta = "SELECT fiscalgrupo.idGrupo, fiscalgrupo.codigoGrupo, fiscalgrupo.codigoNcm, fiscalgrupo.codigoCest FROM fiscalgrupo WHERE codigoGrupo = $codigoGrupo ";
-    $buscar_consulta = mysqli_query($conexaogeral, $sql_consulta);
-    $row_consulta = mysqli_fetch_array($buscar_consulta, MYSQLI_ASSOC);
-
-    if ($row_consulta != null) {
-      if ($row_consulta["codigoGrupo"] != "null") {
-        $idGrupo = $row_consulta["idGrupo"];
-        $codigoGrupo = isset($row_consulta["codigoGrupo"]) && $row_consulta["codigoGrupo"] !== "null"    ? "'" . $row_consulta["codigoGrupo"] . "'" : "null";
-        $codigoNcm = isset($row_consulta["codigoNcm"]) && $row_consulta["codigoNcm"] !== "null"    ? "'" . $row_consulta["codigoNcm"] . "'" : "null";
-        $codigoCest = isset($row_consulta["codigoCest"]) && $row_consulta["codigoCest"] !== "null"    ? "'" . $row_consulta["codigoCest"] . "'" : "null";
-
+     
+    $apiEntrada = array(
+      "codigoGrupo" => $codigoGrupo,
+      "buscaGrupoProduto" => null
+    );
+    
+    $buscagrupos = chamaAPI(null, '/impostos/grupoproduto', json_encode($apiEntrada), 'GET');
+    
+    if(isset($buscagrupos["idGrupo"])){
+      if ($buscagrupos["codigoGrupo"] != "null") {
+        $idGrupo = $buscagrupos["idGrupo"];
+        $codigoGrupo = isset($buscagrupos["codigoGrupo"]) && $buscagrupos["codigoGrupo"] !== "null"    ? "'" . $buscagrupos["codigoGrupo"] . "'" : "null";
+        $codigoNcm = isset($buscagrupos["codigoNcm"]) && $buscagrupos["codigoNcm"] !== "null"    ? "'" . $buscagrupos["codigoNcm"] . "'" : "null";
+        $codigoCest = isset($buscagrupos["codigoCest"]) && $buscagrupos["codigoCest"] !== "null"    ? "'" . $buscagrupos["codigoCest"] . "'" : "null";
 
         foreach ($eanProdutos as $eanProduto) {
           $atualizaProduto = atualizaProduto($conexaogeral, $conexao, $eanProduto, $codigoNcm, $codigoCest, $idGrupo);
@@ -503,9 +516,9 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
         );
       }
     } else {
+      
       $apiEntrada = array(
-        'idEmpresa' => $idEmpresa,
-        'codigoGrupo' => $grupo['codigo'],
+        'codigoGrupo' => $codigoGrupo,
         'nomeGrupo' => $grupo['descricao'],
         'codigoNcm' => $grupo['nCM'],
         'codigoCest' => $grupo['cEST'],
@@ -529,7 +542,7 @@ foreach ($retornoImendes['Grupos'] as $grupo) {
         if ($LOG_NIVEL >= 2) {
           fwrite($arquivo, $identificacao . "-GRUPOINSERIR->" . json_encode($apiEntrada) . "\n");
         }
-      }
+      } 
 
       $inserirGrupo = chamaAPI(null, '/impostos/grupoproduto', json_encode($apiEntrada), 'PUT');
       $idGrupo = $inserirGrupo['idGrupo'];

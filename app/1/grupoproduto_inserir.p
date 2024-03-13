@@ -12,9 +12,10 @@ def temp-table ttentrada no-undo serialize-name "fiscalgrupo"   /* JSON ENTRADA 
 
 def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CASO ERRO */
     field tstatus        as int serialize-name "status"
-    field descricaoStatus      as char.
+    field descricaoStatus      as char
+    field idgrupo      AS INT SERIALIZE-NAME "idGrupo".
 
-
+def VAR vidgrupo AS INT.
 
 hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
@@ -66,8 +67,10 @@ THEN DO:
 
 END.
 
+vidgrupo = 0.
 do on error undo:
     create fiscalgrupo.
+    vidgrupo = fiscalgrupo.idgrupo.
     BUFFER-COPY ttentrada EXCEPT idGrupo TO fiscalgrupo.
    
 end.
@@ -75,6 +78,7 @@ end.
 create ttsaida.
 ttsaida.tstatus = 200.
 ttsaida.descricaoStatus = "Grupo criado com sucesso".
+ttsaida.idgrupo = vidgrupo.
 
 hsaida  = temp-table ttsaida:handle.
 

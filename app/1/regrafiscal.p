@@ -56,6 +56,17 @@ THEN DO:
     end. 
 END.
 
+IF ttentrada.codRegra <> ? 
+THEN DO:
+      for each fiscalregra WHERE 
+        fiscalregra.codRegra = ttentrada.codRegra
+        no-lock.
+        
+        RUN criaRegras.
+
+    end. 
+END.
+
 find first ttfiscalregra no-error.
 
 if not avail ttfiscalregra
