@@ -91,11 +91,16 @@ $buscar_empresa = mysqli_query($conexao, $sql_empresa);
 $row_empresa = mysqli_fetch_array($buscar_empresa, MYSQLI_ASSOC);
 $cpfCnpjEmpresa = $row_empresa['cpfCnpj'];
 
+
 //GERALPESSOAS 
-$sql_geralPessoa = "SELECT geralpessoas.codigoEstado, geralpessoas.cpfCnpj, geralpessoas.cnae, geralpessoas.regimeEspecial, geralpessoas.regimeTrib, geralpessoas.crt, geralpessoas.origem,
-geralpessoas.caracTrib FROM geralpessoas WHERE cpfCnpj = $cpfCnpjEmpresa ";
-$buscar_geralPessoa = mysqli_query($conexaogeral, $sql_geralPessoa);
-$row_geralPessoa = mysqli_fetch_array($buscar_geralPessoa, MYSQLI_ASSOC);
+
+$apiEntrada = array(
+  'acao' => "filtrar",
+  'cpfCnpj' => $cpfCnpjEmpresa
+);
+
+$row_geralPessoaArray = chamaAPI(null, '/sistema/geralpessoas', json_encode($apiEntrada), 'GET');
+$row_geralPessoa = $row_geralPessoaArray[0];
 
 if (isset($LOG_NIVEL)) {
   if ($LOG_NIVEL >= 2) {
@@ -150,7 +155,8 @@ if ($regimeTrib == 'SN') {
 } else {
   $simplesN = 'N';
 }
-
+/* 
+ ESTA ENTRANDO NO DIRETO NO IF DE ERRO***
 $caracTrib = isset($row_geralPessoa['caracTrib']) && $row_geralPessoa['caracTrib'] !== "null" ? (int)$row_geralPessoa['caracTrib'] : "null";
 if ($row_geralPessoa['caracTrib'] == null) {
   $jsonSaida = array(
@@ -158,8 +164,8 @@ if ($row_geralPessoa['caracTrib'] == null) {
     "retorno" => "geralPessoa.caracTrib nÃ£o informado"
   );
   return;
-}
-
+} */
+$caracTrib = 0;
 
 if (isset($jsonEntrada["idProduto"])) {
   //PRODUTOS
@@ -375,10 +381,7 @@ function adicionaRegraFiscal($conexaogeral, $regras, $idGrupo)
           $codExcecao = isset($CaracTrib['codExcecao']) && $CaracTrib['codExcecao'] !== "null"    ? "'" . $CaracTrib['codExcecao'] . "'" : "null";
           $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigIni'])) : "null";
           $dtVigFin = isset($CaracTrib['dtVigFin']) && $CaracTrib['dtVigFin'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigFin'])) : "null";
-        /* ===== PARAMETROS DE TESTE =====  */
-          //$codRegra = "8000";
-          //$codExcecao = "8100";
-        /* ===== PARAMETROS DE TESTE =====  */  
+         
           $apiEntrada = array(
             'idRegra' => null,
             'codRegra' => $codRegra,
@@ -439,13 +442,7 @@ function adicionaRegraFiscal($conexaogeral, $regras, $idGrupo)
           }
           
         //OPERAÇÂO
-        /* ===== PARAMETROS DE TESTE =====  */
-          //$idGrupo = 800;
-          //$codigoEstado = "RS";
-          //$cFOP = "8000";
-          //$codigoCaracTrib = "N";
-          //$finalidade = "0";
-        /* ===== PARAMETROS DE TESTE =====  */ 
+        
           $apiEntrada = array(
             "idGrupo"=> $idGrupo,
             "codigoEstado"=> $codigoEstado,
@@ -484,10 +481,6 @@ $historico = adicionaHistorico($conexao, $retornoImendes);
 
 foreach ($retornoImendes['Grupos'] as $grupo) {
   if (is_array($grupo) && isset($grupo['codigo'])) {
-    /* ===== PARAMETROS DE TESTE =====  */
-    //$codigoGrupo = "800";
-    /* ===== PARAMETROS DE TESTE =====  */ 
-
     $codigoGrupo = $grupo['codigo'];
     $eanProdutos = $grupo['prodEan'];
      
