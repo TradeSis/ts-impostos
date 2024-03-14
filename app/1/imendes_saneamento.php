@@ -370,17 +370,17 @@ function adicionaRegraFiscal($conexaogeral, $regras, $idGrupo)
 
       foreach ($ufs as $dadosCFOP) {
 
-        $codigoEstado = isset($dadosCFOP['uF']) && $dadosCFOP['uF'] !== "null"    ? "'" . $dadosCFOP['uF'] . "'" : "null";
-        $cFOP = isset($dadosCFOP['CFOP']['cFOP']) && $dadosCFOP['CFOP']['cFOP'] !== "null"    ? "'" . $dadosCFOP['CFOP']['cFOP'] . "'" : "null";
+        $codigoEstado = isset($dadosCFOP['uF']) && $dadosCFOP['uF'] !== "null"    ?  $dadosCFOP['uF'] : "null";
+        $cFOP = isset($dadosCFOP['CFOP']['cFOP']) && $dadosCFOP['CFOP']['cFOP'] !== "null"    ?  $dadosCFOP['CFOP']['cFOP'] : "null";
 
         foreach ($dadosCFOP['CFOP']['CaracTrib'] as $CaracTrib) {
 
-          $codigoCaracTrib = isset($CaracTrib['codigo']) && $CaracTrib['codigo'] !== "null"    ? "'" . $CaracTrib['codigo'] . "'" : "null";
-          $finalidade = isset($CaracTrib['finalidade']) && $CaracTrib['finalidade'] !== "null"    ? "'" . $CaracTrib['finalidade'] . "'" : "null";
-          $codRegra = isset($CaracTrib['codRegra']) && $CaracTrib['codRegra'] !== "null"    ? "'" . $CaracTrib['codRegra'] . "'" : "null";
-          $codExcecao = isset($CaracTrib['codExcecao']) && $CaracTrib['codExcecao'] !== "null"    ? "'" . $CaracTrib['codExcecao'] . "'" : "null";
-          $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigIni'])) : "null";
-          $dtVigFin = isset($CaracTrib['dtVigFin']) && $CaracTrib['dtVigFin'] !== ""    ? date('Ymd', strtotime($CaracTrib['dtVigFin'])) : "null";
+          $codigoCaracTrib = isset($CaracTrib['codigo']) && $CaracTrib['codigo'] !== "null"  ?  $CaracTrib['codigo'] : "null";
+          $finalidade = isset($CaracTrib['finalidade']) && $CaracTrib['finalidade'] !== "null"  ?  $CaracTrib['finalidade'] : "null";
+          $codRegra = isset($CaracTrib['codRegra']) && $CaracTrib['codRegra'] !== "null"    ?  $CaracTrib['codRegra'] : "null";
+          $codExcecao = isset($CaracTrib['codExcecao']) && $CaracTrib['codExcecao'] !== "null"    ?  $CaracTrib['codExcecao'] : "null";
+          $dtVigIni = isset($CaracTrib['dtVigIni']) && $CaracTrib['dtVigIni'] !== ""    ? date('Y-m-d', strtotime($CaracTrib['dtVigIni'])) : null;
+          $dtVigFin = isset($CaracTrib['dtVigFin']) && $CaracTrib['dtVigFin'] !== ""    ? date('Y-m-d', strtotime($CaracTrib['dtVigFin'])) : null;
          
           $apiEntrada = array(
             'idRegra' => null,
@@ -394,23 +394,12 @@ function adicionaRegraFiscal($conexaogeral, $regras, $idGrupo)
           if(isset($buscaregras[0])){
             $idRegra = $buscaregras[0]["idRegra"];
           }else{
-           if($dtVigIni == "null"){
-            $dtVigIni_formatada = null;
-           }else{
-            $dtVigIni_formatada = date('Y-m-d', strtotime($dtVigIni));
-           }
-
-           if($dtVigFin == "null"){
-            $dtVigFin_formatada = null;
-           }else{
-            $dtVigFin_formatada = date('Y-m-d', strtotime($dtVigFin));
-           }
            
             $apiEntrada = array(
               'codRegra' => $codRegra,
               'codExcecao' => $codExcecao,
-              'dtVigIni' =>  $dtVigIni_formatada,
-              'dtVigFin' =>  $dtVigFin_formatada,
+              'dtVigIni' =>  $dtVigIni,
+              'dtVigFin' =>  $dtVigFin,
               'cFOPCaracTrib' =>  $CaracTrib['cFOP'],
               'cST' => $CaracTrib['cST'],
               'cSOSN' => $CaracTrib['cSOSN'],
