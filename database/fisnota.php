@@ -80,8 +80,8 @@ if (isset($_GET['operacao'])) {
 	
 		$nfe = chamaAPI(null, '/impostos/fisnota', json_encode($apiEntrada), 'PUT');
 	
-		echo json_encode($nfe);
-		return $nfe;
+		echo json_encode($apiEntrada);
+		return $apiEntrada;
 	}
 
 	if ($operacao == "processarXML") {
