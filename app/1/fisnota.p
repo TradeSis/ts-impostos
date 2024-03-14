@@ -111,7 +111,9 @@ put unformatted string(vlcSaida).
 PROCEDURE criaNotas.
 
     create ttfisnota.
-    BUFFER-COPY fisnota TO ttfisnota.
+    /*adicionado except devido ao erro:
+    Attempt to exceed maximum size of a CHARACTER variable. (9324) */
+    BUFFER-COPY fisnota except fisnota.xml TO ttfisnota.
         
         FIND pessoas WHERE pessoas.idPessoa = fisnota.idPessoaEmitente NO-LOCK no-error.
         FIND geralpessoas WHERE geralpessoas.cpfCnpj = pessoas.cpfCnpj NO-LOCK no-error.

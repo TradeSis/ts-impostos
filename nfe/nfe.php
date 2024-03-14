@@ -36,7 +36,7 @@ $notas = buscarNota();
                                     <a role="button" class="btn btn-warning processar-btn" title="Processar todos XMLs">Processar</a>
                                 </div>
                                 <div class="col-6">
-                                    <form id="uploadForm" action="../database/fisnota.php?operacao=upload" method="POST" enctype="multipart/form-data">
+                                    <form id="uploadForm" method="POST" enctype="multipart/form-data">
                                         <input type="file" id="arquivo" class="custom-file-upload" name="file[]" style="color:#567381; display:none" multiple>
                                         <label for="arquivo">
                                             <a class="btn btn-primary">
@@ -62,6 +62,7 @@ $notas = buscarNota();
                                 </tr>
                             </thead>
                             <?php
+                            if (!isset($notas['status'])) {
                             foreach ($notas as $nota) { ?>
                                 <tr>
                                     <td> <?php echo $nota['NF'] ?> </td>
@@ -79,7 +80,7 @@ $notas = buscarNota();
                                     </td>
 
                                 </tr>
-                            <?php } ?>
+                            <?php } }?>
                         </table>
                     </div>
                 </div>
@@ -115,7 +116,7 @@ $notas = buscarNota();
                             console.log(msg);
                             $('body').css('cursor', 'default');
                             var message = JSON.parse(msg);
-                            if (message.retorno === "ok") {
+                            if (message.status === 200) {
                                 refreshPage('xml');
                             }
                             if (message.status === 400) {
