@@ -28,38 +28,235 @@ if (isset($jsonEntrada["idEmpresa"])) {
 $conexao = conectaMysql($idEmpresa);
 $conexaogeral = conectaMysql(null);
 
-$operacao = array();
-
-$progr = new chamaprogress();
-$retorno = $progr->executarprogress("impostos/app/1/imendes_saneamento",json_encode($jsonEntrada));
-//echo  $retorno."\n";
-fwrite($arquivo,$identificacao."-RETORNO->".$retorno."\n");
-$operacao = json_decode($retorno,true);
-//echo 'OPERACAO -> ' . json_encode($operacao);
-/*if (isset($operacao["conteudoSaida"])) { // Conteudo Saida - Caso de erro
-  echo "--------- ESTA AQUI -----------";
-  $operacao = $operacao["conteudoSaida"][0];
-} else {
-  
-   if (!isset($operacao["fiscalgrupo"][1]) && ($jsonEntrada['idGeralProduto'] != null)) {  // Verifica se tem mais de 1 registro
-    $operacao = $operacao["fiscalgrupo"][0]; // Retorno sem array
-  } else {
-    $operacao = $operacao["fiscalgrupo"]; 
+//APIFISCA
+$sql_apifiscal = "SELECT apifiscal.login,apifiscal.senha,apifiscal.tpAmb,apifiscal.cfopEntrada,apifiscal.finalidade FROM apifiscal WHERE idEmpresa = $idEmpresa ";
+$buscar_apifiscal = mysqli_query($conexao, $sql_apifiscal);
+$row_apifiscal = mysqli_fetch_array($buscar_apifiscal, MYSQLI_ASSOC);
+if (isset($LOG_NIVEL)) {
+  if ($LOG_NIVEL >= 2) {
+    fwrite($arquivo, $identificacao . "-APIFISCAL->" . json_encode($row_apifiscal) . "\n");
   }
+}
 
+$login = $row_apifiscal['login'];
+if (!$row_apifiscal['login']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "apifiscal.login não informado"
+  );
+  return;
+}
+$senha = $row_apifiscal['senha'];
+if (!$row_apifiscal['senha']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "apifiscal.senha não informado"
+  );
+  return;
+}
+$amb = $row_apifiscal['tpAmb'];
+if (!$row_apifiscal['tpAmb']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "apifiscal.tpAmb não informado"
+  );
+  return;
+}
+$cfopEntrada = $row_apifiscal['cfopEntrada'];
+if (!$row_apifiscal['cfopEntrada']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "apifiscal.cfopEntrada não informado"
+  );
+  return;
+}
+$finalidade = isset($row_apifiscal['finalidade']) && $row_apifiscal['finalidade'] !== "null" ? (int)$row_apifiscal['finalidade'] : "null";
+if ($row_apifiscal['finalidade'] == null) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "apifiscal.finalidade não informado"
+  );
+  return;
+}
+
+//EMPRESA
+$sql_empresa = "SELECT empresa.idPessoa FROM empresa WHERE idEmpresa = $idEmpresa ";
+$buscar_empresa = mysqli_query($conexaogeral, $sql_empresa);
+$row_empresa = mysqli_fetch_array($buscar_empresa, MYSQLI_ASSOC);
+$idPessoaEmpresa = $row_empresa['idPessoa'];
+
+//PESSOAS
+$sql_empresa = "SELECT * FROM pessoas WHERE idPessoa = $idPessoaEmpresa ";
+$buscar_empresa = mysqli_query($conexao, $sql_empresa);
+$row_empresa = mysqli_fetch_array($buscar_empresa, MYSQLI_ASSOC);
+$cpfCnpjEmpresa = $row_empresa['cpfCnpj'];
+
+
+//GERALPESSOAS 
+
+$apiEntrada = array(
+  'acao' => "filtrar",
+  'cpfCnpj' => $cpfCnpjEmpresa
+);
+
+$row_geralPessoaArray = chamaAPI(null, '/sistema/geralpessoas', json_encode($apiEntrada), 'GET');
+$row_geralPessoa = $row_geralPessoaArray[0];
+
+if (isset($LOG_NIVEL)) {
+  if ($LOG_NIVEL >= 2) {
+    fwrite($arquivo, $identificacao . "-geralPESSOA->" . json_encode($row_geralPessoa) . "\n");
+  }
+}
+
+$cpfCnpj = $row_geralPessoa['cpfCnpj'];
+$cnae = $row_geralPessoa['cnae'];
+if (!$row_geralPessoa['cnae']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "geralPessoa.cnae não informado"
+  );
+  return;
+}
+$regimeEspecial = $row_geralPessoa['regimeEspecial'];
+if (!$row_geralPessoa['regimeEspecial']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "geralPessoa.regimeEspecial não informado"
+  );
+  return;
+}
+$regimeTrib = $row_geralPessoa['regimeTrib'];
+if (!$row_geralPessoa['regimeTrib']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "geralPessoa.regimeTrib não informado"
+  );
+  return;
+}
+$codigoEstado = $row_geralPessoa['codigoEstado'];
+$crt = (int)$row_geralPessoa['crt'];
+if (!$row_geralPessoa['crt']) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "geralPessoa.crt não informado"
+  );
+  return;
+}
+$origem = $row_geralPessoa['origem'];
+if (!isset($origem)) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "geralPessoa.origem  não informado"
+  );
+  return;
+}
+if ($regimeTrib == 'SN') {
+  $simplesN = 'S';
+} else {
+  $simplesN = 'N';
+}
+/* 
+ ESTA ENTRANDO NO DIRETO NO IF DE ERRO***
+$caracTrib = isset($row_geralPessoa['caracTrib']) && $row_geralPessoa['caracTrib'] !== "null" ? (int)$row_geralPessoa['caracTrib'] : "null";
+if ($row_geralPessoa['caracTrib'] == null) {
+  $jsonSaida = array(
+    "status" => 400,
+    "retorno" => "geralPessoa.caracTrib não informado"
+  );
+  return;
 } */
+$caracTrib = 0;
 
-$imendesEntrada= $operacao;
-//echo "IMENDES ENTRADA\n".json_encode($imendesEntrada)."\n";
-//return;
-$login = $imendesEntrada["headers"]["login"];
-$senha = $imendesEntrada["headers"]["senha"];
+if (isset($jsonEntrada["idProduto"])) {
+  //PRODUTOS
+  $produtos = array();
+  $sql_produtos = "SELECT * FROM produtos WHERE idProduto = " . $jsonEntrada["idProduto"] . " ";
+  $buscar_produtos = mysqli_query($conexao, $sql_produtos);
+
+  while ($row = mysqli_fetch_array($buscar_produtos, MYSQLI_ASSOC)) {
+    $idGeralProduto = $row['idGeralProduto'];
+  
+    $sql2 = "SELECT geralprodutos.* FROM geralprodutos WHERE geralprodutos.idGeralProduto = $idGeralProduto";
+    $rows = 0;
+    $buscar2 = mysqli_query($conexaogeral, $sql2);
+
+    while ($row2 = mysqli_fetch_array($buscar2, MYSQLI_ASSOC)) {
+      $mergedRow = array_merge($row, $row2);
+      array_push($produtos, $mergedRow);
+      $rows = $rows + 1;
+    }
+    
+  }
+  if (isset($jsonEntrada["idProduto"]) && $rows == 1) {
+    $produtos = $produtos[0];
+  }
+  $retornoProdutos = $produtos;
+
+  if (isset($LOG_NIVEL)) {
+    if ($LOG_NIVEL >= 2) {
+      fwrite($arquivo, $identificacao . "-produtos->" . json_encode($retornoProdutos) . "\n");
+    }
+  }
+  $nomeProduto = $retornoProdutos['nomeProduto'];
+  $codigoNcm = $retornoProdutos['codigoNcm'];
+  $eanProduto = $retornoProdutos['eanProduto'];
+
+}
+
+
+$emit = array(
+  'amb' => $amb,
+  'cnpj' => $cpfCnpj,
+  'crt' => $crt, //- Para o CRT 3, informe o campo 'regimeTrib' igual a 'LR' ou 'LP'."
+  'regimeTrib' => $regimeTrib,
+  'uf' => $codigoEstado,
+  'cnae' => $cnae,
+  'regimeEspecial' => $regimeEspecial,
+  'substICMS' => "N", // - Verificar com Daniel
+  'interdependente' => "N", // - Verificar com Daniel
+);
+
+$ufPerfil = array(
+  $codigoEstado
+);
+
+$caracTrib = array(
+  $caracTrib
+);
+$perfil = array(
+  'uf' => $ufPerfil,
+  'cfop' => $cfopEntrada, //"1101"
+  'caracTrib' => $caracTrib,
+  'finalidade' => $finalidade,
+  'simplesN' => $simplesN,
+  'origem' => $origem,
+  'substICMS' => "N",
+  'prodZFM' => "N"
+);
+
+$produto = array(
+  'codigo' => $eanProduto,
+  'codInterno' => "N",
+  'descricao' => $nomeProduto,
+  'ncm' => $codigoNcm
+);
+
+$produtos = array(
+  $produto
+);
+
+$imendesEntrada = array(
+  'emit' => $emit,
+  'perfil' => $perfil,
+  'produtos' => $produtos
+);
+/* echo "IMENDES\n".json_encode($imendesEntrada)."\n";
+return; */
 $apiHeaders = array(
   "Content-Type: application/json",
   "login: $login",
   "senha: $senha"
 );
-
 
 if (isset($LOG_NIVEL)) {
   if ($LOG_NIVEL >= 2) {
@@ -86,8 +283,7 @@ if ($produtoNaoRetornado == 1) {
     "mensagem" => true
   );
 }
-//echo "IMENDES\n".json_encode($JSON)."\n";
-//return;
+
 if (isset($LOG_NIVEL)) {
   if ($LOG_NIVEL >= 2) {
     fwrite($arquivo, $identificacao . "-imendesSaida->" . json_encode($JSON) . "\n");
