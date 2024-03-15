@@ -43,8 +43,6 @@ DEFINE VARIABLE joHeaders   AS JsonObject NO-UNDO.
 def input param vlcentrada as longchar. /* JSON ENTRADA */
 def input param vtmp       as char.     /* CAMINHO PROGRESS_TMP */
 
-def var vlcsaida   as longchar.         /* JSON SAIDA */
-
 def var lokjson as log.                 /* LOGICAL DE APOIO */
 def var hentrada as handle.             /* HANDLE ENTRADA */
 def var hsaida   as handle.             /* HANDLE SAIDA */
@@ -52,6 +50,8 @@ def var hsaida   as handle.             /* HANDLE SAIDA */
 def TEMP-TABLE ttentrada NO-UNDO   /* JSON ENTRADA */
     field idEmpresa      AS INT
     field idGeralProduto      AS INT.
+                        
+DEF BUFFER bgeralpessoasfornecedor FOR geralpessoas.
 
 DEF VAR vsimplesN AS CHAR.
 
@@ -59,157 +59,16 @@ hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
-
-/* VARIAVEL TEMPORARIA*/
-  /* DEF VAR vidEmpresa AS INT.
-  DEF VAR vidGeralProduto AS INT.   */
-  /* PARAMETROS DE TESTE */
-  /* vidEmpresa = 1.
-  vidGeralProduto = 188. */
-
 /* APIFISCAL */
-FIND apifiscal WHERE apifiscal.idEmpresa = ttentrada.idEmpresa NO-LOCK.  /* ttentrada.idEmpresa */
- 
- /* IF apifiscal.login = ?
-    then do:
-        create ttsaida.
-        ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "apifiscal.login não informado".
-
-        hsaida  = temp-table ttsaida:handle.
-
-        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-        message string(vlcSaida).
-        return.
-    end.
-    
-   IF apifiscal.senha = ?
-    then do:
-        create ttsaida.
-        ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "apifiscal.senha não informado".
-        DISP ttsaida.
-
-        hsaida  = temp-table ttsaida:handle.
-
-        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-        message string(vlcSaida).
-        return.
-    end.
-    
-   IF apifiscal.tpAmb = ?
-    then do:
-        create ttsaida.
-        ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "apifiscal.tpAmb não informado".
-        DISP ttsaida.
-
-        hsaida  = temp-table ttsaida:handle.
-
-        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-        message string(vlcSaida).
-        return.
-    end.
-    
-   IF apifiscal.cfopEntrada = ?
-    then do:
-        create ttsaida.
-        ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "apifiscal.cfopEntrada não informado".
-        DISP ttsaida.
-
-        hsaida  = temp-table ttsaida:handle.
-
-        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-        message string(vlcSaida).
-        return.
-    end.
-    
-   IF apifiscal.finalidade = ?
-    then do:
-        create ttsaida.
-        ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "apifiscal.finalidade não informado".
-        DISP ttsaida.
-
-        hsaida  = temp-table ttsaida:handle.
-
-        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-        message string(vlcSaida).
-        return.
-    end. */
+FIND apifiscal WHERE apifiscal.idEmpresa = ttentrada.idEmpresa NO-LOCK.  
 
 /* EMPRESA */
-FIND empresa WHERE empresa.idEmpresa = ttentrada.idEmpresa NO-LOCK.  /* ttentrada.idEmpresa */
+FIND empresa WHERE empresa.idEmpresa = ttentrada.idEmpresa NO-LOCK.  
  
 /* GERAL PESSOAS */
 FIND geralpessoas WHERE geralpessoas.cpfCnpj = empresa.cnpj NO-LOCK.
 
-/* IF geralpessoas.cnae = ?
-    then do:
-        create ttsaida.
-        ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "geralpessoas.cnae não informado".
 
-        hsaida  = temp-table ttsaida:handle.
-
-        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-        message string(vlcSaida).
-        return.
-    end.
-
-IF geralpessoas.regimeEspecial = ?
-    then do:
-        create ttsaida.
-        ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "geralpessoas.regimeEspecial não informado".
-
-        hsaida  = temp-table ttsaida:handle.
-
-        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-        message string(vlcSaida).
-        return.
-    end.
-    
-IF geralpessoas.regimeTrib = ?
-    then do:
-        create ttsaida.
-        ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "geralpessoas.regimeTrib não informado".
-
-        hsaida  = temp-table ttsaida:handle.
-
-        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-        message string(vlcSaida).
-        return.
-    end.
-    
-IF geralpessoas.crt = ?
-    then do:
-        create ttsaida.
-        ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "geralpessoas.crt não informado".
-
-        hsaida  = temp-table ttsaida:handle.
-
-        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-        message string(vlcSaida).
-        return.
-    end.
- 
-IF geralpessoas.origem = ?
-    then do:
-        create ttsaida.
-        ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "geralpessoas.origem não informado".
-
-        hsaida  = temp-table ttsaida:handle.
-
-        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-        message string(vlcSaida).
-        return.
-    end. 
-     */
 vsimplesN = "".
 
 IF  geralpessoas.regimeTrib = 'SN' 
@@ -220,15 +79,16 @@ ELSE DO:
    vsimplesN = "N".
 END.    
 
-/* GERAL PRODUTOS  OBS PODE TER VARIOS PRODUTOS*/
-FIND geralprodutos WHERE geralprodutos.idGeralProduto = ttentrada.idGeralProduto NO-LOCK. /* ttentrada.idGeralProduto */
+/* GERAL PRODUTOS */
+FIND geralprodutos WHERE geralprodutos.idGeralProduto = ttentrada.idGeralProduto NO-LOCK. 
+
 
 /* JSON DE REQUEST */       
 joEmit = NEW JsonObject().
 joEmit:ADD("amb",apifiscal.tpAmb).
 joEmit:ADD("cnpj",geralpessoas.cpfCnpj).
 joEmit:ADD("crt",geralpessoas.crt).
-joEmit:ADD("regimeTrib",geralpessoas.regimeTrib). /* tratar */
+joEmit:ADD("regimeTrib",geralpessoas.regimeTrib). 
 joEmit:ADD("uf",geralpessoas.codigoEstado).
 joEmit:ADD("cnae",geralpessoas.cnae).
 joEmit:ADD("regimeEspecial",geralpessoas.regimeEspecial).
@@ -236,10 +96,17 @@ joEmit:ADD("substlCMS","N").  // - Verificar com Daniel
 joEmit:ADD("interdependente","N").  // - Verificar com Daniel                                                   
 
 jaUF = NEW JsonArray().
-jaUF:ADD(geralpessoas.codigoEstado).
-
 jaCarac = NEW JsonArray().
-jaCarac:ADD(geralpessoas.caracTrib). 
+
+/* GERAL FORNECIMENTO */
+FOR EACH geralfornecimento WHERE geralfornecimento.idGeralProduto = geralprodutos.idGeralProduto NO-LOCK.
+    
+    FIND bgeralpessoasfornecedor WHERE bgeralpessoasfornecedor.cpfCnpj = geralfornecimento.Cnpj NO-LOCK.
+        jaUF:ADD(bgeralpessoasfornecedor.codigoEstado).
+        jaCarac:ADD(bgeralpessoasfornecedor.caracTrib).
+        
+END.
+ 
 
 joPerfil = NEW JsonObject().
 joPerfil:ADD("uf",jaUF).
@@ -274,19 +141,23 @@ joImendes:ADD("headers",joHeaders).
 
 
 joImendes:Write(lcJsonRequest).
-put unformatted string(lcJsonRequest).
-/* MESSAGE string(lcJsonRequest). */
 
- 
 
-/******************************
 /* INI - requisicao web */
 ASSIGN netClient   = ClientBuilder:Build():Client       
-       netUri      = new URI("http", "localhost") /* URI("metodo", "dominio", "porta") */
-       netUri:Path = "/api/sistema/estados".     
+       netUri      = new URI("http", "http://consultatributos.com.br:8080") /* URI("metodo", "dominio", "porta") */
+       netUri:Path = "/api/v3/public/SaneamentoGrades".     
+
 
 //FAZ A REQUISIÇÃO
-netRequest  = RequestBuilder:GET(netUri, joRequest):REQUEST.
+// ANTIGO netRequest  = RequestBuilder:POST(netUri, joImendes):REQUEST.
+netRequest = RequestBuilder:POST (netUri, joImendes)
+                     :AcceptJson()
+                     :AddHeader("login", apifiscal.login)
+                     :AddHeader("senha", apifiscal.senha)
+                     :ContentType("application/json":U)
+                     :REQUEST.
+
 netResponse = netClient:EXECUTE(netRequest).
 
 //TRATA RETORNO
@@ -299,14 +170,5 @@ if type-of(netResponse:Entity, JsonArray) then do:
     jaResponse:Write(lcJsonResponse).
 END.
 
-MESSAGE string(lcJsonResponse) VIEW-AS ALERT-BOX.
-
-hResponse = TEMP-TABLE ttestados:HANDLE.   
-lReturnValue = hResponse:READ-JSON("longchar", lcJsonResponse, "EMPTY") NO-ERROR.
-
-FOR EACH ttestados:
-    DISP ttestados.
-END.
-********************************/    
-
+put unformatted string(lcJsonResponse). 
 

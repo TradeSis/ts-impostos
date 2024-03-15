@@ -32,26 +32,14 @@ $operacao = array();
 
 $progr = new chamaprogress();
 $retorno = $progr->executarprogress("impostos/app/1/imendes_saneamento",json_encode($jsonEntrada));
-//echo  $retorno."\n";
 fwrite($arquivo,$identificacao."-RETORNO->".$retorno."\n");
 $operacao = json_decode($retorno,true);
-//echo 'OPERACAO -> ' . json_encode($operacao);
-/*if (isset($operacao["conteudoSaida"])) { // Conteudo Saida - Caso de erro
-  echo "--------- ESTA AQUI -----------";
-  $operacao = $operacao["conteudoSaida"][0];
-} else {
-  
-   if (!isset($operacao["fiscalgrupo"][1]) && ($jsonEntrada['idGeralProduto'] != null)) {  // Verifica se tem mais de 1 registro
-    $operacao = $operacao["fiscalgrupo"][0]; // Retorno sem array
-  } else {
-    $operacao = $operacao["fiscalgrupo"]; 
-  }
-
-} */
 
 $imendesEntrada= $operacao;
-//echo "IMENDES ENTRADA\n".json_encode($imendesEntrada)."\n";
-//return;
+
+/* echo "IMENDES\n".json_encode($imendesEntrada)."\n";
+return;
+ */
 $login = $imendesEntrada["headers"]["login"];
 $senha = $imendesEntrada["headers"]["senha"];
 $apiHeaders = array(
@@ -75,8 +63,8 @@ $JSON = chamaAPI(
   "POST",
   $apiHeaders
 );
-//echo "IMENDES\n".json_encode($JSON)."\n";
-
+echo "IMENDES\n".json_encode($JSON)."\n";
+return;
 
 $produtoNaoRetornado = $JSON['Cabecalho']['prodNaoRet'];
 if ($produtoNaoRetornado == 1) {
