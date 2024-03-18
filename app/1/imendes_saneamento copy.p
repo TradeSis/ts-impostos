@@ -40,7 +40,6 @@ DEFINE VARIABLE joProduto      AS JsonObject NO-UNDO.
 DEFINE VARIABLE jaCarac        AS JsonArray NO-UNDO.
 DEFINE VARIABLE joHeaders   AS JsonObject NO-UNDO.
 
-/*
 def input param vlcentrada as longchar. /* JSON ENTRADA */
 def input param vtmp       as char.     /* CAMINHO PROGRESS_TMP */
 
@@ -51,31 +50,20 @@ def var hsaida   as handle.             /* HANDLE SAIDA */
 def TEMP-TABLE ttentrada NO-UNDO   /* JSON ENTRADA */
     field idEmpresa      AS INT
     field idGeralProduto      AS INT.
-    
-*/
-// -------------------TESTE ENTRADA   
-DEF VAR vidEmpresa AS INT.
-DEF VAR vidGeralProduto AS int.
-
-vidEmpresa = 1.
-vidGeralProduto = 5.
-// -------------------FIM TESTE ENTRADA
-
+                        
 DEF BUFFER bgeralpessoasfornecedor FOR geralpessoas.
 
 DEF VAR vsimplesN AS CHAR.
 
-/*
 hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
-*/
 
 /* APIFISCAL */
-FIND apifiscal WHERE apifiscal.idEmpresa = vidEmpresa NO-LOCK.  
+FIND apifiscal WHERE apifiscal.idEmpresa = ttentrada.idEmpresa NO-LOCK.  
 
 /* EMPRESA */
-FIND empresa WHERE empresa.idEmpresa = vidEmpresa NO-LOCK.  
+FIND empresa WHERE empresa.idEmpresa = ttentrada.idEmpresa NO-LOCK.  
  
 /* GERAL PESSOAS */
 FIND geralpessoas WHERE geralpessoas.cpfCnpj = empresa.cnpj NO-LOCK.
@@ -92,7 +80,7 @@ ELSE DO:
 END.    
 
 /* GERAL PRODUTOS */
-FIND geralprodutos WHERE geralprodutos.idGeralProduto = vidGeralProduto NO-LOCK. 
+FIND geralprodutos WHERE geralprodutos.idGeralProduto = ttentrada.idGeralProduto NO-LOCK. 
 
 
 /* JSON DE REQUEST */       
@@ -159,7 +147,7 @@ joImendes:Write(lcJsonRequest).
 ASSIGN netClient   = ClientBuilder:Build():Client       
        netUri      = new URI("http", "consultatributos.com.br",8080) /* URI("metodo", "dominio", "porta") */
        netUri:Path = "/api/v3/public/SaneamentoGrades".     
-       
+
 
 //FAZ A REQUISIÇÃO
 // ANTIGO netRequest  = RequestBuilder:POST(netUri, joImendes):REQUEST.
@@ -175,28 +163,7 @@ netResponse = netClient:EXECUTE(netRequest).
 //TRATA RETORNO
 if type-of(netResponse:Entity, JsonObject) then do:
     joResponse = CAST(netResponse:Entity, JsonObject).
-    //joResponse:Write(lcJsonResponse).
-    
-    //todos
-    joResponse = joResponse:GetJsonObject ("json").
-    
-    //campo a campo
-    //joResponse = joResponse:GetJsonObject("Grupos"):GetJsonObject("pisCofins").
-    //joResponse:Write(lcJsonResponse, TRUE).
-    
-    
-    //joResponse:Write(lcJsonResponse, true).
-    
-   
-    MESSAGE joResponse view-as alert-box.
-    
-    
-    
-  
-
-
-   
-    
+    joResponse:Write(lcJsonResponse).
 END.
 if type-of(netResponse:Entity, JsonArray) then do:
     jaResponse = CAST(netResponse:Entity, JsonArray).
