@@ -1,5 +1,3 @@
-
-
 /** Carrega bibliotecas necessarias **/
 using OpenEdge.Net.HTTP.IHttpClientLibrary.
 using OpenEdge.Net.HTTP.ConfigBuilder.
@@ -39,10 +37,13 @@ DEFINE VARIABLE jaProdutos     AS JsonArray NO-UNDO.
 DEFINE VARIABLE joProduto      AS JsonObject NO-UNDO.
 DEFINE VARIABLE jaCarac        AS JsonArray NO-UNDO.
 DEFINE VARIABLE joHeaders   AS JsonObject NO-UNDO.
+DEF VAR joCabecalho         AS  JsonObject NO-UNDO.
+DEF VAR jaGrupos         AS  JsonArray NO-UNDO.
+DEF VAR joGrupo             AS  JsonObject.
+DEF VAR lcJsonauxiliar      AS   LONGCHAR NO-UNDO.
 
-/*
-def input param vlcentrada as longchar. /* JSON ENTRADA */
-def input param vtmp       as char.     /* CAMINHO PROGRESS_TMP */
+def /*input param*/ VAR vlcentrada as longchar. /* JSON ENTRADA */
+def /*input param*/ VAR vtmp       as char.     /* CAMINHO PROGRESS_TMP */
 
 def var lokjson as log.                 /* LOGICAL DE APOIO */
 def var hentrada as handle.             /* HANDLE ENTRADA */
@@ -51,31 +52,30 @@ def var hsaida   as handle.             /* HANDLE SAIDA */
 def TEMP-TABLE ttentrada NO-UNDO   /* JSON ENTRADA */
     field idEmpresa      AS INT
     field idGeralProduto      AS INT.
-    
-*/
-// -------------------TESTE ENTRADA   
-DEF VAR vidEmpresa AS INT.
-DEF VAR vidGeralProduto AS int.
+DEF VAR iContador AS INT.    
 
-vidEmpresa = 1.
-vidGeralProduto = 5.
+// -------------------TESTE ENTRADA   
+CREATE  ttentrada.
+ttentrada.idEmpresa = 1.
+ttentrada.idGeralProduto = 5.
+
 // -------------------FIM TESTE ENTRADA
 
 DEF BUFFER bgeralpessoasfornecedor FOR geralpessoas.
 
 DEF VAR vsimplesN AS CHAR.
 
-/*
+
 hEntrada = temp-table ttentrada:HANDLE.
-lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
+//lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
-*/
+
 
 /* APIFISCAL */
-FIND apifiscal WHERE apifiscal.idEmpresa = vidEmpresa NO-LOCK.  
+FIND apifiscal WHERE apifiscal.idEmpresa = ttentrada.idempresa NO-LOCK.  
 
 /* EMPRESA */
-FIND empresa WHERE empresa.idEmpresa = vidEmpresa NO-LOCK.  
+FIND empresa WHERE empresa.idEmpresa = ttentrada.idEmpresa NO-LOCK.  
  
 /* GERAL PESSOAS */
 FIND geralpessoas WHERE geralpessoas.cpfCnpj = empresa.cnpj NO-LOCK.
@@ -92,7 +92,7 @@ ELSE DO:
 END.    
 
 /* GERAL PRODUTOS */
-FIND geralprodutos WHERE geralprodutos.idGeralProduto = vidGeralProduto NO-LOCK. 
+FIND geralprodutos WHERE geralprodutos.idGeralProduto = ttentrada.idGeralProduto NO-LOCK. 
 
 
 /* JSON DE REQUEST */       
@@ -175,33 +175,57 @@ netResponse = netClient:EXECUTE(netRequest).
 //TRATA RETORNO
 if type-of(netResponse:Entity, JsonObject) then do:
     joResponse = CAST(netResponse:Entity, JsonObject).
-    //joResponse:Write(lcJsonResponse).
+    joResponse:Write(lcJsonResponse).
     
-    //todos
-    joResponse = joResponse:GetJsonObject ("json").
-    
-    //campo a campo
-    //joResponse = joResponse:GetJsonObject("Grupos"):GetJsonObject("pisCofins").
-    //joResponse:Write(lcJsonResponse, TRUE).
-    
-    
-    //joResponse:Write(lcJsonResponse, true).
-    
-   
-    MESSAGE joResponse view-as alert-box.
-    
-    
-    
-  
+    joCabecalho = joResponse:GetJsonObject("Cabecalho").
+    joCabecalho:Write(lcJsonauxiliar, TRUE).
+    //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.    
 
+    //MESSAGE joCabecalho:GetCharacter("cnpj")  joCabecalho:GetCharacter("dthr") VIEW-AS ALERT-BOX.
+    
+    /*    
+    CREATE ttapihistorico.
+    ttapihistorico.cnpj       =     joCabecalho:GetCharacter("cnpj").
+    ttapihistorico.transacao  =     joCabecalho:GetCharacter("transacao").
+    */
 
-   
+     /* leitura de grupos */
+    jaGrupos = joResponse:GetJsonArray("Grupos").
+    jaGrupos:Write(lcJsonauxiliar, TRUE).
+    //MESSAGE jaGrupos:LENGTH STRING(lcJsonauxiliar) view-as alert-box.    
+    DO iContador = 1 to jaGrupos:length on error undo, next:
+        joGrupo = jaGrupos:GetJsonObject(iContador).
+        joGrupo:Write(lcJsonauxiliar, TRUE).
+        //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.   
+        MESSAGE  joGrupo:GetCharacter("codigo") 
+                joGrupo:GetCharacter("descricao")
+                joGrupo:GetJsonObject("pisCofins"):GetCharacter("cstEnt")  
+                VIEW-AS ALERT-BOX   .
+                
+        /*    
+        create ttGrupos.
+        assign tt-rastreio.id        = string(oJsonObj:GetInt64("id"))
+               tt-rastreio.nr_hawb = oJsonObj:GetCharacter("nr_hawb")
+               tt-rastreio.data  = oJsonObj:GetCharacter("data")
+               tt-rastreio.descricao  = oJsonObj:GetCharacter("descricao")
+               tt-rastreio.remetente  = oJsonObj:GetCharacter("remetente")
+               tt-rastreio.destinatario  = oJsonObj:GetCharacter("destinatario").
+        */
+    end.  
+    /*
+    for EACH ttgupos:
+        DISP ttgrupos.
+    end.
+    */
+    
+    
     
 END.
 if type-of(netResponse:Entity, JsonArray) then do:
     jaResponse = CAST(netResponse:Entity, JsonArray).
     jaResponse:Write(lcJsonResponse).
 END.
-
+/* criar ttsaida
 put unformatted string(lcJsonResponse). 
+*/
 
