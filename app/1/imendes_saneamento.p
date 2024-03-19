@@ -224,13 +224,9 @@ netResponse = netClient:EXECUTE(netRequest).
 //TRATA RETORNO
 if type-of(netResponse:Entity, JsonObject) then do:
     joResponse = CAST(netResponse:Entity, JsonObject).
-    joResponse:Write(lcJsonResponse).
+    /*joResponse:Write(lcJsonResponse).*/
     
     joCabecalho = joResponse:GetJsonObject("Cabecalho").
-    joCabecalho:Write(lcJsonauxiliar, TRUE).
-    //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.    
-
-    //MESSAGE joCabecalho:GetCharacter("cnpj")  joCabecalho:GetCharacter("dthr") VIEW-AS ALERT-BOX.
         
     CREATE ttapihistorico.
     ttapihistorico.sugestao       =     joCabecalho:GetCharacter("sugestao").
@@ -249,13 +245,10 @@ if type-of(netResponse:Entity, JsonObject) then do:
 
      /* leitura de grupos */
     jaGrupos = joResponse:GetJsonArray("Grupos").
-    //jaGrupos:Write(lcJsonauxiliar, TRUE).
-    //MESSAGE jaGrupos:LENGTH STRING(lcJsonauxiliar) view-as alert-box.    
+    
     DO iGrupos = 1 to jaGrupos:length on error undo, next:
         joGrupo = jaGrupos:GetJsonObject(iGrupos).
-        //joGrupo:Write(lcJsonauxiliar, TRUE).
-        //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.   
-         
+
         vcodigoGrupo = joGrupo:GetCharacter("codigo").
                  
         IF vcodigoGrupo = ?  
@@ -296,13 +289,6 @@ if type-of(netResponse:Entity, JsonObject) then do:
             end.
             find fiscalgrupo where fiscalgrupo.idgrupo = vidgrupo no-lock.
         END.
-        // avail fiscal grupo e vidgrupo                                                                 
-           
-            // INSERI GRUPOPRODUTO
-            // ADICIONA REFRAFISCAL
-            // ATUALIZAPRODUTO
-            
-         
         
         jaRegras = joGrupo:GetJsonArray("Regras").
         //jaRegras:Write(lcJsonauxiliar, TRUE).
@@ -338,7 +324,9 @@ if type-of(netResponse:Entity, JsonObject) then do:
                                          
                     IF vcodRegra <> ? AND vcodExcecao <> ? 
                     THEN DO:
-                        FIND fiscalregra where fiscalregra.codRegra = vcodRegra AND fiscalregra.codExcecao = vcodExcecao  no-lock no-error.
+                        FIND fiscalregra where  fiscalregra.codRegra = vcodRegra AND 
+                                                fiscalregra.codExcecao = vcodExcecao  
+                                                no-lock no-error.
                         IF avail fiscalregra
                         then do:
                             vidRegra = fiscalregra.idRegra.
@@ -347,8 +335,8 @@ if type-of(netResponse:Entity, JsonObject) then do:
                             CREATE ttregra.
                             ttregra.codRegra = jocaracTib:GetCharacter("codRegra").
                             ttregra.codExcecao = vcodExcecao.
-                            //ttregra.dtVigIni = jocaracTib:GetCharacter("dtVigIni").
-                            //ttregra.dtVigFin = jocaracTib:GetCharacter("dtVigFin").
+                            ttregra.dtVigIni = date(jocaracTib:GetCharacter("dtVigIni")).
+                            ttregra.dtVigFin = date(jocaracTib:GetCharacter("dtVigFin")).
                             ttregra.cFOPCaracTrib = jocaracTib:GetCharacter("cFOP").
                             ttregra.cST = jocaracTib:GetCharacter("cST").
                             ttregra.cSOSN = jocaracTib:GetCharacter("cSOSN").
@@ -380,7 +368,7 @@ if type-of(netResponse:Entity, JsonObject) then do:
                                                                      output vmensagem).
                             DELETE ttregra.
                             if vmensagem <> ? then do:
-                                message "ERRO AO CRIAR REGRAFISAL - " vmensagem view-as alert-box.
+                                message "ERRO AO CRIAR REGRAFISCAL - " vmensagem view-as alert-box.
                                 return.
                             end.
                             find fiscalregra where fiscalregra.idRegra = vidRegra no-lock.
@@ -396,11 +384,8 @@ if type-of(netResponse:Entity, JsonObject) then do:
                                             fiscaloperacao.cFOP = vcFOP AND 
                                             fiscaloperacao.finalidade = vfinalidade  
                                             no-lock no-error.
-                        IF avail fiscaloperacao
+                        IF NOT avail fiscaloperacao
                         then do:
-                            NEXT.
-                        end.     
-                        else do:
                             CREATE ttoperacao.
                             ttoperacao.idGrupo = vidgrupo.
                             ttoperacao.codigoEstado = vcodigoEstado.
@@ -419,12 +404,17 @@ if type-of(netResponse:Entity, JsonObject) then do:
                                 return.
                             end.
                         end.
-                        
-                        
                     END. 
                 end.  /* icaracTib */  
             end.  /* iuFs */
         end. /* iRegras */
+        
+        DO ON ERROR UNDO:
+            FIND CURRENT geralproduto EXCLUSIVE.
+            geralproduto.idGrupo = vidgrupo.
+            geralproduto.dataAtualizacaoTributaria = DATETIME(TODAY, MTIME).
+        end.
+        
     end. /* iGrupos */ 
 END.
 
