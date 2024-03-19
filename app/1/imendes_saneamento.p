@@ -334,8 +334,8 @@ if type-of(netResponse:Entity, JsonObject) then do:
                     vcodigoCaracTrib = jocaracTib:GetCharacter("codigo").
                     vfinalidade = jocaracTib:GetCharacter("finalidade").
                     vcodRegra = jocaracTib:GetCharacter("codRegra").
-                    //vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
-                     vcodExcecao = "2".                     
+                    vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
+                                         
                     IF vcodRegra <> ? AND vcodExcecao <> ? 
                     THEN DO:
                         FIND fiscalregra where fiscalregra.codRegra = vcodRegra AND fiscalregra.codExcecao = vcodExcecao  no-lock no-error.
