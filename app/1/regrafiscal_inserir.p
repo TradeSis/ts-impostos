@@ -16,58 +16,30 @@ def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CA
     field idregra      AS INT SERIALIZE-NAME "idRegra".
     
 def VAR vidregra AS INT.
+def var vmensagem as char.
 
 hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
-
-if not avail ttentrada
-then do:
-    create ttsaida.
-    ttsaida.tstatus = 400.
-    ttsaida.descricaoStatus = "Dados de Entrada nao encontrados".
-
-    hsaida  = temp-table ttsaida:handle.
-
-    lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-    message string(vlcSaida).
-    return.
-end.
-
-if ttentrada.codRegra = ? OR ttentrada.codExcecao = ?
-then do:
-    create ttsaida.
-    ttsaida.tstatus = 400.
-    ttsaida.descricaoStatus = "Dados de Entrada Invalidos".
-
-    hsaida  = temp-table ttsaida:handle.
-
-    lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-    message string(vlcSaida).
-    return.
-end.
-
-find fiscalregra where fiscalregra.codRegra = ttentrada.codRegra AND fiscalregra.codExcecao = ttentrada.codExcecao no-lock no-error.
-if avail fiscalregra
-then do:
-    create ttsaida.
-    ttsaida.tstatus = 400.
-    ttsaida.descricaoStatus = "Regra ja cadastrada".
-
-    hsaida  = temp-table ttsaida:handle.
-
-    lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-    message string(vlcSaida).
-    return.
-end.
-
 vidregra = 0.
-do on error undo:
-    create fiscalregra.   
-    vidregra = fiscalregra.idregra.
-    BUFFER-COPY ttentrada EXCEPT idRegra TO fiscalregra.
+RUN impostos/database/regrafiscal-inc.p (input table ttentrada, 
+                                         output vidregra,
+                                         output vmensagem).
+
+if vmensagem <> ?
+then do:
+    create ttsaida.
+    ttsaida.tstatus = 400.
+    ttsaida.descricaoStatus = vmensagem.
+
+    hsaida  = temp-table ttsaida:handle.
+
+    lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
+    message string(vlcSaida).
+    return.
 end.
+
 
 
 create ttsaida.

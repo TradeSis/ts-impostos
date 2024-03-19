@@ -16,64 +16,28 @@ def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CA
     field descricaoStatus      as char.
 
 
+def var vmensagem as char.
 
 hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
-
-if not avail ttentrada
-then do:
-    create ttsaida.
-    ttsaida.tstatus = 400.
-    ttsaida.descricaoStatus = "Dados de Entrada nao encontrados".
-
-    hsaida  = temp-table ttsaida:handle.
-
-    lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-    message string(vlcSaida).
-    return.
-end.
-
-if ttentrada.idGrupo = ? OR ttentrada.codigoEstado = ? OR ttentrada.cFOP = ? OR ttentrada.codigoCaracTrib = ? OR ttentrada.finalidade = ?
-then do:
-    create ttsaida.
-    ttsaida.tstatus = 400.
-    ttsaida.descricaoStatus = "Dados de Entrada Invalidos".
-
-    hsaida  = temp-table ttsaida:handle.
-
-    lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-    message string(vlcSaida).
-    return.
-end.
-
-find fiscaloperacao where 
-        fiscaloperacao.idGrupo = ttentrada.idGrupo AND
-        fiscaloperacao.codigoEstado = ttentrada.codigoEstado AND
-        fiscaloperacao.cFOP = ttentrada.cFOP AND
-        fiscaloperacao.codigoCaracTrib = ttentrada.codigoCaracTrib AND
-        fiscaloperacao.finalidade = ttentrada.finalidade
-    no-lock no-error.
-
-if avail fiscaloperacao
-then do:
-    create ttsaida.
-    ttsaida.tstatus = 400.
-    ttsaida.descricaoStatus = "Operacao ja cadastrada".
-
-    hsaida  = temp-table ttsaida:handle.
-
-    lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-    message string(vlcSaida).
-    return.
-end.
+RUN impostos/database/operacaofiscal-inc.p (input table ttentrada, 
+                                            output vmensagem).
 
 
-do on error undo:
-    create fiscaloperacao.
-    BUFFER-COPY ttentrada EXCEPT idoperacaofiscal TO fiscaloperacao.
-end.
+IF vmensagem <> ? 
+THEN DO:
+        create ttsaida.
+        ttsaida.tstatus = 400.
+        ttsaida.descricaoStatus = vmensagem.
+
+        hsaida  = temp-table ttsaida:handle.
+
+        lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
+        message string(vlcSaida).
+        return.
+END.
 
 create ttsaida.
 ttsaida.tstatus = 200.
