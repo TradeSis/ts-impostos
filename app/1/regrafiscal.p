@@ -56,7 +56,7 @@ THEN DO:
     end. 
 END.
 
-IF ttentrada.codRegra <> ? 
+IF ttentrada.codRegra <> ? AND ttentrada.codExcecao = ? 
 THEN DO:
       for each fiscalregra WHERE 
         fiscalregra.codRegra = ttentrada.codRegra

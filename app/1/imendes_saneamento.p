@@ -41,6 +41,14 @@ DEF VAR joCabecalho         AS  JsonObject NO-UNDO.
 DEF VAR jaGrupos         AS  JsonArray NO-UNDO.
 DEF VAR joGrupo             AS  JsonObject.
 DEF VAR lcJsonauxiliar      AS   LONGCHAR NO-UNDO.
+DEF VAR jaRegras            AS  JsonArray NO-UNDO.
+DEF VAR joRegra             AS  JsonObject NO-UNDO.
+DEF VAR jauFs            AS  JsonArray NO-UNDO. 
+DEF VAR jouF             AS  JsonObject NO-UNDO.
+DEF VAR joCFOP      AS  JsonObject NO-UNDO.
+DEF VAR jacaracTib     AS  JsonArray NO-UNDO.
+DEF VAR jocaracTib      AS  JsonObject NO-UNDO.
+
 
 def /*input param*/ VAR vlcentrada as longchar. /* JSON ENTRADA */
 def /*input param*/ VAR vtmp       as char.     /* CAMINHO PROGRESS_TMP */
@@ -52,7 +60,73 @@ def var hsaida   as handle.             /* HANDLE SAIDA */
 def TEMP-TABLE ttentrada NO-UNDO   /* JSON ENTRADA */
     field idEmpresa      AS INT
     field idGeralProduto      AS INT.
-DEF VAR iContador AS INT.    
+    
+def temp-table ttapihistorico NO-UNDO 
+    field sugestao  AS CHAR
+    field amb  AS INT
+    field cnpj  AS CHAR
+    field dthr  AS CHAR
+    field transacao  AS CHAR
+    field mensagem  AS CHAR
+    field prodEnv  AS INT
+    field prodRet  AS INT
+    field prodNaoRet  AS INT
+    field comportamentosParceiro  AS CHAR
+    field comportamentosCliente  AS CHAR
+    field versao  AS CHAR
+    field duracao  AS CHAR.
+
+def temp-table ttgrupos NO-UNDO 
+    field codigo  AS CHAR
+    field descricao  AS CHAR
+    field nCM  AS CHAR
+    field cEST  AS CHAR
+    field impostoImportacao  AS DECIMAL 
+    FIELD cstEnt  AS CHAR
+    FIELD cstSai  AS CHAR
+    FIELD aliqPis  AS INT
+    FIELD aliqCofins  AS INT
+    FIELD nri  AS CHAR
+    FIELD ampLegal  AS CHAR
+    FIELD redPis  AS DECIMAL
+    FIELD redCofins  AS DECIMAL
+    FIELD ipicstEnt  AS CHAR
+    FIELD ipicstSai  AS CHAR
+    FIELD aliqipi  AS DECIMAL
+    FIELD codenq  AS CHAR
+    FIELD ipiex  AS CHAR.
+
+//---------- REGRAS-------------
+DEF TEMP-TABLE ttregra NO-UNDO
+    field codRegra  AS CHAR
+    field codExcecao  AS CHAR
+    field dtVigIni  AS CHAR
+    field dtVigFin  AS CHAR
+    field cFOPCaracTrib  AS CHAR
+    field cST  AS CHAR
+    field cSOSN  AS CHAR
+    field aliqIcmsInterna  AS DECIMAL
+    field aliqIcmsInterestadual  AS DECIMAL
+    field reducaoBcIcms  AS DECIMAL
+    field reducaoBcIcmsSt  AS DECIMAL
+    field redBcICMsInterestadual  AS DECIMAL
+    field aliqIcmsSt  AS DECIMAL
+    field iVA  AS DECIMAL
+    field iVAAjust  AS DECIMAL
+    field fCP  AS DECIMAL
+    field codBenef  AS CHAR
+    field pDifer  AS DECIMAL
+    field pIsencao  AS DECIMAL
+    field antecipado  AS CHAR
+    field desonerado  AS CHAR
+    field pICMSDeson  AS DECIMAL
+    field isento  AS CHAR
+    field tpCalcDifal  AS INT
+    field ampLegal  AS CHAR
+    //field Protocolo  AS CHAR
+    //field Convenio  AS CHAR
+    field regraGeral  AS CHAR.
+
 
 // -------------------TESTE ENTRADA   
 CREATE  ttentrada.
@@ -62,8 +136,24 @@ ttentrada.idGeralProduto = 5.
 // -------------------FIM TESTE ENTRADA
 
 DEF BUFFER bgeralpessoasfornecedor FOR geralpessoas.
-
+ 
 DEF VAR vsimplesN AS CHAR.
+DEF VAR vcodRegra AS CHAR.
+DEF VAR vcodExcecao AS CHAR.
+DEF VAR vidRegra AS INT.
+DEF VAR vcodigoGrupo AS CHAR.
+DEF VAR vcodigoEstado AS CHAR.
+DEF VAR vcFOP AS CHAR.
+DEF VAR vcodigoCaracTrib AS CHAR.
+DEF VAR vfinalidade AS CHAR.
+DEF VAR vidGrupo AS INT.
+
+//variaveis de contador
+DEF VAR iGrupos AS INT.   
+DEF VAR iRegras AS INT.
+DEF VAR iuFs AS INT.
+DEF VAR icaracTib AS INT.
+
 
 
 hEntrada = temp-table ttentrada:HANDLE.
@@ -182,41 +272,178 @@ if type-of(netResponse:Entity, JsonObject) then do:
     //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.    
 
     //MESSAGE joCabecalho:GetCharacter("cnpj")  joCabecalho:GetCharacter("dthr") VIEW-AS ALERT-BOX.
-    
-    /*    
+        
     CREATE ttapihistorico.
+    ttapihistorico.sugestao       =     joCabecalho:GetCharacter("sugestao").
+    ttapihistorico.amb       =     joCabecalho:GetInteger("amb").
     ttapihistorico.cnpj       =     joCabecalho:GetCharacter("cnpj").
+    ttapihistorico.dthr       =     joCabecalho:GetCharacter("dthr").
     ttapihistorico.transacao  =     joCabecalho:GetCharacter("transacao").
-    */
+    ttapihistorico.mensagem  =     joCabecalho:GetCharacter("mensagem").
+    ttapihistorico.prodEnv  =     joCabecalho:GetInteger("prodEnv").
+    ttapihistorico.prodRet  =     joCabecalho:GetInteger("prodRet").
+    ttapihistorico.prodNaoRet  =     joCabecalho:GetInteger("prodNaoRet").
+    ttapihistorico.comportamentosParceiro  =     joCabecalho:GetCharacter("comportamentosParceiro").
+    ttapihistorico.comportamentosCliente  =     joCabecalho:GetCharacter("comportamentosCliente").
+    ttapihistorico.versao  =     joCabecalho:GetCharacter("versao").
+    ttapihistorico.duracao  =     joCabecalho:GetCharacter("duracao").
 
      /* leitura de grupos */
     jaGrupos = joResponse:GetJsonArray("Grupos").
     jaGrupos:Write(lcJsonauxiliar, TRUE).
     //MESSAGE jaGrupos:LENGTH STRING(lcJsonauxiliar) view-as alert-box.    
-    DO iContador = 1 to jaGrupos:length on error undo, next:
-        joGrupo = jaGrupos:GetJsonObject(iContador).
+    DO iGrupos = 1 to jaGrupos:length on error undo, next:
+        joGrupo = jaGrupos:GetJsonObject(iGrupos).
         joGrupo:Write(lcJsonauxiliar, TRUE).
         //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.   
-        MESSAGE  joGrupo:GetCharacter("codigo") 
-                joGrupo:GetCharacter("descricao")
-                joGrupo:GetJsonObject("pisCofins"):GetCharacter("cstEnt")  
-                VIEW-AS ALERT-BOX   .
-                
-        /*    
-        create ttGrupos.
-        assign tt-rastreio.id        = string(oJsonObj:GetInt64("id"))
-               tt-rastreio.nr_hawb = oJsonObj:GetCharacter("nr_hawb")
-               tt-rastreio.data  = oJsonObj:GetCharacter("data")
-               tt-rastreio.descricao  = oJsonObj:GetCharacter("descricao")
-               tt-rastreio.remetente  = oJsonObj:GetCharacter("remetente")
-               tt-rastreio.destinatario  = oJsonObj:GetCharacter("destinatario").
-        */
+         
+         vcodigoGrupo = joGrupo:GetCharacter("codigo").
+         
+         IF vcodigoGrupo <> ?  
+         THEN DO:
+            find fiscalgrupo where fiscalgrupo.codigoGrupo = vcodigoGrupo  no-lock no-error.
+            IF avail fiscalgrupo
+            then do:
+                //DISP fiscalgrupo.
+                // ATUALIZA PRODUTO
+                // ADICIONA REGRAFISCAL
+            end.
+                                                                             
+            CREATE ttgrupos.
+                ttgrupos.codigo = joGrupo:GetCharacter("codigo").
+                ttgrupos.descricao = joGrupo:GetCharacter("descricao").
+                ttgrupos.nCM = joGrupo:GetCharacter("nCM").
+                ttgrupos.cEST = joGrupo:GetCharacter("cEST").
+                ttgrupos.impostoImportacao = joGrupo:GetDecimal("impostoImportacao").   
+                ttgrupos.cstEnt = joGrupo:GetJsonObject("pisCofins"):GetCharacter("cstEnt").
+                ttgrupos.cstSai = joGrupo:GetJsonObject("pisCofins"):GetCharacter("cstSai").
+                ttgrupos.aliqPis = joGrupo:GetJsonObject("pisCofins"):GetInteger("aliqPis").
+                ttgrupos.aliqCofins = joGrupo:GetJsonObject("pisCofins"):GetInteger("aliqCofins").
+                ttgrupos.nri = joGrupo:GetJsonObject("pisCofins"):GetCharacter("nri").
+                ttgrupos.ampLegal = joGrupo:GetJsonObject("pisCofins"):GetCharacter("ampLegal").
+                ttgrupos.redPis = joGrupo:GetJsonObject("pisCofins"):GetDecimal("redPis").
+                ttgrupos.redCofins = joGrupo:GetJsonObject("pisCofins"):GetDecimal("redCofins").
+                ttgrupos.ipicstEnt = joGrupo:GetJsonObject("iPI"):GetCharacter("cstEnt").
+                ttgrupos.ipicstSai = joGrupo:GetJsonObject("iPI"):GetCharacter("cstSai").
+                ttgrupos.aliqipi = joGrupo:GetJsonObject("iPI"):GetDecimal("aliqipi").  
+                ttgrupos.codenq = joGrupo:GetJsonObject("iPI"):GetCharacter("codenq").
+                ttgrupos.ipiex = joGrupo:GetJsonObject("iPI"):GetCharacter("ex").
+            
+            // INSERI GRUPOPRODUTO
+            // ADICIONA REFRAFISCAL
+            // ATUALIZAPRODUTO
+            
+         END.
+        
+        jaRegras = joGrupo:GetJsonArray("Regras").
+        jaRegras:Write(lcJsonauxiliar, TRUE).
+         //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.
+         DO iRegras = 1 to jaRegras:length on error undo, next:
+            joRegra = jaRegras:GetJsonObject(iRegras).
+            joRegra:Write(lcJsonauxiliar, TRUE).
+            //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.
+            
+                jauFs = joRegra:GetJsonArray("uFs").
+                jauFs:Write(lcJsonauxiliar, TRUE).
+                 //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.
+                    DO iuFs = 1 to jauFs:length on error undo, next:
+                        jouF = jauFs:GetJsonObject(iuFs).
+                        jouF:Write(lcJsonauxiliar, TRUE).
+                            
+                            joCFOP = jouF:GetJsonObject("CFOP").
+                            joCFOP:Write(lcJsonauxiliar, TRUE).
+                                
+                                jacaracTib = joCFOP:GetJsonArray("CaracTrib").
+                                jacaracTib:Write(lcJsonauxiliar, TRUE).
+                                 
+                                    DO icaracTib = 1 to jacaracTib:length on error undo, next:
+                                        jocaracTib = jacaracTib:GetJsonObject(icaracTib).
+                                        jocaracTib:Write(lcJsonauxiliar, TRUE).
+                                        
+                                        vcodRegra = jocaracTib:GetCharacter("codRegra").
+                                        vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
+                                            
+                                        IF vcodRegra <> ? AND vcodExcecao <> ? 
+                                        THEN DO:
+                                            find fiscalregra where fiscalregra.codRegra = vcodRegra AND fiscalregra.codExcecao = vcodExcecao  no-lock no-error.
+                                            IF avail fiscalregra
+                                            then do:
+                                                vidRegra = fiscalregra.idRegra.
+                                            
+                                            end.
+                                            
+                                            CREATE ttregra.
+                                            ttregra.codRegra = jocaracTib:GetCharacter("codRegra").
+                                            ttregra.codExcecao = vcodExcecao.
+                                            ttregra.dtVigIni = jocaracTib:GetCharacter("dtVigIni").
+                                            ttregra.dtVigFin = jocaracTib:GetCharacter("dtVigFin").
+                                            ttregra.cFOPCaracTrib = jocaracTib:GetCharacter("cFOP").
+                                            ttregra.cST = jocaracTib:GetCharacter("cST").
+                                            ttregra.cSOSN = jocaracTib:GetCharacter("cSOSN").
+                                            ttregra.aliqIcmsInterna = jocaracTib:GetDecimal("aliqIcmsInterna").
+                                            ttregra.aliqIcmsInterestadual = jocaracTib:GetDecimal("aliqIcmsInterestadual").
+                                            ttregra.reducaoBcIcms = jocaracTib:GetDecimal("reducaoBcIcms").
+                                            ttregra.reducaoBcIcmsSt = jocaracTib:GetDecimal("reducaoBcIcmsSt").
+                                            ttregra.redBcICMsInterestadual = jocaracTib:GetDecimal("redBcICMsInterestadual").
+                                            ttregra.aliqIcmsSt = jocaracTib:GetDecimal("aliqIcmsSt").
+                                            ttregra.iVA = jocaracTib:GetDecimal("iVA").
+                                            ttregra.iVAAjust = jocaracTib:GetDecimal("iVAAjust").
+                                            ttregra.fCP = jocaracTib:GetDecimal("fCP").
+                                            ttregra.codBenef = jocaracTib:GetCharacter("codBenef").
+                                            ttregra.pDifer = jocaracTib:GetDecimal("pDifer").
+                                            ttregra.pIsencao = jocaracTib:GetDecimal("pIsencao").
+                                            ttregra.antecipado = jocaracTib:GetCharacter("antecipado").
+                                            ttregra.desonerado = jocaracTib:GetCharacter("desonerado").
+                                            ttregra.pICMSDeson = jocaracTib:GetDecimal("pICMSDeson").
+                                            ttregra.isento = jocaracTib:GetCharacter("isento").
+                                            ttregra.tpCalcDifal = jocaracTib:GetInteger("tpCalcDifal").
+                                            ttregra.ampLegal = jocaracTib:GetCharacter("ampLegal").
+                                            //ttregra.Protocolo = jocaracTib:GetCharacter("Protocolo").
+                                            //ttregra.Convenio = jocaracTib:GetCharacter("Convenio").
+                                            ttregra.regraGeral = jocaracTib:GetCharacter("regraGeral").
+                                             DISP ttregra.
+                                            // INSERI REGRAFISCAL
+                                            // retorna IDREGRA
+                                             
+                                        END.    
+                                          
+                                        vidGrupo = 21.  // vem como parametro da funcao
+                                        vcodigoEstado = jouF:GetCharacter("uF").
+                                        vcFOP = joCFOP:GetCharacter("cFOP").
+                                        vcodigoCaracTrib = jocaracTib:GetCharacter("codigo").
+                                        vfinalidade = jocaracTib:GetCharacter("finalidade").
+                                        //MESSAGE vcodigoEstado vcFOP  vcodigoCaracTrib  vfinalidade view-as alert-box.
+                                     
+                                        IF vidGrupo <> ? AND vcodigoEstado <> ? AND vcFOP <> ? AND vcodigoCaracTrib <> ? AND vfinalidade <> ?
+                                        THEN DO:
+                                            find fiscaloperacao where 
+                                            fiscaloperacao.idGrupo = vidGrupo AND
+                                            fiscaloperacao.codigoEstado = vcodigoEstado AND 
+                                            fiscaloperacao.cFOP = vcFOP AND 
+                                            fiscaloperacao.finalidade = vfinalidade  
+                                            no-lock no-error.
+                                            IF NOT avail fiscaloperacao
+                                            then do:
+                                                MESSAGE "ESTA DENTRO" view-as alert-box.
+                                                //vidGrupo =   // vem como parametro da funcao
+                                                vcodigoEstado = jouF:GetCharacter("uF").
+                                                vcFOP = joCFOP:GetCharacter("cFOP").
+                                                vcodigoCaracTrib = jocaracTib:GetCharacter("codigo").
+                                                vfinalidade = jocaracTib:GetCharacter("finalidade").
+                                                //vidRegra =   // vem do retorno do inserirRegra
+                                                
+                                                // INSERI OPERACAOFISCAL
+                                            
+                                            end.
+                                          END. 
+                                        
+                                     end.    
+                    end.
+            
+         end.
+        
     end.  
-    /*
-    for EACH ttgupos:
-        DISP ttgrupos.
-    end.
-    */
+    
     
     
     
