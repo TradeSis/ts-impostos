@@ -16,71 +16,39 @@ def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CA
     field idgrupo      AS INT SERIALIZE-NAME "idGrupo".
 
 def VAR vidgrupo AS INT.
+def var vmensagem as char.
 
 hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
+vidgrupo = 0.
+RUN impostos/database/fiscalgrupo-inc.p (input table ttentrada, 
+                                         output vidgrupo,
+                                         output vmensagem).
 
-if not avail ttentrada
-then do:
-    create ttsaida.
-    ttsaida.tstatus = 400.
-    ttsaida.descricaoStatus = "Dados de Entrada nao encontrados".
-
-    hsaida  = temp-table ttsaida:handle.
-
-    lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-    message string(vlcSaida).
-    return.
-end.
-
-if ttentrada.nomeGrupo = ?
-then do:
-    create ttsaida.
-    ttsaida.tstatus = 400.
-    ttsaida.descricaoStatus = "Dados de Entrada Invalidos".
-
-    hsaida  = temp-table ttsaida:handle.
-
-    lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-    message string(vlcSaida).
-    return.
-end.
-
-IF ttentrada.codigoGrupo <> ? 
+IF vmensagem <> ? 
 THEN DO:
-    
-    find fiscalgrupo where fiscalgrupo.codigoGrupo = ttentrada.codigoGrupo no-lock no-error.
-    if avail fiscalgrupo
-    then do:
         create ttsaida.
         ttsaida.tstatus = 400.
-        ttsaida.descricaoStatus = "Grupo ja cadastrado".
+        ttsaida.descricaoStatus = vmensagem.
 
         hsaida  = temp-table ttsaida:handle.
 
         lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
         message string(vlcSaida).
         return.
-    end.
-
 END.
+                                         
 
-vidgrupo = 0.
-do on error undo:
-    create fiscalgrupo.
-    vidgrupo = fiscalgrupo.idgrupo.
-    BUFFER-COPY ttentrada EXCEPT idGrupo TO fiscalgrupo.
-   
-end.
 
 create ttsaida.
 ttsaida.tstatus = 200.
-ttsaida.descricaoStatus = "Grupo criado com sucesso".
+ttsaida.descricaoStatus = "Grupo " + string(vidgrupo) + " criado com sucesso".
 ttsaida.idgrupo = vidgrupo.
 
 hsaida  = temp-table ttsaida:handle.
 
 lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
 put unformatted string(vlcSaida).
+

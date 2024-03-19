@@ -36,7 +36,7 @@ DEFINE VARIABLE jaUF           AS JsonArray NO-UNDO.
 DEFINE VARIABLE jaProdutos     AS JsonArray NO-UNDO.                                                  
 DEFINE VARIABLE joProduto      AS JsonObject NO-UNDO.
 DEFINE VARIABLE jaCarac        AS JsonArray NO-UNDO.
-DEFINE VARIABLE joHeaders   AS JsonObject NO-UNDO.
+
 DEF VAR joCabecalho         AS  JsonObject NO-UNDO.
 DEF VAR jaGrupos         AS  JsonArray NO-UNDO.
 DEF VAR joGrupo             AS  JsonObject.
@@ -76,25 +76,8 @@ def temp-table ttapihistorico NO-UNDO
     field versao  AS CHAR
     field duracao  AS CHAR.
 
-def temp-table ttgrupos NO-UNDO 
-    field codigo  AS CHAR
-    field descricao  AS CHAR
-    field nCM  AS CHAR
-    field cEST  AS CHAR
-    field impostoImportacao  AS DECIMAL 
-    FIELD cstEnt  AS CHAR
-    FIELD cstSai  AS CHAR
-    FIELD aliqPis  AS INT
-    FIELD aliqCofins  AS INT
-    FIELD nri  AS CHAR
-    FIELD ampLegal  AS CHAR
-    FIELD redPis  AS DECIMAL
-    FIELD redCofins  AS DECIMAL
-    FIELD ipicstEnt  AS CHAR
-    FIELD ipicstSai  AS CHAR
-    FIELD aliqipi  AS DECIMAL
-    FIELD codenq  AS CHAR
-    FIELD ipiex  AS CHAR.
+def temp-table ttgrupos no-undo serialize-name "fiscalgrupo"   
+    LIKE fiscalgrupo.
 
 //---------- REGRAS-------------
 DEF TEMP-TABLE ttregra NO-UNDO
@@ -229,16 +212,11 @@ joProduto:ADD("ncm","111111").
 jaProdutos = NEW JsonArray().
 jaProdutos:ADD(joProduto).
 
-joHeaders = NEW JsonObject().
-joHeaders:ADD("Content-Type","application/json").
-joHeaders:ADD("login",apifiscal.login).
-joHeaders:ADD("senha",apifiscal.senha).
-
 joImendes = NEW JsonObject().
 joImendes:ADD("emit",joEmit).
 joImendes:ADD("perfil",joPerfil).
 joImendes:ADD("produtos",jaProdutos).
-joImendes:ADD("headers",joHeaders).
+
 
 
 
@@ -290,168 +268,172 @@ if type-of(netResponse:Entity, JsonObject) then do:
 
      /* leitura de grupos */
     jaGrupos = joResponse:GetJsonArray("Grupos").
-    jaGrupos:Write(lcJsonauxiliar, TRUE).
+    //jaGrupos:Write(lcJsonauxiliar, TRUE).
     //MESSAGE jaGrupos:LENGTH STRING(lcJsonauxiliar) view-as alert-box.    
     DO iGrupos = 1 to jaGrupos:length on error undo, next:
         joGrupo = jaGrupos:GetJsonObject(iGrupos).
-        joGrupo:Write(lcJsonauxiliar, TRUE).
+        //joGrupo:Write(lcJsonauxiliar, TRUE).
         //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.   
          
-         vcodigoGrupo = joGrupo:GetCharacter("codigo").
+        vcodigoGrupo = joGrupo:GetCharacter("codigo").
+                 
+        IF vcodigoGrupo = ?  
+        THEN NEXT. /* Validacao Erro do Json */
          
-         IF vcodigoGrupo <> ?  
-         THEN DO:
-            find fiscalgrupo where fiscalgrupo.codigoGrupo = vcodigoGrupo  no-lock no-error.
-            IF avail fiscalgrupo
-            then do:
-                //DISP fiscalgrupo.
-                // ATUALIZA PRODUTO
-                // ADICIONA REGRAFISCAL
-            end.
-                                                                             
+        find fiscalgrupo where fiscalgrupo.codigoGrupo = vcodigoGrupo  no-lock no-error.
+        if avail fiscalgrupo then do:
+            vidgrupo = fiscalgrupo.idgrupo.            
+        end.
+        else do:
             CREATE ttgrupos.
-                ttgrupos.codigo = joGrupo:GetCharacter("codigo").
-                ttgrupos.descricao = joGrupo:GetCharacter("descricao").
-                ttgrupos.nCM = joGrupo:GetCharacter("nCM").
-                ttgrupos.cEST = joGrupo:GetCharacter("cEST").
-                ttgrupos.impostoImportacao = joGrupo:GetDecimal("impostoImportacao").   
-                ttgrupos.cstEnt = joGrupo:GetJsonObject("pisCofins"):GetCharacter("cstEnt").
-                ttgrupos.cstSai = joGrupo:GetJsonObject("pisCofins"):GetCharacter("cstSai").
-                ttgrupos.aliqPis = joGrupo:GetJsonObject("pisCofins"):GetInteger("aliqPis").
-                ttgrupos.aliqCofins = joGrupo:GetJsonObject("pisCofins"):GetInteger("aliqCofins").
-                ttgrupos.nri = joGrupo:GetJsonObject("pisCofins"):GetCharacter("nri").
-                ttgrupos.ampLegal = joGrupo:GetJsonObject("pisCofins"):GetCharacter("ampLegal").
-                ttgrupos.redPis = joGrupo:GetJsonObject("pisCofins"):GetDecimal("redPis").
-                ttgrupos.redCofins = joGrupo:GetJsonObject("pisCofins"):GetDecimal("redCofins").
-                ttgrupos.ipicstEnt = joGrupo:GetJsonObject("iPI"):GetCharacter("cstEnt").
-                ttgrupos.ipicstSai = joGrupo:GetJsonObject("iPI"):GetCharacter("cstSai").
-                ttgrupos.aliqipi = joGrupo:GetJsonObject("iPI"):GetDecimal("aliqipi").  
-                ttgrupos.codenq = joGrupo:GetJsonObject("iPI"):GetCharacter("codenq").
-                ttgrupos.ipiex = joGrupo:GetJsonObject("iPI"):GetCharacter("ex").
-            
+            ttgrupos.codigoGrupo = joGrupo:GetCharacter("codigo").
+            ttgrupos.nomeGrupo = joGrupo:GetCharacter("descricao").
+            /*
+            ttgrupos.nCM = joGrupo:GetCharacter("nCM").
+            ttgrupos.cEST = joGrupo:GetCharacter("cEST").
+            ttgrupos.impostoImportacao = joGrupo:GetDecimal("impostoImportacao").   
+            ttgrupos.cstEnt = joGrupo:GetJsonObject("pisCofins"):GetCharacter("cstEnt").
+            ttgrupos.cstSai = joGrupo:GetJsonObject("pisCofins"):GetCharacter("cstSai").
+            ttgrupos.aliqPis = joGrupo:GetJsonObject("pisCofins"):GetInteger("aliqPis").
+            ttgrupos.aliqCofins = joGrupo:GetJsonObject("pisCofins"):GetInteger("aliqCofins").
+            ttgrupos.nri = joGrupo:GetJsonObject("pisCofins"):GetCharacter("nri").
+            ttgrupos.ampLegal = joGrupo:GetJsonObject("pisCofins"):GetCharacter("ampLegal").
+            ttgrupos.redPis = joGrupo:GetJsonObject("pisCofins"):GetDecimal("redPis").
+            ttgrupos.redCofins = joGrupo:GetJsonObject("pisCofins"):GetDecimal("redCofins").
+            ttgrupos.ipicstEnt = joGrupo:GetJsonObject("iPI"):GetCharacter("cstEnt").
+            ttgrupos.ipicstSai = joGrupo:GetJsonObject("iPI"):GetCharacter("cstSai").
+            ttgrupos.aliqipi = joGrupo:GetJsonObject("iPI"):GetDecimal("aliqipi").  
+            ttgrupos.codenq = joGrupo:GetJsonObject("iPI"):GetCharacter("codenq").
+            ttgrupos.ipiex = joGrupo:GetJsonObject("iPI"):GetCharacter("ex").
+            */
+            vidgrupo = 0.
+            RUN impostos/database/fiscalgrupo-inc.p (input table ttentrada, 
+                                                     output vidgrupo,
+                                                     output vmensagem).
+            DELETE ttgrupos.
+            if vmensagem <> ? then do:
+                message "ERRO AO CRIAR FISCALGRUPO - " vmensagem view-as alert-box.
+                return.
+            end.
+            find fiscalgrupo where fiscalgrupo.idgrupo = vidgrupo no-lock.
+        END.
+        // avail fiscal grupo e vidgrupo                                                                 
+           
             // INSERI GRUPOPRODUTO
             // ADICIONA REFRAFISCAL
             // ATUALIZAPRODUTO
             
-         END.
+         
         
         jaRegras = joGrupo:GetJsonArray("Regras").
         jaRegras:Write(lcJsonauxiliar, TRUE).
          //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.
-         DO iRegras = 1 to jaRegras:length on error undo, next:
+        DO iRegras = 1 to jaRegras:length on error undo, next:
             joRegra = jaRegras:GetJsonObject(iRegras).
             joRegra:Write(lcJsonauxiliar, TRUE).
             //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.
             
-                jauFs = joRegra:GetJsonArray("uFs").
-                jauFs:Write(lcJsonauxiliar, TRUE).
+            jauFs = joRegra:GetJsonArray("uFs").
+            jauFs:Write(lcJsonauxiliar, TRUE).
                  //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.
-                    DO iuFs = 1 to jauFs:length on error undo, next:
-                        jouF = jauFs:GetJsonObject(iuFs).
-                        jouF:Write(lcJsonauxiliar, TRUE).
+            DO iuFs = 1 to jauFs:length on error undo, next:
+                jouF = jauFs:GetJsonObject(iuFs).
+                jouF:Write(lcJsonauxiliar, TRUE).
+                vcodigoEstado = jouF:GetCharacter("uF").                            
+                        
+                joCFOP = jouF:GetJsonObject("CFOP").
+                joCFOP:Write(lcJsonauxiliar, TRUE).
+                vcFOP = joCFOP:GetCharacter("cFOP").                                
                             
-                            joCFOP = jouF:GetJsonObject("CFOP").
-                            joCFOP:Write(lcJsonauxiliar, TRUE).
-                                
-                                jacaracTib = joCFOP:GetJsonArray("CaracTrib").
-                                jacaracTib:Write(lcJsonauxiliar, TRUE).
+                jacaracTib = joCFOP:GetJsonArray("CaracTrib").
+                jacaracTib:Write(lcJsonauxiliar, TRUE).
                                  
-                                    DO icaracTib = 1 to jacaracTib:length on error undo, next:
-                                        jocaracTib = jacaracTib:GetJsonObject(icaracTib).
-                                        jocaracTib:Write(lcJsonauxiliar, TRUE).
+                DO icaracTib = 1 to jacaracTib:length on error undo, next:
+                    jocaracTib = jacaracTib:GetJsonObject(icaracTib).
+                    jocaracTib:Write(lcJsonauxiliar, TRUE).
                                         
-                                        vcodRegra = jocaracTib:GetCharacter("codRegra").
-                                        vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
-                                            
-                                        IF vcodRegra <> ? AND vcodExcecao <> ? 
-                                        THEN DO:
-                                            find fiscalregra where fiscalregra.codRegra = vcodRegra AND fiscalregra.codExcecao = vcodExcecao  no-lock no-error.
-                                            IF avail fiscalregra
-                                            then do:
-                                                vidRegra = fiscalregra.idRegra.
-                                            
-                                            end.
-                                            
-                                            CREATE ttregra.
-                                            ttregra.codRegra = jocaracTib:GetCharacter("codRegra").
-                                            ttregra.codExcecao = vcodExcecao.
-                                            ttregra.dtVigIni = jocaracTib:GetCharacter("dtVigIni").
-                                            ttregra.dtVigFin = jocaracTib:GetCharacter("dtVigFin").
-                                            ttregra.cFOPCaracTrib = jocaracTib:GetCharacter("cFOP").
-                                            ttregra.cST = jocaracTib:GetCharacter("cST").
-                                            ttregra.cSOSN = jocaracTib:GetCharacter("cSOSN").
-                                            ttregra.aliqIcmsInterna = jocaracTib:GetDecimal("aliqIcmsInterna").
-                                            ttregra.aliqIcmsInterestadual = jocaracTib:GetDecimal("aliqIcmsInterestadual").
-                                            ttregra.reducaoBcIcms = jocaracTib:GetDecimal("reducaoBcIcms").
-                                            ttregra.reducaoBcIcmsSt = jocaracTib:GetDecimal("reducaoBcIcmsSt").
-                                            ttregra.redBcICMsInterestadual = jocaracTib:GetDecimal("redBcICMsInterestadual").
-                                            ttregra.aliqIcmsSt = jocaracTib:GetDecimal("aliqIcmsSt").
-                                            ttregra.iVA = jocaracTib:GetDecimal("iVA").
-                                            ttregra.iVAAjust = jocaracTib:GetDecimal("iVAAjust").
-                                            ttregra.fCP = jocaracTib:GetDecimal("fCP").
-                                            ttregra.codBenef = jocaracTib:GetCharacter("codBenef").
-                                            ttregra.pDifer = jocaracTib:GetDecimal("pDifer").
-                                            ttregra.pIsencao = jocaracTib:GetDecimal("pIsencao").
-                                            ttregra.antecipado = jocaracTib:GetCharacter("antecipado").
-                                            ttregra.desonerado = jocaracTib:GetCharacter("desonerado").
-                                            ttregra.pICMSDeson = jocaracTib:GetDecimal("pICMSDeson").
-                                            ttregra.isento = jocaracTib:GetCharacter("isento").
-                                            ttregra.tpCalcDifal = jocaracTib:GetInteger("tpCalcDifal").
-                                            ttregra.ampLegal = jocaracTib:GetCharacter("ampLegal").
-                                            //ttregra.Protocolo = jocaracTib:GetCharacter("Protocolo").
-                                            //ttregra.Convenio = jocaracTib:GetCharacter("Convenio").
-                                            ttregra.regraGeral = jocaracTib:GetCharacter("regraGeral").
-                                             DISP ttregra.
-                                            // INSERI REGRAFISCAL
-                                            // retorna IDREGRA
-                                             
-                                        END.    
-                                          
-                                        vidGrupo = 21.  // vem como parametro da funcao
-                                        vcodigoEstado = jouF:GetCharacter("uF").
-                                        vcFOP = joCFOP:GetCharacter("cFOP").
-                                        vcodigoCaracTrib = jocaracTib:GetCharacter("codigo").
-                                        vfinalidade = jocaracTib:GetCharacter("finalidade").
-                                        //MESSAGE vcodigoEstado vcFOP  vcodigoCaracTrib  vfinalidade view-as alert-box.
+                    vcodigoCaracTrib = jocaracTib:GetCharacter("codigo").
+                    vfinalidade = jocaracTib:GetCharacter("finalidade").
+                    vcodRegra = jocaracTib:GetCharacter("codRegra").
+                    vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
+                                           
+                    IF vcodRegra <> ? AND vcodExcecao <> ? 
+                    THEN DO:
+                        FIND fiscalregra where fiscalregra.codRegra = vcodRegra AND fiscalregra.codExcecao = vcodExcecao  no-lock no-error.
+                        IF avail fiscalregra
+                        then do:
+                            vidRegra = fiscalregra.idRegra.
+                        end.
+                        CREATE ttregra.
+                        ttregra.codRegra = jocaracTib:GetCharacter("codRegra").
+                        ttregra.codExcecao = vcodExcecao.
+                        ttregra.dtVigIni = jocaracTib:GetCharacter("dtVigIni").
+                        ttregra.dtVigFin = jocaracTib:GetCharacter("dtVigFin").
+                        ttregra.cFOPCaracTrib = jocaracTib:GetCharacter("cFOP").
+                        ttregra.cST = jocaracTib:GetCharacter("cST").
+                        ttregra.cSOSN = jocaracTib:GetCharacter("cSOSN").
+                        ttregra.aliqIcmsInterna = jocaracTib:GetDecimal("aliqIcmsInterna").
+                        ttregra.aliqIcmsInterestadual = jocaracTib:GetDecimal("aliqIcmsInterestadual").
+                        ttregra.reducaoBcIcms = jocaracTib:GetDecimal("reducaoBcIcms").
+                        ttregra.reducaoBcIcmsSt = jocaracTib:GetDecimal("reducaoBcIcmsSt").
+                        ttregra.redBcICMsInterestadual = jocaracTib:GetDecimal("redBcICMsInterestadual").
+                        ttregra.aliqIcmsSt = jocaracTib:GetDecimal("aliqIcmsSt").
+                        ttregra.iVA = jocaracTib:GetDecimal("iVA").
+                        ttregra.iVAAjust = jocaracTib:GetDecimal("iVAAjust").
+                        ttregra.fCP = jocaracTib:GetDecimal("fCP").
+                        ttregra.codBenef = jocaracTib:GetCharacter("codBenef").
+                        ttregra.pDifer = jocaracTib:GetDecimal("pDifer").
+                        ttregra.pIsencao = jocaracTib:GetDecimal("pIsencao").
+                        ttregra.antecipado = jocaracTib:GetCharacter("antecipado").
+                        ttregra.desonerado = jocaracTib:GetCharacter("desonerado").
+                        ttregra.pICMSDeson = jocaracTib:GetDecimal("pICMSDeson").
+                        ttregra.isento = jocaracTib:GetCharacter("isento").
+                        ttregra.tpCalcDifal = jocaracTib:GetInteger("tpCalcDifal").
+                        ttregra.ampLegal = jocaracTib:GetCharacter("ampLegal").
+                        //ttregra.Protocolo = jocaracTib:GetCharacter("Protocolo").
+                        //ttregra.Convenio = jocaracTib:GetCharacter("Convenio").
+                        ttregra.regraGeral = jocaracTib:GetCharacter("regraGeral").
+                        DISP ttregra.
+                        run especialista.
+                        // INSERI REGRAFISCAL
+                        // retorna IDREGRA
+                    END.    
+                    //MESSAGE vcodigoEstado vcFOP  vcodigoCaracTrib  vfinalidade view-as alert-box.
                                      
-                                        IF vidGrupo <> ? AND vcodigoEstado <> ? AND vcFOP <> ? AND vcodigoCaracTrib <> ? AND vfinalidade <> ?
-                                        THEN DO:
-                                            find fiscaloperacao where 
+                    IF vidGrupo <> ? AND vcodigoEstado <> ? AND vcFOP <> ? AND vcodigoCaracTrib <> ? AND vfinalidade <> ?
+                    THEN DO:
+                        find fiscaloperacao where 
                                             fiscaloperacao.idGrupo = vidGrupo AND
                                             fiscaloperacao.codigoEstado = vcodigoEstado AND 
                                             fiscaloperacao.cFOP = vcFOP AND 
                                             fiscaloperacao.finalidade = vfinalidade  
                                             no-lock no-error.
-                                            IF NOT avail fiscaloperacao
-                                            then do:
-                                                MESSAGE "ESTA DENTRO" view-as alert-box.
-                                                //vidGrupo =   // vem como parametro da funcao
-                                                vcodigoEstado = jouF:GetCharacter("uF").
-                                                vcFOP = joCFOP:GetCharacter("cFOP").
-                                                vcodigoCaracTrib = jocaracTib:GetCharacter("codigo").
-                                                vfinalidade = jocaracTib:GetCharacter("finalidade").
-                                                //vidRegra =   // vem do retorno do inserirRegra
-                                                
-                                                // INSERI OPERACAOFISCAL
-                                            
-                                            end.
-                                          END. 
-                                        
-                                     end.    
-                    end.
-            
-         end.
-        
-    end.  
-    
-    
-    
-    
+                        IF NOT avail fiscaloperacao
+                        then do:
+                            MESSAGE "ESTA DENTRO" view-as alert-box.
+                            //vidGrupo =   // vem como parametro da funcao
+                            vcodigoEstado = jouF:GetCharacter("uF").
+                            vcFOP = joCFOP:GetCharacter("cFOP").
+                            vcodigoCaracTrib = jocaracTib:GetCharacter("codigo").
+                            vfinalidade = jocaracTib:GetCharacter("finalidade").
+                            //vidRegra =   // vem do retorno do inserirRegra
+                            
+                            // INSERI OPERACAOFISCAL
+                        
+                        end.
+                    END. 
+                end.  /* icaracTib */  
+            end.  /* iuFs */
+        end. /* iRegras */
+    end. /* iGrupos */ 
 END.
+
+/*
 if type-of(netResponse:Entity, JsonArray) then do:
     jaResponse = CAST(netResponse:Entity, JsonArray).
     jaResponse:Write(lcJsonResponse).
 END.
+*/
 /* criar ttsaida
 put unformatted string(lcJsonResponse). 
 */
