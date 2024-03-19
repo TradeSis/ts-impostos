@@ -80,35 +80,8 @@ def temp-table ttgrupos no-undo serialize-name "fiscalgrupo"
     LIKE fiscalgrupo.
 
 //---------- REGRAS-------------
-DEF TEMP-TABLE ttregra NO-UNDO
-    field codRegra  AS CHAR
-    field codExcecao  AS CHAR
-    field dtVigIni  AS CHAR
-    field dtVigFin  AS CHAR
-    field cFOPCaracTrib  AS CHAR
-    field cST  AS CHAR
-    field cSOSN  AS CHAR
-    field aliqIcmsInterna  AS DECIMAL
-    field aliqIcmsInterestadual  AS DECIMAL
-    field reducaoBcIcms  AS DECIMAL
-    field reducaoBcIcmsSt  AS DECIMAL
-    field redBcICMsInterestadual  AS DECIMAL
-    field aliqIcmsSt  AS DECIMAL
-    field iVA  AS DECIMAL
-    field iVAAjust  AS DECIMAL
-    field fCP  AS DECIMAL
-    field codBenef  AS CHAR
-    field pDifer  AS DECIMAL
-    field pIsencao  AS DECIMAL
-    field antecipado  AS CHAR
-    field desonerado  AS CHAR
-    field pICMSDeson  AS DECIMAL
-    field isento  AS CHAR
-    field tpCalcDifal  AS INT
-    field ampLegal  AS CHAR
-    //field Protocolo  AS CHAR
-    //field Convenio  AS CHAR
-    field regraGeral  AS CHAR.
+def temp-table ttregra no-undo serialize-name "fiscalregra"   
+    LIKE fiscalregra.
 
 //---------- OPERACAO-------------
 
@@ -135,6 +108,9 @@ DEF VAR vcodigoCaracTrib AS CHAR.
 DEF VAR vfinalidade AS CHAR.
 DEF VAR vidGrupo AS INT.
 DEF VAR vmensagem AS CHAR.
+DEF VAR vidoperacaofiscal AS INT.
+DEF VAR vdtVigIni AS CHAR.
+DEF VAR vdtVigFin AS CHAR.
 
 //variaveis de contador
 DEF VAR iGrupos AS INT.   
@@ -310,7 +286,7 @@ if type-of(netResponse:Entity, JsonObject) then do:
             ttgrupos.codenq = joGrupo:GetJsonObject("iPI"):GetCharacter("codenq").
             ttgrupos.ipiex = joGrupo:GetJsonObject("iPI"):GetCharacter("ex").
             vidgrupo = 0.
-            RUN impostos/database/fiscalgrupo-inc.p (input table ttentrada, 
+            RUN impostos/database/grupoproduto-inc.p (input table ttentrada, 
                                                      output vidgrupo,
                                                      output vmensagem).
             DELETE ttgrupos.
@@ -358,8 +334,8 @@ if type-of(netResponse:Entity, JsonObject) then do:
                     vcodigoCaracTrib = jocaracTib:GetCharacter("codigo").
                     vfinalidade = jocaracTib:GetCharacter("finalidade").
                     vcodRegra = jocaracTib:GetCharacter("codRegra").
-                    vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
-                                           
+                    //vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
+                     vcodExcecao = "2".                     
                     IF vcodRegra <> ? AND vcodExcecao <> ? 
                     THEN DO:
                         FIND fiscalregra where fiscalregra.codRegra = vcodRegra AND fiscalregra.codExcecao = vcodExcecao  no-lock no-error.
@@ -371,8 +347,8 @@ if type-of(netResponse:Entity, JsonObject) then do:
                             CREATE ttregra.
                             ttregra.codRegra = jocaracTib:GetCharacter("codRegra").
                             ttregra.codExcecao = vcodExcecao.
-                            ttregra.dtVigIni = jocaracTib:GetCharacter("dtVigIni").
-                            ttregra.dtVigFin = jocaracTib:GetCharacter("dtVigFin").
+                            //ttregra.dtVigIni = jocaracTib:GetCharacter("dtVigIni").
+                            //ttregra.dtVigFin = jocaracTib:GetCharacter("dtVigFin").
                             ttregra.cFOPCaracTrib = jocaracTib:GetCharacter("cFOP").
                             ttregra.cST = jocaracTib:GetCharacter("cST").
                             ttregra.cSOSN = jocaracTib:GetCharacter("cSOSN").
@@ -399,7 +375,7 @@ if type-of(netResponse:Entity, JsonObject) then do:
                             ttregra.regraGeral = jocaracTib:GetCharacter("regraGeral").
                             
                             vidRegra = 0.
-                            RUN impostos/database/fiscalgrupo-inc.p (input table ttentrada, 
+                            RUN impostos/database/regrafiscal-inc.p (input table ttentrada, 
                                                                      output vidRegra,
                                                                      output vmensagem).
                             DELETE ttregra.
@@ -432,8 +408,10 @@ if type-of(netResponse:Entity, JsonObject) then do:
                             ttoperacao.codigoCaracTrib = vcodigoCaracTrib.
                             ttoperacao.finalidade = vfinalidade.
                             ttoperacao.idRegra = vidRegra.
-            
+                            
+                            vidoperacaofiscal = 0.
                             RUN impostos/database/operacaofiscal-inc.p (input table ttentrada, 
+                                                                        output vidoperacaofiscal,
                                                                         output vmensagem).
                             DELETE ttoperacao.
                             if vmensagem <> ? then do:

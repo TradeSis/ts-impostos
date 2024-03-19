@@ -23,7 +23,7 @@ lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
 vidgrupo = 0.
-RUN impostos/database/fiscalgrupo-inc.p (input table ttentrada, 
+RUN impostos/database/grupoproduto-inc.p (input table ttentrada, 
                                          output vidgrupo,
                                          output vmensagem).
 

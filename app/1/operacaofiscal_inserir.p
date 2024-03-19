@@ -13,16 +13,18 @@ def temp-table ttentrada no-undo serialize-name "fiscaloperacao"   /* JSON ENTRA
 
 def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CASO ERRO */
     field tstatus        as int serialize-name "status"
-    field descricaoStatus      as char.
-
+    field descricaoStatus      as char
+    field idoperacaofiscal      AS INT SERIALIZE-NAME "idoperacaofiscal".
 
 def var vmensagem as char.
+def var vidoperacaofiscal as char.
 
 hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
 RUN impostos/database/operacaofiscal-inc.p (input table ttentrada, 
+                                            output vidoperacaofiscal,
                                             output vmensagem).
 
 

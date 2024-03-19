@@ -36,11 +36,12 @@ fwrite($arquivo,$identificacao."-RETORNO->".$retorno."\n");
 $operacao = json_decode($retorno,true);
 
 $imendesEntrada= $operacao;
-
+echo "IMENDES\n".json_encode($imendesEntrada)."\n";
+return;
 /* echo "IMENDES\n".json_encode($imendesEntrada)."\n";
 return;
  */
-$login = $imendesEntrada["headers"]["login"];
+/* $login = $imendesEntrada["headers"]["login"];
 $senha = $imendesEntrada["headers"]["senha"];
 $apiHeaders = array(
   "Content-Type: application/json",
@@ -62,9 +63,9 @@ $JSON = chamaAPI(
   json_encode($imendesEntrada),
   "POST",
   $apiHeaders
-);
-echo "IMENDES\n".json_encode($JSON)."\n";
-return;
+); */
+/* echo "IMENDES\n".json_encode($JSON)."\n";
+return; */
 
 $produtoNaoRetornado = $JSON['Cabecalho']['prodNaoRet'];
 if ($produtoNaoRetornado == 1) {

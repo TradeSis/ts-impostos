@@ -5,9 +5,11 @@ def temp-table ttentrada no-undo serialize-name "fiscaloperacao"   /* JSON ENTRA
 
   
 DEF INPUT PARAM TABLE FOR ttentrada.
+def output param vidoperacaofiscal like fiscalfiscaloperacao.grupo.idgrupo.
 def output param vmensagem as char.
 
 vmensagem = ?.
+vidoperacaofiscal = ?.
 
 if not avail ttentrada
 then do:
@@ -38,5 +40,6 @@ end.
 
 do on error undo:
     create fiscaloperacao.
+    vidoperacaofiscal = fiscaloperacao.idoperacaofiscal.
     BUFFER-COPY ttentrada EXCEPT idoperacaofiscal TO fiscaloperacao.
 end.
