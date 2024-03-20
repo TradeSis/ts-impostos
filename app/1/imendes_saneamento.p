@@ -321,7 +321,7 @@ if type-of(netResponse:Entity, JsonObject) then do:
                     vfinalidade = jocaracTib:GetCharacter("finalidade").
                     vcodRegra = jocaracTib:GetCharacter("codRegra").
                     vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
-                                         
+                    
                     IF vcodRegra <> ? AND vcodExcecao <> ? 
                     THEN DO:
                         FIND fiscalregra where  fiscalregra.codRegra = vcodRegra AND 
@@ -373,7 +373,11 @@ if type-of(netResponse:Entity, JsonObject) then do:
                             end.
                             find fiscalregra where fiscalregra.idRegra = vidRegra no-lock.
                         end.   
-                    END.    
+                    END.
+                    ELSE DO:
+                        MESSAGE "Parametros de entrada invalidos".
+                    END.
+                    
                     //MESSAGE vcodigoEstado vcFOP  vcodigoCaracTrib  vfinalidade view-as alert-box.
                                      
                     IF vidgrupo <> ? AND vcodigoEstado <> ? AND vcFOP <> ? AND vcodigoCaracTrib <> ? AND vfinalidade <> ?
