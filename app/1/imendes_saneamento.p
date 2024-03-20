@@ -50,8 +50,10 @@ DEF VAR jacaracTib     AS  JsonArray NO-UNDO.
 DEF VAR jocaracTib      AS  JsonObject NO-UNDO.
 
 
-def /*input param*/ VAR vlcentrada as longchar. /* JSON ENTRADA */
-def /*input param*/ VAR vtmp       as char.     /* CAMINHO PROGRESS_TMP */
+def input param vlcentrada as longchar. /* JSON ENTRADA */
+def input param vtmp       as char.     /* CAMINHO PROGRESS_TMP */
+
+def var vlcsaida   as longchar.         /* JSON SAIDA */
 
 def var lokjson as log.                 /* LOGICAL DE APOIO */
 def var hentrada as handle.             /* HANDLE ENTRADA */
@@ -60,6 +62,11 @@ def var hsaida   as handle.             /* HANDLE SAIDA */
 def TEMP-TABLE ttentrada NO-UNDO   /* JSON ENTRADA */
     field idEmpresa      AS INT
     field idGeralProduto      AS INT.
+
+def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CASO ERRO */
+    field tstatus        as int serialize-name "status"
+    field descricaoStatus      as CHAR.
+
     
 def temp-table ttapihistorico NO-UNDO 
     field sugestao  AS CHAR
@@ -88,12 +95,6 @@ def temp-table ttregra no-undo serialize-name "fiscalregra"
 def temp-table ttoperacao no-undo serialize-name "fiscaloperacao"   
     LIKE fiscaloperacao.                          
 
-// -------------------TESTE ENTRADA   
-CREATE  ttentrada.
-ttentrada.idEmpresa = 1.
-ttentrada.idGeralProduto = 5.
-
-// -------------------FIM TESTE ENTRADA
 
 DEF BUFFER bgeralpessoasfornecedor FOR geralpessoas.
  
@@ -121,7 +122,7 @@ DEF VAR icaracTib AS INT.
 
 
 hEntrada = temp-table ttentrada:HANDLE.
-//lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
+lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
 
@@ -322,8 +323,10 @@ if type-of(netResponse:Entity, JsonObject) then do:
                     vcodRegra = jocaracTib:GetCharacter("codRegra").
                     vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
                     
-                    IF vcodRegra <> ? AND vcodExcecao <> ? 
-                    THEN DO:
+                    IF vcodRegra = ? AND vcodExcecao = ? 
+                    THEN NEXT.
+                    
+                    ELSE DO:
                         FIND fiscalregra where  fiscalregra.codRegra = vcodRegra AND 
                                                 fiscalregra.codExcecao = vcodExcecao  
                                                 no-lock no-error.
@@ -374,12 +377,8 @@ if type-of(netResponse:Entity, JsonObject) then do:
                             find fiscalregra where fiscalregra.idRegra = vidRegra no-lock.
                         end.   
                     END.
-                    ELSE DO:
-                        MESSAGE "Parametros de entrada invalidos".
-                    END.
-                    
-                    //MESSAGE vcodigoEstado vcFOP  vcodigoCaracTrib  vfinalidade view-as alert-box.
-                                     
+              
+                                    
                     IF vidgrupo <> ? AND vcodigoEstado <> ? AND vcFOP <> ? AND vcodigoCaracTrib <> ? AND vfinalidade <> ?
                     THEN DO:
                         find fiscaloperacao where 
@@ -408,7 +407,10 @@ if type-of(netResponse:Entity, JsonObject) then do:
                                 return.
                             end.
                         end.
-                    END. 
+                    END.
+                    ELSE DO:
+                        MESSAGE "Parametros de entrada invalidos!. ".
+                    END.
                 end.  /* icaracTib */  
             end.  /* iuFs */
         end. /* iRegras */
@@ -428,7 +430,16 @@ if type-of(netResponse:Entity, JsonArray) then do:
     jaResponse:Write(lcJsonResponse).
 END.
 */
-/* criar ttsaida
-put unformatted string(lcJsonResponse). 
-*/
+/* criar ttsaida */
+
+/* PUT UNFORMATTED string(lcJsonResponse). */
+create ttsaida.
+ttsaida.tstatus = 200.
+ttsaida.descricaoStatus = "ok".
+
+hsaida  = temp-table ttsaida:handle.
+
+lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
+put unformatted string(vlcSaida).
+
 
