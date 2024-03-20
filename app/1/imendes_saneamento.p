@@ -53,6 +53,7 @@ DEF VAR jocaracTib      AS  JsonObject NO-UNDO.
 def input param vlcentrada as longchar. /* JSON ENTRADA */
 def input param vtmp       as char.     /* CAMINHO PROGRESS_TMP */
 
+
 def var vlcsaida   as longchar.         /* JSON SAIDA */
 
 def var lokjson as log.                 /* LOGICAL DE APOIO */
@@ -83,18 +84,21 @@ def temp-table ttapihistorico NO-UNDO
     field versao  AS CHAR
     field duracao  AS CHAR.
 
+//---------- HISTORICO-----------
+def temp-table ttfishistorico no-undo serialize-name "apifiscalhistorico"   
+    LIKE apifiscalhistorico. 
+    
+//---------- GRUPOS -------------    
 def temp-table ttgrupos no-undo serialize-name "fiscalgrupo"   
     LIKE fiscalgrupo.
 
-//---------- REGRAS-------------
+//---------- REGRAS -------------
 def temp-table ttregra no-undo serialize-name "fiscalregra"   
     LIKE fiscalregra.
 
-//---------- OPERACAO-------------
-
+//---------- OPERACAO------------
 def temp-table ttoperacao no-undo serialize-name "fiscaloperacao"   
     LIKE fiscaloperacao.                          
-
 
 DEF BUFFER bgeralpessoasfornecedor FOR geralpessoas.
  
@@ -112,6 +116,9 @@ DEF VAR vmensagem AS CHAR.
 DEF VAR vidoperacaofiscal AS INT.
 DEF VAR vdtVigIni AS CHAR.
 DEF VAR vdtVigFin AS CHAR.
+DEF VAR vcodigoNcm AS CHAR.
+DEF VAR vcodigoCest AS CHAR.
+DEF VAR vidHistorico AS INT.
 
 //variaveis de contador
 DEF VAR iGrupos AS INT.   
@@ -127,14 +134,74 @@ find first ttentrada no-error.
 
 
 /* APIFISCAL */
-FIND apifiscal WHERE apifiscal.idEmpresa = ttentrada.idempresa NO-LOCK.  
+FIND apifiscal WHERE apifiscal.idEmpresa = ttentrada.idempresa NO-LOCK. 
 
+IF apifiscal.login = ?  
+THEN DO:
+    RUN montasaida (400,"Campo login Invalido").
+    RETURN.
+END.
+
+IF apifiscal.senha = ?  
+THEN DO:
+    RUN montasaida (400,"Campo senha Invalido").
+    RETURN.
+END.
+
+IF apifiscal.tpAmb = ?  
+THEN DO:
+    RUN montasaida (400,"Campo tpAmb Invalido").
+    RETURN.
+END.
+
+IF apifiscal.cfopEntrada = ?  
+THEN DO:
+    RUN montasaida (400,"Campo cfopEntrada Invalido").
+    RETURN.
+END.
+
+IF apifiscal.finalidade = ?  
+THEN DO:
+    RUN montasaida (400,"Campo finalidade Invalido").
+    RETURN.
+END.
+ 
+        
 /* EMPRESA */
 FIND empresa WHERE empresa.idEmpresa = ttentrada.idEmpresa NO-LOCK.  
  
 /* GERAL PESSOAS */
 FIND geralpessoas WHERE geralpessoas.cpfCnpj = empresa.cnpj NO-LOCK.
 
+IF geralpessoas.cnae = ?  
+THEN DO:
+    RUN montasaida (400,"Campo cnae Invalido").
+    RETURN.
+END.
+
+IF geralpessoas.regimeEspecial = ?  
+THEN DO:
+    RUN montasaida (400,"Campo regimeEspecial Invalido").
+    RETURN.
+END.
+
+IF geralpessoas.regimeTrib = ?  
+THEN DO:
+    RUN montasaida (400,"Campo regimeTrib Invalido").
+    RETURN.
+END.
+
+IF geralpessoas.crt = ?  
+THEN DO:
+    RUN montasaida (400,"Campo crt Invalido").
+    RETURN.
+END.
+
+IF geralpessoas.origem = ?  
+THEN DO:
+    RUN montasaida (400,"Campo origem Invalido").
+    RETURN.
+END.
 
 vsimplesN = "".
 
@@ -149,6 +216,12 @@ END.
 /* GERAL PRODUTOS */
 FIND geralprodutos WHERE geralprodutos.idGeralProduto = ttentrada.idGeralProduto NO-LOCK. 
 
+/* FISCAL GRUPO */
+vcodigoNcm = "".
+find fiscalgrupo where fiscalgrupo.idGrupo = geralprodutos.idGrupo  no-lock no-error.
+if avail fiscalgrupo then do:
+    vcodigoNcm =  fiscalgrupo.codigoNcm.         
+end.
 
 /* JSON DE REQUEST */       
 joEmit = NEW JsonObject().
@@ -186,10 +259,10 @@ joPerfil:ADD("substlCMS","N").
 joPerfil:ADD("prodZFM","N").
 
 joProduto = NEW JsonObject().
-joProduto:ADD("codigo","7891960708166"). /* 7891960708166 */
+joProduto:ADD("codigo",geralprodutos.eanProduto). /* 7891960708166 */ 
 joProduto:ADD("codInterno","N").
 joProduto:ADD("descricao",geralprodutos.nomeProduto).
-joProduto:ADD("ncm","111111").
+joProduto:ADD("ncm",vcodigoNcm).
 
 jaProdutos = NEW JsonArray().
 jaProdutos:ADD(joProduto).
@@ -203,7 +276,7 @@ joImendes:ADD("produtos",jaProdutos).
 
 
 joImendes:Write(lcJsonRequest).
-
+//MESSAGE STRING(lcJsonauxiliar) view-as alert-box.
 
 /* INI - requisicao web */
 ASSIGN netClient   = ClientBuilder:Build():Client       
@@ -229,20 +302,32 @@ if type-of(netResponse:Entity, JsonObject) then do:
     
     joCabecalho = joResponse:GetJsonObject("Cabecalho").
         
-    CREATE ttapihistorico.
-    ttapihistorico.sugestao       =     joCabecalho:GetCharacter("sugestao").
-    ttapihistorico.amb       =     joCabecalho:GetInteger("amb").
-    ttapihistorico.cnpj       =     joCabecalho:GetCharacter("cnpj").
-    ttapihistorico.dthr       =     joCabecalho:GetCharacter("dthr").
-    ttapihistorico.transacao  =     joCabecalho:GetCharacter("transacao").
-    ttapihistorico.mensagem  =     joCabecalho:GetCharacter("mensagem").
-    ttapihistorico.prodEnv  =     joCabecalho:GetInteger("prodEnv").
-    ttapihistorico.prodRet  =     joCabecalho:GetInteger("prodRet").
-    ttapihistorico.prodNaoRet  =     joCabecalho:GetInteger("prodNaoRet").
-    ttapihistorico.comportamentosParceiro  =     joCabecalho:GetCharacter("comportamentosParceiro").
-    ttapihistorico.comportamentosCliente  =     joCabecalho:GetCharacter("comportamentosCliente").
-    ttapihistorico.versao  =     joCabecalho:GetCharacter("versao").
-    ttapihistorico.duracao  =     joCabecalho:GetCharacter("duracao").
+    CREATE ttfishistorico.
+    ttfishistorico.dtHistorico = ?. // função datetime
+    ttfishistorico.sugestao       =     joCabecalho:GetCharacter("sugestao").
+    ttfishistorico.amb       =     joCabecalho:GetInteger("amb").
+    ttfishistorico.cnpj       =     joCabecalho:GetCharacter("cnpj").
+    //ttfishistorico.dthr       =   joCabecalho:GetCharacter("dthr").
+    //ttfishistorico.transacao  =     joCabecalho:GetInteger("transacao").
+    ttfishistorico.mensagem  =     joCabecalho:GetCharacter("mensagem").
+    ttfishistorico.prodEnv  =     joCabecalho:GetInteger("prodEnv").
+    ttfishistorico.prodRet  =     joCabecalho:GetInteger("prodRet").
+    ttfishistorico.prodNaoRet  =     joCabecalho:GetInteger("prodNaoRet").
+    ttfishistorico.comportamentosParceiro  =     joCabecalho:GetCharacter("comportamentosParceiro").
+    ttfishistorico.comportamentosCliente  =     joCabecalho:GetCharacter("comportamentosCliente").
+    ttfishistorico.versao  =     joCabecalho:GetCharacter("versao").
+    ttfishistorico.duracao  =     joCabecalho:GetCharacter("duracao").
+    vidHistorico = 0.
+    RUN impostos/database/fishistorico-inc.p (input table ttentrada, 
+                                              output vidHistorico,
+                                              output vmensagem).
+    DELETE ttfishistorico.
+    if vmensagem <> ? then do:
+        RUN montasaida (400,vmensagem).
+        RETURN.
+    end.
+    find apifiscalhistorico where apifiscalhistorico.idHistorico = vidHistorico no-lock.
+     
 
      /* leitura de grupos */
     jaGrupos = joResponse:GetJsonArray("Grupos").

@@ -86,6 +86,13 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
                                 href="?tab=regrafiscal" role="tab">Regra Fiscal</a>
                             </li>
                         <?php }
+                        if ($nivelMenu >= 1) { ?>
+                            <li class="nav-item mr-1">
+                                <a class="nav-link 
+                                <?php if ($tab == "fishistorico") {echo " active ";} ?>" 
+                                href="?tab=fishistorico" role="tab">Fiscal Historico</a>
+                            </li>
+                        <?php }
                         if ($nivelMenu >= 4) { ?>
                             <li class="nav-item mr-1">
                                 <a class="nav-link 
@@ -120,6 +127,9 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
                         <option value="<?php echo URLROOT ?>/impostos/index.php?tab=regrafiscal" 
                         <?php if ($getTab == "regrafiscal") {echo " selected ";} ?>>Regra Fiscal</option>
 
+                        <option value="<?php echo URLROOT ?>/impostos/index.php?tab=fishistorico" 
+                        <?php if ($getTab == "fishistorico") {echo " selected ";} ?>>Fiscal Historico</option>
+
                         <option value="<?php echo URLROOT ?>/impostos/index.php?tab=configuracao" 
                         <?php if ($getTab == "configuracao") {echo " selected ";} ?>>Configurações</option>
                     </select>
@@ -149,6 +159,9 @@ $nivelMenu = $nivelMenuLogin['nivelMenu'];
             }
             if ($tab == "regrafiscal") {
                 $src = "cadastros/regrafiscal.php";
+            }
+            if ($tab == "fishistorico") {
+                $src = "cadastros/fishistorico.php";
             }
             if ($tab == "configuracao") {
                 $src = "configuracao/";

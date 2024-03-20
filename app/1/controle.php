@@ -69,6 +69,10 @@ if ($metodo == "GET") {
       include 'fisnotastatus.php';
       break;
 
+    case "fishistorico":
+      include 'fishistorico.php';
+      break;
+
     default:
       $jsonSaida = json_decode(json_encode(
         array(
@@ -133,6 +137,10 @@ if ($metodo == "PUT") {
 
     case "fisnotastatus":
       include 'fisnotastatus_inserir.php';
+      break;
+
+    case "fishistorico":
+      include 'fishistorico_inserir.php';
       break;
 
     default:
