@@ -32,12 +32,10 @@ if (isset($operacao["conteudoSaida"][0])) { // Conteudo Saida - Caso de erro
   $operacao = $operacao["conteudoSaida"][0];
 } else {
 
- if (!isset($operacao["lcJsonResponse"][1]) && ($jsonEntrada['idGeralProduto'] != null)) {  // Verifica se tem mais de 1 registro
-  $operacao = $operacao["lcJsonResponse"][0]; // Retorno sem array
-} else {
-  $operacao = $operacao["lcJsonResponse"];  
-}
-
+  $operacao = array(
+    "status" => 400,
+    "retorno" => "Erro na saida"
+  );
 }
 $jsonSaida = $operacao;
 

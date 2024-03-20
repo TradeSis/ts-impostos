@@ -253,7 +253,10 @@ if type-of(netResponse:Entity, JsonObject) then do:
         vcodigoGrupo = joGrupo:GetCharacter("codigo").
                  
         IF vcodigoGrupo = ?  
-        THEN NEXT. /* Validacao Erro do Json */
+        THEN DO:
+            RUN montasaida (400,"Codigo do Grupo Invalido").
+            RETURN.
+        END.
          
         find fiscalgrupo where fiscalgrupo.codigoGrupo = vcodigoGrupo  no-lock no-error.
         if avail fiscalgrupo then do:
@@ -285,8 +288,8 @@ if type-of(netResponse:Entity, JsonObject) then do:
                                                      output vmensagem).
             DELETE ttgrupos.
             if vmensagem <> ? then do:
-                message "ERRO AO CRIAR FISCALGRUPO - " vmensagem view-as alert-box.
-                return.
+                RUN montasaida (400,vmensagem).
+                RETURN.
             end.
             find fiscalgrupo where fiscalgrupo.idgrupo = vidgrupo no-lock.
         END.
@@ -306,11 +309,21 @@ if type-of(netResponse:Entity, JsonObject) then do:
                 jouF = jauFs:GetJsonObject(iuFs).
                 //jouF:Write(lcJsonauxiliar, TRUE).
                 vcodigoEstado = jouF:GetCharacter("uF").                            
-                        
+                IF vcodigoEstado = ? 
+                THEN DO:
+                    RUN montasaida (400,"Codigo do Estato Invalido").
+                    RETURN.
+
+                END.
+                    
                 joCFOP = jouF:GetJsonObject("CFOP").
                 //joCFOP:Write(lcJsonauxiliar, TRUE).
                 vcFOP = joCFOP:GetCharacter("cFOP").                                
-                            
+                IF vcFOP = ? 
+                THEN DO:
+                    RUN montasaida (400,"Codigo do CFOP Invalido").
+                    RETURN.
+                END.                            
                 jacaracTib = joCFOP:GetJsonArray("CaracTrib").
                 //jacaracTib:Write(lcJsonauxiliar, TRUE).
                                  
@@ -320,97 +333,97 @@ if type-of(netResponse:Entity, JsonObject) then do:
                                         
                     vcodigoCaracTrib = jocaracTib:GetCharacter("codigo").
                     vfinalidade = jocaracTib:GetCharacter("finalidade").
+                    IF vcodigoCaracTrib = ? OR vfinalidade = ?
+                    THEN DO:
+                        RUN montasaida (400,"Codigo do codigoCaracTrib/finalidade Invalido").
+                        RETURN.
+                    END.                            
+                    
                     vcodRegra = jocaracTib:GetCharacter("codRegra").
                     vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
                     
-                    IF vcodRegra = ? AND vcodExcecao = ? 
-                    THEN NEXT.
-                    
-                    ELSE DO:
-                        FIND fiscalregra where  fiscalregra.codRegra = vcodRegra AND 
-                                                fiscalregra.codExcecao = vcodExcecao  
-                                                no-lock no-error.
-                        IF avail fiscalregra
-                        then do:
-                            vidRegra = fiscalregra.idRegra.
-                        end.
-                        else do:
-                            CREATE ttregra.
-                            ttregra.codRegra = jocaracTib:GetCharacter("codRegra").
-                            ttregra.codExcecao = vcodExcecao.
-                            ttregra.dtVigIni = date(jocaracTib:GetCharacter("dtVigIni")).
-                            ttregra.dtVigFin = date(jocaracTib:GetCharacter("dtVigFin")).
-                            ttregra.cFOPCaracTrib = jocaracTib:GetCharacter("cFOP").
-                            ttregra.cST = jocaracTib:GetCharacter("cST").
-                            ttregra.cSOSN = jocaracTib:GetCharacter("cSOSN").
-                            ttregra.aliqIcmsInterna = jocaracTib:GetDecimal("aliqIcmsInterna").
-                            ttregra.aliqIcmsInterestadual = jocaracTib:GetDecimal("aliqIcmsInterestadual").
-                            ttregra.reducaoBcIcms = jocaracTib:GetDecimal("reducaoBcIcms").
-                            ttregra.reducaoBcIcmsSt = jocaracTib:GetDecimal("reducaoBcIcmsSt").
-                            ttregra.redBcICMsInterestadual = jocaracTib:GetDecimal("redBcICMsInterestadual").
-                            ttregra.aliqIcmsSt = jocaracTib:GetDecimal("aliqIcmsSt").
-                            ttregra.iVA = jocaracTib:GetDecimal("iVA").
-                            ttregra.iVAAjust = jocaracTib:GetDecimal("iVAAjust").
-                            ttregra.fCP = jocaracTib:GetDecimal("fCP").
-                            ttregra.codBenef = jocaracTib:GetCharacter("codBenef").
-                            ttregra.pDifer = jocaracTib:GetDecimal("pDifer").
-                            ttregra.pIsencao = jocaracTib:GetDecimal("pIsencao").
-                            ttregra.antecipado = jocaracTib:GetCharacter("antecipado").
-                            ttregra.desonerado = jocaracTib:GetCharacter("desonerado").
-                            ttregra.pICMSDeson = jocaracTib:GetDecimal("pICMSDeson").
-                            ttregra.isento = jocaracTib:GetCharacter("isento").
-                            ttregra.tpCalcDifal = jocaracTib:GetInteger("tpCalcDifal").
-                            ttregra.ampLegal = jocaracTib:GetCharacter("ampLegal").
-                            //ttregra.Protocolo = jocaracTib:GetCharacter("Protocolo").
-                            //ttregra.Convenio = jocaracTib:GetCharacter("Convenio").
-                            ttregra.regraGeral = jocaracTib:GetCharacter("regraGeral").
-                            
-                            vidRegra = 0.
-                            RUN impostos/database/regrafiscal-inc.p (input table ttentrada, 
-                                                                     output vidRegra,
-                                                                     output vmensagem).
-                            DELETE ttregra.
-                            if vmensagem <> ? then do:
-                                message "ERRO AO CRIAR REGRAFISCAL - " vmensagem view-as alert-box.
-                                return.
-                            end.
-                            find fiscalregra where fiscalregra.idRegra = vidRegra no-lock.
-                        end.   
-                    END.
-              
-                                    
-                    IF vidgrupo <> ? AND vcodigoEstado <> ? AND vcFOP <> ? AND vcodigoCaracTrib <> ? AND vfinalidade <> ?
+                    IF vcodRegra = ? OR vcodExcecao = ? 
                     THEN DO:
-                        find fiscaloperacao where 
-                                            fiscaloperacao.idGrupo = vidgrupo AND
-                                            fiscaloperacao.codigoEstado = vcodigoEstado AND 
-                                            fiscaloperacao.cFOP = vcFOP AND 
-                                            fiscaloperacao.finalidade = vfinalidade  
+                        RUN montasaida (400,"Codigo do codRegra/codExcecao Invalido").
+                        RETURN.                         
+                    END.
+                    
+                    FIND fiscalregra where  fiscalregra.codRegra = vcodRegra AND 
+                                            fiscalregra.codExcecao = vcodExcecao  
                                             no-lock no-error.
-                        IF NOT avail fiscaloperacao
-                        then do:
-                            CREATE ttoperacao.
-                            ttoperacao.idGrupo = vidgrupo.
-                            ttoperacao.codigoEstado = vcodigoEstado.
-                            ttoperacao.cFOP = vcFOP.
-                            ttoperacao.codigoCaracTrib = vcodigoCaracTrib.
-                            ttoperacao.finalidade = vfinalidade.
-                            ttoperacao.idRegra = vidRegra.
-                            
-                            vidoperacaofiscal = 0.
-                            RUN impostos/database/operacaofiscal-inc.p (input table ttentrada, 
-                                                                        output vidoperacaofiscal,
-                                                                        output vmensagem).
-                            DELETE ttoperacao.
-                            if vmensagem <> ? then do:
-                                message "ERRO AO CRIAR OPERACAOFISCAL - " vmensagem view-as alert-box.
-                                return.
-                            end.
+                    IF avail fiscalregra
+                    then do:
+                        vidRegra = fiscalregra.idRegra.
+                    end.
+                    else do:
+                        CREATE ttregra.
+                        ttregra.codRegra = jocaracTib:GetCharacter("codRegra").
+                        ttregra.codExcecao = vcodExcecao.
+                        ttregra.dtVigIni = date(jocaracTib:GetCharacter("dtVigIni")).
+                        ttregra.dtVigFin = date(jocaracTib:GetCharacter("dtVigFin")).
+                        ttregra.cFOPCaracTrib = jocaracTib:GetCharacter("cFOP").
+                        ttregra.cST = jocaracTib:GetCharacter("cST").
+                        ttregra.cSOSN = jocaracTib:GetCharacter("cSOSN").
+                        ttregra.aliqIcmsInterna = jocaracTib:GetDecimal("aliqIcmsInterna").
+                        ttregra.aliqIcmsInterestadual = jocaracTib:GetDecimal("aliqIcmsInterestadual").
+                        ttregra.reducaoBcIcms = jocaracTib:GetDecimal("reducaoBcIcms").
+                        ttregra.reducaoBcIcmsSt = jocaracTib:GetDecimal("reducaoBcIcmsSt").
+                        ttregra.redBcICMsInterestadual = jocaracTib:GetDecimal("redBcICMsInterestadual").
+                        ttregra.aliqIcmsSt = jocaracTib:GetDecimal("aliqIcmsSt").
+                        ttregra.iVA = jocaracTib:GetDecimal("iVA").
+                        ttregra.iVAAjust = jocaracTib:GetDecimal("iVAAjust").
+                        ttregra.fCP = jocaracTib:GetDecimal("fCP").
+                        ttregra.codBenef = jocaracTib:GetCharacter("codBenef").
+                        ttregra.pDifer = jocaracTib:GetDecimal("pDifer").
+                        ttregra.pIsencao = jocaracTib:GetDecimal("pIsencao").
+                        ttregra.antecipado = jocaracTib:GetCharacter("antecipado").
+                        ttregra.desonerado = jocaracTib:GetCharacter("desonerado").
+                        ttregra.pICMSDeson = jocaracTib:GetDecimal("pICMSDeson").
+                        ttregra.isento = jocaracTib:GetCharacter("isento").
+                        ttregra.tpCalcDifal = jocaracTib:GetInteger("tpCalcDifal").
+                        ttregra.ampLegal = jocaracTib:GetCharacter("ampLegal").
+                        //ttregra.Protocolo = jocaracTib:GetCharacter("Protocolo").
+                        //ttregra.Convenio = jocaracTib:GetCharacter("Convenio").
+                        ttregra.regraGeral = jocaracTib:GetCharacter("regraGeral").
+                        
+                        vidRegra = 0.
+                        RUN impostos/database/regrafiscal-inc.p (input table ttentrada, 
+                                                                 output vidRegra,
+                                                                 output vmensagem).
+                        DELETE ttregra.
+                        if vmensagem <> ? then do:
+                            RUN montasaida (400,vmensagem).
+                            RETURN.
                         end.
-                    END.
-                    ELSE DO:
-                        MESSAGE "Parametros de entrada invalidos!. ".
-                    END.
+                        find fiscalregra where fiscalregra.idRegra = vidRegra no-lock.
+                    end.   
+              
+                    find fiscaloperacao where 
+                                        fiscaloperacao.idGrupo = vidgrupo AND
+                                        fiscaloperacao.codigoEstado = vcodigoEstado AND 
+                                        fiscaloperacao.cFOP = vcFOP AND 
+                                        fiscaloperacao.finalidade = vfinalidade  
+                                        no-lock no-error.
+                    IF NOT avail fiscaloperacao
+                    then do:
+                        CREATE ttoperacao.
+                        ttoperacao.idGrupo = vidgrupo.
+                        ttoperacao.codigoEstado = vcodigoEstado.
+                        ttoperacao.cFOP = vcFOP.
+                        ttoperacao.codigoCaracTrib = vcodigoCaracTrib.
+                        ttoperacao.finalidade = vfinalidade.
+                        ttoperacao.idRegra = vidRegra.
+                        
+                        vidoperacaofiscal = 0.
+                        RUN impostos/database/operacaofiscal-inc.p (input table ttentrada, 
+                                                                    output vidoperacaofiscal,
+                                                                    output vmensagem).
+                        DELETE ttoperacao.
+                        if vmensagem <> ? then do:
+                            RUN montasaida (400,vmensagem).
+                            RETURN.
+                        end.
+                    end.
                 end.  /* icaracTib */  
             end.  /* iuFs */
         end. /* iRegras */
@@ -433,13 +446,22 @@ END.
 /* criar ttsaida */
 
 /* PUT UNFORMATTED string(lcJsonResponse). */
-create ttsaida.
-ttsaida.tstatus = 200.
-ttsaida.descricaoStatus = "ok".
 
-hsaida  = temp-table ttsaida:handle.
-
-lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
-put unformatted string(vlcSaida).
+RUN montasaida (200,"").
+RETURN.
 
 
+procedure montasaida.
+    DEF INPUT PARAM tstatus AS INT.
+    DEF INPUT PARAM tdescricaoStatus AS CHAR.
+
+    create ttsaida.
+    ttsaida.tstatus = tstatus.
+    ttsaida.descricaoStatus = tdescricaoStatus.
+
+    hsaida  = temp-table ttsaida:handle.
+
+    lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
+    put unformatted string(vlcSaida).
+
+END PROCEDURE.
