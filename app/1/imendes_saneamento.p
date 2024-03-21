@@ -306,12 +306,14 @@ if type-of(netResponse:Entity, JsonObject) then do:
     joCabecalho = joResponse:GetJsonObject("Cabecalho").
         
     CREATE ttfishistorico.
-    ttfishistorico.dtHistorico = ?. // função datetime
+    ttfishistorico.dtHistorico = DATETIME(TODAY, MTIME).
     ttfishistorico.sugestao       =     joCabecalho:GetCharacter("sugestao").
     ttfishistorico.amb       =     joCabecalho:GetInteger("amb").
     ttfishistorico.cnpj       =     joCabecalho:GetCharacter("cnpj").
-    //ttfishistorico.dthr       =   joCabecalho:GetCharacter("dthr").
-    //ttfishistorico.transacao  =     joCabecalho:GetInteger("transacao").
+    ttfishistorico.dthr       =    joCabecalho:GetDateTime("dthr").
+    ttfishistorico.transacao  =     joCabecalho:GetCharacter("transacao").
+    //ttfishistorico.transacao  =     INT64(joCabecalho:GetCharacter("transacao")).
+    ttfishistorico.mensagem  =     joCabecalho:GetCharacter("mensagem").
     ttfishistorico.mensagem  =     joCabecalho:GetCharacter("mensagem").
     ttfishistorico.prodEnv  =     joCabecalho:GetInteger("prodEnv").
     ttfishistorico.prodRet  =     joCabecalho:GetInteger("prodRet").

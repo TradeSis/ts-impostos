@@ -11,8 +11,8 @@ def output param vmensagem as char.
 vmensagem = ?.
 vidoperacaofiscal = ?.
 
-if not avail ttentrada
-then do:
+find first ttentrada no-error.
+if not avail ttentrada then do:
     vmensagem = "Dados de Entrada fiscaloperacao nao encontrados".
     return.
 end.

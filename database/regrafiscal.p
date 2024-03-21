@@ -10,9 +10,15 @@ def output param vmensagem as char.
 vidregra = ?.
 vmensagem = ?.
 
+find first ttentrada no-error.
+if not avail ttentrada then do:
+    vmensagem = "Dados de Entrada fiscalregra nao encontrados".
+    return.    
+end.
+
 if ttentrada.codRegra = ? OR ttentrada.codExcecao = ?
 then do:
-	vmensagem = "Dados de Entrada Invalidos".
+	vmensagem = "Dados de Entrada  Invalidos".
     return.
 end.
 
