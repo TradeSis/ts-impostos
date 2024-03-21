@@ -429,10 +429,8 @@ if type-of(netResponse:Entity, JsonObject) then do:
                         RETURN.
                     END.                            
                     
-                    //vcodRegra = jocaracTib:GetCharacter("codRegra").
-                    //vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
-                    vcodRegra = "6350".
-                    vcodExcecao = "0".
+                    vcodRegra = jocaracTib:GetCharacter("codRegra").
+                    vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
                     
                     IF vcodRegra = ? OR vcodExcecao = ? 
                     THEN DO:
