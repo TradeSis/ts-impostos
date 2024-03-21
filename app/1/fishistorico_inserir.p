@@ -23,9 +23,10 @@ lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
 vidHistorico = 0.
-RUN impostos/database/fishistorico-inc.p (input table ttentrada, 
-                                          output idHistorico,
-                                          output vmensagem).
+RUN impostos/database/fishistorico.p (  input "PUT",
+                                        input table ttentrada, 
+                                        output idHistorico,
+                                        output vmensagem).
 
 IF vmensagem <> ? 
 THEN DO:

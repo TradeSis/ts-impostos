@@ -23,9 +23,10 @@ lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
 vidregra = 0.
-RUN impostos/database/regrafiscal-inc.p (input table ttentrada, 
-                                         output vidregra,
-                                         output vmensagem).
+RUN impostos/database/regrafiscal.p (   input "PUT",
+                                        input table ttentrada, 
+                                        output vidregra,
+                                        output vmensagem).
 
 if vmensagem <> ?
 then do:

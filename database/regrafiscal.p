@@ -2,7 +2,7 @@
 def temp-table ttentrada no-undo serialize-name "fiscalregra"   /* JSON ENTRADA */
     LIKE fiscalregra.
 
-  
+DEF INPUT PARAM vacao AS CHAR.   
 DEF INPUT PARAM TABLE FOR ttentrada.
 def output param vidregra like fiscalregra.idregra.
 def output param vmensagem as char.
@@ -23,9 +23,13 @@ then do:
     return.
 end.
 
+IF vacao = "PUT"
+THEN DO:
+    do on error undo:
+        create fiscalregra.   
+        vidregra = fiscalregra.idregra.
+        BUFFER-COPY ttentrada EXCEPT idRegra TO fiscalregra.
+    end.  
+END.
 
-do on error undo:
-    create fiscalregra.   
-    vidregra = fiscalregra.idregra.
-    BUFFER-COPY ttentrada EXCEPT idRegra TO fiscalregra.
-end.
+

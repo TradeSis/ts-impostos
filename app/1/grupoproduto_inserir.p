@@ -23,9 +23,10 @@ lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
 vidgrupo = 0.
-RUN impostos/database/grupoproduto-inc.p (input table ttentrada, 
-                                         output vidgrupo,
-                                         output vmensagem).
+RUN impostos/database/grupoproduto.p (  input "PUT",
+                                        input table ttentrada, 
+                                        output vidgrupo,
+                                        output vmensagem).
 
 IF vmensagem <> ? 
 THEN DO:

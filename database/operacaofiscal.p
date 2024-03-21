@@ -3,9 +3,9 @@
 def temp-table ttentrada no-undo serialize-name "fiscaloperacao"   /* JSON ENTRADA */
     LIKE fiscaloperacao.
 
-  
+DEF INPUT PARAM vacao AS CHAR.   
 DEF INPUT PARAM TABLE FOR ttentrada.
-def output param vidoperacaofiscal like fiscalfiscaloperacao.grupo.idgrupo.
+def output param vidoperacaofiscal LIKE fiscaloperacao.idoperacaofiscal.
 def output param vmensagem as char.
 
 vmensagem = ?.
@@ -13,7 +13,7 @@ vidoperacaofiscal = ?.
 
 if not avail ttentrada
 then do:
-    vmensagem = "Dados de Entrada nao encontrados".
+    vmensagem = "Dados de Entrada fiscaloperacao nao encontrados".
     return.
 end.
 
@@ -37,9 +37,12 @@ then do:
     return.
 end.
 
+IF vacao = "PUT"
+THEN DO:
+    do on error undo:
+        create fiscaloperacao.
+        vidoperacaofiscal = fiscaloperacao.idoperacaofiscal.
+        BUFFER-COPY ttentrada EXCEPT idoperacaofiscal TO fiscaloperacao.
+    end.  
+END.
 
-do on error undo:
-    create fiscaloperacao.
-    vidoperacaofiscal = fiscaloperacao.idoperacaofiscal.
-    BUFFER-COPY ttentrada EXCEPT idoperacaofiscal TO fiscaloperacao.
-end.

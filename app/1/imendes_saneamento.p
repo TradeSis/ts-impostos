@@ -68,22 +68,6 @@ def temp-table ttsaida  no-undo serialize-name "conteudoSaida"  /* JSON SAIDA CA
     field tstatus        as int serialize-name "status"
     field descricaoStatus      as CHAR.
 
-    
-def temp-table ttapihistorico NO-UNDO 
-    field sugestao  AS CHAR
-    field amb  AS INT
-    field cnpj  AS CHAR
-    field dthr  AS CHAR
-    field transacao  AS CHAR
-    field mensagem  AS CHAR
-    field prodEnv  AS INT
-    field prodRet  AS INT
-    field prodNaoRet  AS INT
-    field comportamentosParceiro  AS CHAR
-    field comportamentosCliente  AS CHAR
-    field versao  AS CHAR
-    field duracao  AS CHAR.
-
 //---------- HISTORICO-----------
 def temp-table ttfishistorico no-undo serialize-name "apifiscalhistorico"   
     LIKE apifiscalhistorico. 
@@ -131,10 +115,19 @@ DEF VAR icaracTib AS INT.
 hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
-
+IF NOT AVAIL ttentrada 
+THEN DO:
+    RUN montasaida (400,"Dados de entrada invalidos!").
+    RETURN.
+END.
 
 /* APIFISCAL */
-FIND apifiscal WHERE apifiscal.idEmpresa = ttentrada.idempresa NO-LOCK. 
+FIND apifiscal WHERE apifiscal.idEmpresa = ttentrada.idempresa NO-LOCK NO-ERROR. 
+IF NOT AVAIL apifiscal 
+THEN DO:
+    RUN montasaida (400,"Apifiscal não cadastrada para empresa!").
+    RETURN.
+END.
 
 IF apifiscal.login = ?  
 THEN DO:
@@ -168,10 +161,20 @@ END.
  
         
 /* EMPRESA */
-FIND empresa WHERE empresa.idEmpresa = ttentrada.idEmpresa NO-LOCK.  
+FIND empresa WHERE empresa.idEmpresa = ttentrada.idEmpresa NO-LOCK NO-ERROR.  
+IF NOT AVAIL empresa 
+THEN DO:
+    RUN montasaida (400,"Empresa não cadastrada!").
+    RETURN.
+END.
  
 /* GERAL PESSOAS */
 FIND geralpessoas WHERE geralpessoas.cpfCnpj = empresa.cnpj NO-LOCK.
+IF NOT AVAIL geralpessoas 
+THEN DO:
+    RUN montasaida (400,"Geralpessoas não encontrada!").
+    RETURN.
+END.
 
 IF geralpessoas.cnae = ?  
 THEN DO:
@@ -318,9 +321,10 @@ if type-of(netResponse:Entity, JsonObject) then do:
     ttfishistorico.versao  =     joCabecalho:GetCharacter("versao").
     ttfishistorico.duracao  =     joCabecalho:GetCharacter("duracao").
     vidHistorico = 0.
-    RUN impostos/database/fishistorico-inc.p (input table ttentrada, 
-                                              output vidHistorico,
-                                              output vmensagem).
+    RUN impostos/database/fishistorico.p (  INPUT "PUT",
+                                            input table ttfishistorico, 
+                                            output vidHistorico,
+                                            output vmensagem).
     DELETE ttfishistorico.
     if vmensagem <> ? then do:
         RUN montasaida (400,vmensagem).
@@ -368,9 +372,10 @@ if type-of(netResponse:Entity, JsonObject) then do:
             ttgrupos.codenq = joGrupo:GetJsonObject("iPI"):GetCharacter("codenq").
             ttgrupos.ipiex = joGrupo:GetJsonObject("iPI"):GetCharacter("ex").
             vidgrupo = 0.
-            RUN impostos/database/grupoproduto-inc.p (input table ttentrada, 
-                                                     output vidgrupo,
-                                                     output vmensagem).
+            RUN impostos/database/grupoproduto.p (  INPUT "PUT",
+                                                    input table ttgrupos, 
+                                                    output vidgrupo,
+                                                    output vmensagem).
             DELETE ttgrupos.
             if vmensagem <> ? then do:
                 RUN montasaida (400,vmensagem).
@@ -424,8 +429,10 @@ if type-of(netResponse:Entity, JsonObject) then do:
                         RETURN.
                     END.                            
                     
-                    vcodRegra = jocaracTib:GetCharacter("codRegra").
-                    vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
+                    //vcodRegra = jocaracTib:GetCharacter("codRegra").
+                    //vcodExcecao = STRING(jocaracTib:GetInteger("codExcecao")).
+                    vcodRegra = "6350".
+                    vcodExcecao = "0".
                     
                     IF vcodRegra = ? OR vcodExcecao = ? 
                     THEN DO:
@@ -472,9 +479,10 @@ if type-of(netResponse:Entity, JsonObject) then do:
                         ttregra.regraGeral = jocaracTib:GetCharacter("regraGeral").
                         
                         vidRegra = 0.
-                        RUN impostos/database/regrafiscal-inc.p (input table ttentrada, 
-                                                                 output vidRegra,
-                                                                 output vmensagem).
+                        RUN impostos/database/regrafiscal.p (   INPUT "PUT",
+                                                                input table ttregra, 
+                                                                output vidRegra,
+                                                                output vmensagem).
                         DELETE ttregra.
                         if vmensagem <> ? then do:
                             RUN montasaida (400,vmensagem).
@@ -500,7 +508,8 @@ if type-of(netResponse:Entity, JsonObject) then do:
                         ttoperacao.idRegra = vidRegra.
                         
                         vidoperacaofiscal = 0.
-                        RUN impostos/database/operacaofiscal-inc.p (input table ttentrada, 
+                        RUN impostos/database/operacaofiscal.p (    INPUT "PUT",
+                                                                    INPUT table ttoperacao, 
                                                                     output vidoperacaofiscal,
                                                                     output vmensagem).
                         DELETE ttoperacao.

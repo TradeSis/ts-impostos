@@ -23,7 +23,8 @@ hEntrada = temp-table ttentrada:HANDLE.
 lokJSON = hentrada:READ-JSON("longchar",vlcentrada, "EMPTY") no-error.
 find first ttentrada no-error.
 
-RUN impostos/database/operacaofiscal-inc.p (input table ttentrada, 
+RUN impostos/database/operacaofiscal.p (    input "PUT",
+                                            input table ttentrada, 
                                             output vidoperacaofiscal,
                                             output vmensagem).
 
@@ -43,7 +44,7 @@ END.
 
 create ttsaida.
 ttsaida.tstatus = 200.
-ttsaida.descricaoStatus = "Regra criada com sucesso".
+ttsaida.descricaoStatus = "Operacao criada com sucesso".
 
 hsaida  = temp-table ttsaida:handle.
 
