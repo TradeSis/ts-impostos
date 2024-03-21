@@ -68,7 +68,16 @@ if (isset($_GET['operacao'])) {
 		$xmlArquivos = array();
 	
 		foreach ($_FILES['files']['tmp_name'] as $index => $tmpName) {
-			$xmlArquivo = file_get_contents($tmpName);
+			$originalFilename = $_FILES['files']['name'][$index];
+        
+			$extension = pathinfo($originalFilename, PATHINFO_EXTENSION);
+			
+			$newFilename = 'carregado_' . $originalFilename;
+
+			$targetPath = '/xampp/htdocs/xml/' . $newFilename;
+			move_uploaded_file($tmpName, $targetPath);
+
+			$xmlArquivo = file_get_contents($targetPath);
 			$xmlArquivos[] = $xmlArquivo;
 		}
 	
@@ -128,7 +137,6 @@ if (isset($_GET['operacao'])) {
 
 	if ($operacao == "buscarProduImposto") {
 		$apiEntrada = array(
-			'idEmpresa' => $_SESSION['idEmpresa'],
 			'idNota' => $_POST['idNota'],
 			'nItem' => $_POST['nItem']
 		);
@@ -140,7 +148,6 @@ if (isset($_GET['operacao'])) {
 	}
 	if ($operacao == "buscarProduICMS") {
 		$apiEntrada = array(
-			'idEmpresa' => $_SESSION['idEmpresa'],
 			'idNota' => $_POST['idNota'],
 			'nItem' => $_POST['nItem']
 		);
