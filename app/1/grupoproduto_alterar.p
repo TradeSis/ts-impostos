@@ -60,7 +60,6 @@ then do:
     message string(vlcSaida).
     return.
 end.
-
 IF ttentrada.codigoGrupo <> ? AND ttentrada.codigoGrupo <> fiscalgrupo.codigoGrupo
 THEN DO:
     find bfiscalgrupo where bfiscalgrupo.codigoGrupo = ttentrada.codigoGrupo no-lock no-error.
@@ -82,10 +81,10 @@ END.
 do on error undo:
     find fiscalgrupo where fiscalgrupo.idGrupo = ttentrada.idGrupo exclusive no-error.
     BUFFER-COPY ttentrada 
-            EXCEPT idGrupo codigoGrupo
+            EXCEPT idGrupo codigoGrupo 
             TO fiscalgrupo.
-    IF ttentrada.codigoGrupo <> ? 
-    THEN DO:
+    IF ttentrada.codigoGrupo <> ? THEN
+    DO:
         fiscalgrupo.codigoGrupo = ttentrada.codigoGrupo.
     END.
 end.
@@ -98,3 +97,5 @@ hsaida  = temp-table ttsaida:handle.
 
 lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
 put unformatted string(vlcSaida).
+
+
