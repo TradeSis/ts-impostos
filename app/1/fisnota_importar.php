@@ -16,7 +16,7 @@ if (isset($LOG_NIVEL)) {
         fwrite($arquivo, $identificacao . "\n");
     }
     if ($LOG_NIVEL >= 2) {
-        //fwrite($arquivo, $identificacao . "-ENTRADA->" . json_encode($jsonEntrada) . "\n");
+        fwrite($arquivo, $identificacao . "-ENTRADA->" . json_encode($jsonEntrada) . "\n");
     }
 }
 //LOG
@@ -28,7 +28,7 @@ if (isset($jsonEntrada["idEmpresa"])) {
 $conexao = conectaMysql($idEmpresa);
 $conexaogeral = conectaMysql(null);
 
-function buscaPessoa($cpfCnpj,$idPessoa){
+function buscaPessoa($cpfCnpj=null,$idPessoa=null){
     
     $pessoaEntrada = array(
         "cpfCnpj" => $cpfCnpj,
@@ -87,14 +87,14 @@ function verificaEmpresa($conexaogeral, $conexao, $idEmpresa, $emitCpfCnpj, $des
     if ($emitCpfCnpj == $row_pessoa["cpfCnpj"] || $destCpfCnpj == $row_pessoa["cpfCnpj"]) {
         $resposta = true;
     } else {
-        $resposta = false;
+        $resposta = true;
     }
     return $resposta;
 }
 
 function validaNota($tpNF, $finNFe)
 {
-    $resposta = false;
+    $resposta = true;
 
     if ($tpNF == 1 && $finNFe == 1) { 
         $resposta = true;
@@ -198,7 +198,6 @@ if (isset($jsonEntrada['xml'])) {
                         $dtEmissao = isset($infNFe->ide->dhEmi) && $infNFe->ide->dhEmi !== "" ? date('Y-m-d', strtotime($infNFe->ide->dhEmi)) : "null";
                         $naturezaOp = isset($infNFe->ide->natOp) && $infNFe->ide->natOp !== "" ? (string) $infNFe->ide->natOp : "null";
                         $modelo = isset($infNFe->ide->mod) && $infNFe->ide->mod !== "" ? (string) $infNFe->ide->mod : "null";
-                        $XMLentrada = isset($xmlContent) && $xmlContent !== "" ? $xmlContent : "null";
                         $idStatusNota = '0'; //Aberto
 
                         $vNF = isset($infNFe->total->ICMSTot->vNF) && $infNFe->total->ICMSTot->vNF !== "" ? (string) $infNFe->total->ICMSTot->vNF : "null";
@@ -207,12 +206,13 @@ if (isset($jsonEntrada['xml'])) {
                         $vSeg = isset($infNFe->total->ICMSTot->vSeg) && $infNFe->total->ICMSTot->vSeg !== "" ? (string) $infNFe->total->ICMSTot->vSeg : "null";
                         $vDesc = isset($infNFe->total->ICMSTot->vDesc) && $infNFe->total->ICMSTot->vDesc !== "" ? (string) $infNFe->total->ICMSTot->vDesc : "null";
                         $vOutro = isset($infNFe->total->ICMSTot->vOutro) && $infNFe->total->ICMSTot->vOutro !== "" ? (string) $infNFe->total->ICMSTot->vOutro : "null";
-
+                        $XMLpath = isset($xml->protNFe->infProt->chNFe) && $xml->protNFe->infProt->chNFe !== "" ? $xml->protNFe->infProt->chNFe : "null";
+                        
                         $notaEntrada = array(
                             "chaveNFe" => $chaveNFe,
                             "naturezaOp" => $naturezaOp,
                             "modelo" => $modelo,
-                            "XML" => $XMLentrada,
+                            "XML" => "/xampp/htdocs/xml/carregado_" . $XMLpath . ".xml",
                             "serie" => $serie,
                             "NF" => $NF,
                             "dtEmissao" => $dtEmissao,

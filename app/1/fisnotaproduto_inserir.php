@@ -3,40 +3,37 @@ foreach ($infNFe->det as $item) {
 
     
 
-    $nItem = isset($item['nItem']) && $item['nItem'] !== "" ? "'" . (string) $item['nItem'] . "'" : "NULL";
-    $quantidade = isset($item->prod->qCom) && $item->prod->qCom !== "" ? "'" . (string) $item->prod->qCom . "'" : "NULL";
-    $unidCom = isset($item->prod->uCom) && $item->prod->uCom !== "" ? "'" . (string) $item->prod->uCom . "'" : "NULL";
-    $valorUnidade = isset($item->prod->vUnCom) && $item->prod->vUnCom !== "" ? "'" . (string) $item->prod->vUnCom . "'" : "NULL";
-    $valorTotal = isset($item->prod->vProd) && $item->prod->vProd !== "" ? "'" . (string) $item->prod->vProd . "'" : "NULL";
-    $cfop = isset($item->prod->CFOP) && $item->prod->CFOP !== "" ? "'" . (string) $item->prod->CFOP . "'" : "NULL";
-    $codigoNcm = isset($item->prod->NCM) && $item->prod->NCM !== "" ? "'" . (string) $item->prod->NCM . "'" : "NULL";
-    $codigoCest = isset($item->prod->CEST) && $item->prod->CEST !== "" ? "'" . (string) $item->prod->CEST . "'" : "NULL";
-    $eanProduto = isset($item->prod->cEAN) && $item->prod->cEAN !== "" ? "'" . (string) $item->prod->cEAN . "'" : "NULL";
-    $refProduto = isset($item->prod->cProd) && $item->prod->cProd !== "" ? "'" . (string) $item->prod->cProd . "'" : "NULL";
+    $nItem = isset($item['nItem']) && $item['nItem'] !== "" ? (string) $item['nItem'] : null ;
+    $quantidade = isset($item->prod->qCom) && $item->prod->qCom !== "" ? (string) $item->prod->qCom : null ;
+    $unidCom = isset($item->prod->uCom) && $item->prod->uCom !== "" ? (string) $item->prod->uCom : null ;
+    $valorUnidade = isset($item->prod->vUnCom) && $item->prod->vUnCom !== "" ? (string) $item->prod->vUnCom : null ;
+    $valorTotal = isset($item->prod->vProd) && $item->prod->vProd !== "" ? (string) $item->prod->vProd : null ;
+    $cfop = isset($item->prod->CFOP) && $item->prod->CFOP !== "" ? (string) $item->prod->CFOP : null ;
+    $codigoNcm = isset($item->prod->NCM) && $item->prod->NCM !== "" ? (string) $item->prod->NCM : null ;
+    $codigoCest = isset($item->prod->CEST) && $item->prod->CEST !== "" ? (string) $item->prod->CEST : null ;
+    $eanProduto = isset($item->prod->cEAN) && $item->prod->cEAN !== "" ? (string) $item->prod->cEAN : null ;
+    $refProduto = isset($item->prod->cProd) && $item->prod->cProd !== "" ? (string) $item->prod->cProd : null ;
 
     
     if ($eanProduto == "'SEM GTIN'" || $eanProduto == "''") {
-        $eanProduto = "NULL";
+        $eanProduto = null ;
     }
 
-    $buscaProduto = "SELECT * FROM produtos WHERE idPessoaFornecedor = $idPessoaEmitente AND refProduto = $refProduto";
-    $buscar = mysqli_query($conexao, $buscaProduto);
-    if (mysqli_num_rows($buscar) == 1) {
+    $dadosProduto = buscaProduto($idPessoaEmitente,$refProduto);
+    if (isset($dadosProduto['idProduto'])) {
 
-        $dadosProduto = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
         $idProduto = $dadosProduto["idProduto"];
 
     } else {
-        $nomeProduto = "'" . (string) $item->prod->xProd . "'";
+        $nomeProduto = (string) $item->prod->xProd;
 
-        if($eanProduto == "NULL"){
-            $buscaGeralProdutos = "SELECT * FROM geralprodutos WHERE eanProduto = $eanProduto";
+        if ($eanProduto == "NULL") {
+            $geralproduto = buscaGeralProduto($eanProduto);
         } else {
-            $buscaGeralProdutos = "SELECT * FROM geralprodutos WHERE nomeProduto = $nomeProduto";
+            $geralproduto = buscaGeralProduto($nomeProduto);
         }
-        $geralprodutos = mysqli_query($conexaogeral, $buscaGeralProdutos);
-        $dadosGeralprodutos = mysqli_fetch_array($geralprodutos, MYSQLI_ASSOC);
-        if (mysqli_num_rows($geralprodutos) == 0) {
+        if (!isset($geralproduto[0]['idNota'])) {
+                
                 $geralProdutosEntrada = array(
                     'eanProduto' => str_replace("'", "", $eanProduto),
                     'nomeProduto' => (string) $item->prod->xProd
@@ -46,9 +43,7 @@ foreach ($infNFe->det as $item) {
                 $idGeralProduto = $geralProdutosRetorno['idGeralProduto'];
 
                 //**GeralFornecimento
-                $buscaPessoas = "SELECT * FROM pessoas WHERE idPessoa = $idPessoaEmitente";
-                $buscar = mysqli_query($conexao, $buscaPessoas);
-                $dadosPessoa = mysqli_fetch_array($buscar, MYSQLI_ASSOC);
+                $dadosPessoa = buscaPessoa(null,$idPessoaEmitente);
 
                 $geralFornecimentoEntrada = array(
                     'Cnpj' => $dadosPessoa["cpfCnpj"],
@@ -59,7 +54,6 @@ foreach ($infNFe->det as $item) {
                         
                 $geralFornecimentoRetorno = chamaAPI(null, '/sistema/geralfornecimento', json_encode($geralFornecimentoEntrada), 'PUT');
             }
-
         $produEntrada = array(
             'idEmpresa' => $idEmpresa,
             'idGeralProduto' => $idGeralProduto,
@@ -74,79 +68,104 @@ foreach ($infNFe->det as $item) {
         $idProduto = $produRetorno['idProduto'];
 
     }
+        $fisnotaprodutoEntrada = array(
+            "idNota" => $idNota,
+            "nItem" => $nItem,
+            "idProduto" => (string) $idProduto,
+            "quantidade" => $quantidade,
+            "unidCom" => $unidCom,
+            "valorUnidade" => $valorUnidade,
+            "valorTotal" => $valorTotal,
+            "cfop" => $cfop,
+            "codigoNcm" => $codigoNcm,
+            "codigoCest" => $codigoCest
+        ); 
+        $progr = new chamaprogress();
+        $retorno = $progr->executarprogress("impostos/app/1/fisnotaproduto_inserir",json_encode($fisnotaprodutoEntrada));
+        fwrite($arquivo,$identificacao."-NOTAPRODUTO_RETORNO->".$retorno."\n");
 
-    $sqlNotaProduto = "INSERT INTO fisnotaproduto(idNota,nItem,idProduto,quantidade,unidCom,valorUnidade,valorTotal,cfop,codigoNcm,codigoCest)
-        VALUES($idNota,$nItem,$idProduto,$quantidade,$unidCom,$valorUnidade,$valorTotal,$cfop,$codigoNcm,$codigoCest)";
-
-    //LOG
-    if (isset($LOG_NIVEL)) {
-        if ($LOG_NIVEL >= 3) {
-            fwrite($arquivo, $identificacao . "-SQL_NotaProduto->" . $sqlNotaProduto . "\n");
-        }
-    }
-    //LOG
-
-    $atualizarNotaProduto = mysqli_query($conexao, $sqlNotaProduto);
 
     //********************************************FISNOTAPRODUTOSIMPOSTO
     if (isset($item->imposto)) {
-        $vTotTribIMPOSTO = isset($item->imposto->vTotTrib) && $item->imposto->vTotTrib !== "" ? "'" . (string) $item->imposto->vTotTrib . "'" : "null";
+        $vTotTribIMPOSTO = isset($item->imposto->vTotTrib) && $item->imposto->vTotTrib !== "" ? (string) $item->imposto->vTotTrib : null ;
         foreach ($item->imposto->children() as $filho) {
-            $imposto = "'" . $filho->getName() . "'";
+            $imposto = $filho->getName();
             if ($filho->getName() === "IPI") {
                 foreach ($filho->children() as $ipi) {
                     if ($ipi->getName() !== "cEnq") {
-                        $nomeImposto = "'" . $ipi->getName() . "'";
+                        $nomeImposto = $ipi->getName();
                         $campos = $ipi;
                     }
                 }
             } else {
                 $nomeImposto = $filho->children()->count() > 0 ? $filho->children()->getName() : null;
                 $campos = $filho->$nomeImposto;
-                $nomeImposto = "'" . $nomeImposto . "'";
             }
 
-            if ($imposto == "'ICMS'" ) {
-                $orig = isset($campos->orig) ? "'" . (string) $campos->orig . "'" : "null";
-                $CSOSN = isset($campos->CSOSN) ? "'" . (string) $campos->CSOSN . "'" : "null";
-                $modBCST = isset($campos->modBCST) ? "'" . (string) $campos->modBCST . "'" : "null";
-                $pMVAST = isset($campos->pMVAST) ? "'" . (string) $campos->pMVAST . "'" : "null";
-                $vBCST = isset($campos->vBCST) ? "'" . (string) $campos->vBCST . "'" : "null";
-                $pICMSST = isset($campos->pICMSST) ? "'" . (string) $campos->pICMSST . "'" : "null";
-                $vICMSST = isset($campos->vICMSST) ? "'" . (string) $campos->vICMSST . "'" : "null";
-                $CST = isset($campos->CST) ? "'" . (string) $campos->CST . "'" : "null";
-                $modBC = isset($campos->modBC) ? "'" . (string) $campos->modBC . "'" : "null";
-                $vBC = isset($campos->vBC) ? "'" . (string) $campos->vBC . "'" : "null";
-                $pICMS = isset($campos->pICMS) ? "'" . (string) $campos->pICMS . "'" : "null";
-                $vICMS = isset($campos->vICMS) ? "'" . (string) $campos->vICMS . "'" : "null";
+            if ($imposto == "ICMS" ) {
+                $orig = isset($campos->orig) ? (string) $campos->orig : null ;
+                $CSOSN = isset($campos->CSOSN) ? (string) $campos->CSOSN : null ;
+                $modBCST = isset($campos->modBCST) ? (string) $campos->modBCST : null ;
+                $pMVAST = isset($campos->pMVAST) ? (string) $campos->pMVAST : null ;
+                $vBCST = isset($campos->vBCST) ? (string) $campos->vBCST : null ;
+                $pICMSST = isset($campos->pICMSST) ? (string) $campos->pICMSST : null ;
+                $vICMSST = isset($campos->vICMSST) ? (string) $campos->vICMSST : null ;
+                $CST = isset($campos->CST) ? (string) $campos->CST : null ;
+                $modBC = isset($campos->modBC) ? (string) $campos->modBC : null ;
+                $vBC = isset($campos->vBC) ? (string) $campos->vBC : null ;
+                $pICMS = isset($campos->pICMS) ? (string) $campos->pICMS : null ;
+                $vICMS = isset($campos->vICMS) ? (string) $campos->vICMS : null ;
 
-                $sqlImposto = "INSERT INTO fisnotaproduicms(idNota,nItem,imposto,nomeImposto,vTotTrib,orig,CSOSN,modBCST,pMVAST,vBCST,pICMSST,vICMSST,CST,modBC,vBC,pICMS,vICMS) 
-                               VALUES ($idNota,$nItem,$imposto,$nomeImposto,$vTotTribIMPOSTO,$orig,$CSOSN,$modBCST,$pMVAST,$vBCST,$pICMSST,$vICMSST,$CST,$modBC,$vBC,$pICMS,$vICMS) ";
-
+                $fisnotaproduicmsEntrada = array(
+                    "idNota" => $idNota,
+                    "nItem" => $nItem,
+                    "imposto" => $imposto,
+                    "nomeImposto" => $nomeImposto,
+                    "vTotTrib" => $vTotTribIMPOSTO,
+                    "orig" => $orig,
+                    "CSOSN" => $CSOSN,
+                    "modBCST" => $modBCST,
+                    "pMVAST" => $pMVAST,
+                    "vBCST" => $vBCST,
+                    "pICMSST" => $pICMSST,
+                    "vICMSST" => $vICMSST,
+                    "CST" => $CST,
+                    "modBC" => $modBC,
+                    "vBC" => $vBC,
+                    "pICMS" => $pICMS,
+                    "vICMS" => $vICMS
+                ); 
+                $progr = new chamaprogress();
+                $retorno = $progr->executarprogress("impostos/app/1/fisnotaproduicms_inserir",json_encode($fisnotaproduicmsEntrada));
+                fwrite($arquivo,$identificacao."-ICMS_RETORNO->".$retorno."\n");
 
             } else {
 
-                $cEnq = isset($filho->cEnq) ? "'" . (string) $filho->cEnq . "'" : "null";
-                $CST = isset($campos->CST) ? "'" . (string) $campos->CST . "'" : "null";
-                $vBC = isset($campos->vBC) ? "'" . (string) $campos->vBC . "'" : "null";
+                $cEnq = isset($filho->cEnq) ? (string) $filho->cEnq : null ;
+                $CST = isset($campos->CST) ? (string) $campos->CST : null ;
+                $vBC = isset($campos->vBC) ? (string) $campos->vBC : null ;
 
-                $percentual = isset($campos->{"p".$filho->getName()}) ? "'" . (string) $campos->{"p".$filho->getName()} . "'" : "null";
-                $valor = isset($campos->{"v".$filho->getName()}) ? "'" . (string) $campos->{"v".$filho->getName()} . "'" : "null";
+                $percentual = isset($campos->{"p".$filho->getName()}) ? (string) $campos->{"p".$filho->getName()} : null ;
+                $valor = isset($campos->{"v".$filho->getName()}) ? (string) $campos->{"v".$filho->getName()} : null ;
 
-                $sqlImposto = "INSERT INTO fisnotaproduimposto(idNota,nItem,imposto,nomeImposto,cEnq,CST,vBC,percentual,valor) 
-                               VALUES ($idNota,$nItem,$imposto,$nomeImposto,$cEnq,$CST,$vBC,$percentual,$valor) ";
 
+                $fisnotaproduimpostoEntrada = array(
+                    "idNota" => $idNota,
+                    "nItem" => $nItem,
+                    "imposto" => $imposto,
+                    "nomeImposto" => $nomeImposto,
+                    "cEnq" => $cEnq,
+                    "CST" => $CST,
+                    "vBC" => $vBC,
+                    "percentual" => $percentual,
+                    "valor" => $valor
+                ); 
+                $progr = new chamaprogress();
+                $retorno = $progr->executarprogress("impostos/app/1/fisnotaproduimposto_inserir",json_encode($fisnotaproduimpostoEntrada));
+                fwrite($arquivo,$identificacao."-IMPOSTO_RETORNO->".$retorno."\n");
 
             }
-            //LOG
-            if (isset($LOG_NIVEL)) {
-                if ($LOG_NIVEL >= 3) {
-                    fwrite($arquivo, $identificacao . "-SQL_Imposto->" . $sqlImposto . "\n");
-                }
-            }
-            //LOG
 
-            $atualizarImposto = mysqli_query($conexao, $sqlImposto);
         }
     }
 }
