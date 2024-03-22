@@ -262,7 +262,7 @@ joPerfil:ADD("substlCMS","N").
 joPerfil:ADD("prodZFM","N").
 
 joProduto = NEW JsonObject().
-joProduto:ADD("codigo",geralprodutos.eanProduto). /* 7891960708166 */ 
+joProduto:ADD("codigo",geralprodutos.eanProduto).  
 joProduto:ADD("codInterno","N").
 joProduto:ADD("descricao",geralprodutos.nomeProduto).
 joProduto:ADD("ncm",vcodigoNcm).
@@ -274,8 +274,6 @@ joImendes = NEW JsonObject().
 joImendes:ADD("emit",joEmit).
 joImendes:ADD("perfil",joPerfil).
 joImendes:ADD("produtos",jaProdutos).
-
-
 
 
 joImendes:Write(lcJsonRequest).
@@ -312,7 +310,6 @@ if type-of(netResponse:Entity, JsonObject) then do:
     ttfishistorico.cnpj       =     joCabecalho:GetCharacter("cnpj").
     ttfishistorico.dthr       =    joCabecalho:GetDateTime("dthr").
     ttfishistorico.transacao  =     joCabecalho:GetCharacter("transacao").
-    //ttfishistorico.transacao  =     INT64(joCabecalho:GetCharacter("transacao")).
     ttfishistorico.mensagem  =     joCabecalho:GetCharacter("mensagem").
     ttfishistorico.mensagem  =     joCabecalho:GetCharacter("mensagem").
     ttfishistorico.prodEnv  =     joCabecalho:GetInteger("prodEnv").
@@ -387,19 +384,15 @@ if type-of(netResponse:Entity, JsonObject) then do:
         END.
         
         jaRegras = joGrupo:GetJsonArray("Regras").
-        //jaRegras:Write(lcJsonauxiliar, TRUE).
+         //jaRegras:Write(lcJsonauxiliar, TRUE).
          //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.
         DO iRegras = 1 to jaRegras:length on error undo, next:
             joRegra = jaRegras:GetJsonObject(iRegras).
-            //joRegra:Write(lcJsonauxiliar, TRUE).
-            //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.
             
             jauFs = joRegra:GetJsonArray("uFs").
-            //jauFs:Write(lcJsonauxiliar, TRUE).
-                 //MESSAGE STRING(lcJsonauxiliar) view-as alert-box.
+         
             DO iuFs = 1 to jauFs:length on error undo, next:
                 jouF = jauFs:GetJsonObject(iuFs).
-                //jouF:Write(lcJsonauxiliar, TRUE).
                 vcodigoEstado = jouF:GetCharacter("uF").                            
                 IF vcodigoEstado = ? 
                 THEN DO:
@@ -409,7 +402,6 @@ if type-of(netResponse:Entity, JsonObject) then do:
                 END.
                     
                 joCFOP = jouF:GetJsonObject("CFOP").
-                //joCFOP:Write(lcJsonauxiliar, TRUE).
                 vcFOP = joCFOP:GetCharacter("cFOP").                                
                 IF vcFOP = ? 
                 THEN DO:
@@ -417,11 +409,9 @@ if type-of(netResponse:Entity, JsonObject) then do:
                     RETURN.
                 END.                            
                 jacaracTib = joCFOP:GetJsonArray("CaracTrib").
-                //jacaracTib:Write(lcJsonauxiliar, TRUE).
                                  
                 DO icaracTib = 1 to jacaracTib:length on error undo, next:
                     jocaracTib = jacaracTib:GetJsonObject(icaracTib).
-                    //jocaracTib:Write(lcJsonauxiliar, TRUE).
                                         
                     vcodigoCaracTrib = jocaracTib:GetCharacter("codigo").
                     vfinalidade = jocaracTib:GetCharacter("finalidade").
