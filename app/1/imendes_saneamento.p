@@ -216,16 +216,6 @@ ELSE DO:
    vsimplesN = "N".
 END.    
 
-/* GERAL PRODUTOS */
-FIND geralprodutos WHERE geralprodutos.idGeralProduto = ttentrada.idGeralProduto NO-LOCK. 
-
-/* FISCAL GRUPO */
-vcodigoNcm = "".
-find fiscalgrupo where fiscalgrupo.idGrupo = geralprodutos.idGrupo  no-lock no-error.
-if avail fiscalgrupo then do:
-    vcodigoNcm =  fiscalgrupo.codigoNcm.         
-end.
-
 /* JSON DE REQUEST */       
 joEmit = NEW JsonObject().
 joEmit:ADD("amb",apifiscal.tpAmb).
@@ -241,13 +231,69 @@ joEmit:ADD("interdependente","N").  // - Verificar com Daniel
 jaUF = NEW JsonArray().
 jaCarac = NEW JsonArray().
 
-/* GERAL FORNECIMENTO */
-FOR EACH geralfornecimento WHERE geralfornecimento.idGeralProduto = geralprodutos.idGeralProduto NO-LOCK.
+/* GERAL PRODUTOS */
+jaProdutos = NEW JsonArray().
+
+if ttentrada.idGeralProduto <> ? then do:
     
-    FIND bgeralpessoasfornecedor WHERE bgeralpessoasfornecedor.cpfCnpj = geralfornecimento.Cnpj NO-LOCK.
-        jaUF:ADD(bgeralpessoasfornecedor.codigoEstado).
-        jaCarac:ADD(bgeralpessoasfornecedor.caracTrib).
+    RUN LOG("idGeralProduto Recebido " + STRING(ttentrada.idGeralProduto)).
+    
+    FIND geralprodutos WHERE geralprodutos.idGeralProduto = ttentrada.idGeralProduto NO-LOCK. 
+
+    /* FISCAL GRUPO */
+    vcodigoNcm = "".
+    find fiscalgrupo where fiscalgrupo.idGrupo = geralprodutos.idGrupo  no-lock no-error.
+    if avail fiscalgrupo then do:
+        vcodigoNcm =  fiscalgrupo.codigoNcm.         
+    end.
+
+    /* GERAL FORNECIMENTO */
+    FOR EACH geralfornecimento WHERE geralfornecimento.idGeralProduto = geralprodutos.idGeralProduto NO-LOCK.
         
+        FIND bgeralpessoasfornecedor WHERE bgeralpessoasfornecedor.cpfCnpj = geralfornecimento.Cnpj NO-LOCK.
+            jaUF:ADD(bgeralpessoasfornecedor.codigoEstado).
+            jaCarac:ADD(bgeralpessoasfornecedor.caracTrib).
+            
+    END.
+    joProduto = NEW JsonObject().
+    joProduto:ADD("codigo",geralprodutos.eanProduto).  
+    joProduto:ADD("codInterno","N").
+    joProduto:ADD("descricao",geralprodutos.nomeProduto).
+    joProduto:ADD("ncm",vcodigoNcm).
+    
+    jaProdutos:ADD(joProduto).
+    
+end.
+ELSE DO:
+    RUN LOG("idGeralProduto Recebido Todos nao atualizados")).
+    
+    FOR EACH geralprodutos WHERE geralprodutos.dataAtualizacao = ? NO-LOCK. 
+
+        /* FISCAL GRUPO */
+        vcodigoNcm = "".
+        find fiscalgrupo where fiscalgrupo.idGrupo = geralprodutos.idGrupo  no-lock no-error.
+        if avail fiscalgrupo then do:
+            vcodigoNcm =  fiscalgrupo.codigoNcm.         
+        end.
+
+        /* GERAL FORNECIMENTO */
+        FOR EACH geralfornecimento WHERE geralfornecimento.idGeralProduto = geralprodutos.idGeralProduto NO-LOCK.
+            
+            FIND bgeralpessoasfornecedor WHERE bgeralpessoasfornecedor.cpfCnpj = geralfornecimento.Cnpj NO-LOCK.
+                jaUF:ADD(bgeralpessoasfornecedor.codigoEstado).
+                jaCarac:ADD(bgeralpessoasfornecedor.caracTrib).
+                
+        END.
+        joProduto = NEW JsonObject().
+        joProduto:ADD("codigo",geralprodutos.eanProduto).  
+        joProduto:ADD("codInterno","N").
+        joProduto:ADD("descricao",geralprodutos.nomeProduto).
+        joProduto:ADD("ncm",vcodigoNcm).
+        
+        jaProdutos:ADD(joProduto).
+        
+    END.
+    
 END.
  
 
@@ -261,14 +307,6 @@ joPerfil:ADD("origem",geralpessoas.origem).
 joPerfil:ADD("substlCMS","N").
 joPerfil:ADD("prodZFM","N").
 
-joProduto = NEW JsonObject().
-joProduto:ADD("codigo",geralprodutos.eanProduto).  
-joProduto:ADD("codInterno","N").
-joProduto:ADD("descricao",geralprodutos.nomeProduto).
-joProduto:ADD("ncm",vcodigoNcm).
-
-jaProdutos = NEW JsonArray().
-jaProdutos:ADD(joProduto).
 
 joImendes = NEW JsonObject().
 joImendes:ADD("emit",joEmit).
@@ -548,4 +586,16 @@ procedure montasaida.
     lokJson = hsaida:WRITE-JSON("LONGCHAR", vlcSaida, TRUE).
     put unformatted string(vlcSaida).
 
+END PROCEDURE.
+
+
+procedure LOG.
+    DEF INPUT PARAM vmensagem AS CHAR.    
+    OUTPUT TO VALUE(vtmp + "/impostos_" + string(today,"99999999") + ".log") APPEND.
+        PUT UNFORMATTED 
+            STRING (TIME,"HH:MM:SS")
+            " progress -> " vmensagem
+            SKIP.
+    OUTPUT CLOSE.
+    
 END PROCEDURE.
