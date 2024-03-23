@@ -265,9 +265,9 @@ if ttentrada.idGeralProduto <> ? then do:
     
 end.
 ELSE DO:
-    RUN LOG("idGeralProduto Recebido Todos nao atualizados")).
+    RUN LOG("idGeralProduto Recebido Todos nao atualizados").
     
-    FOR EACH geralprodutos WHERE geralprodutos.dataAtualizacao = ? NO-LOCK. 
+    FOR EACH geralprodutos WHERE geralprodutos.dataAtualizacaoTributaria = ? NO-LOCK. 
 
         /* FISCAL GRUPO */
         vcodigoNcm = "".
@@ -283,6 +283,7 @@ ELSE DO:
                 jaUF:ADD(bgeralpessoasfornecedor.codigoEstado).
                 jaCarac:ADD(bgeralpessoasfornecedor.caracTrib).
                 
+                
         END.
         joProduto = NEW JsonObject().
         joProduto:ADD("codigo",geralprodutos.eanProduto).  
@@ -291,7 +292,12 @@ ELSE DO:
         joProduto:ADD("ncm",vcodigoNcm).
         
         jaProdutos:ADD(joProduto).
-        
+      
+        DO ON ERROR UNDO:
+            FIND CURRENT geralproduto EXCLUSIVE.
+            geralproduto.idGrupo = vidgrupo.
+            geralproduto.dataAtualizacaoTributaria = DATETIME(TODAY, MTIME).
+        end.
     END.
     
 END.
@@ -550,11 +556,11 @@ if type-of(netResponse:Entity, JsonObject) then do:
             end.  /* iuFs */
         end. /* iRegras */
         
-        DO ON ERROR UNDO:
+        /* DO ON ERROR UNDO:
             FIND CURRENT geralproduto EXCLUSIVE.
             geralproduto.idGrupo = vidgrupo.
             geralproduto.dataAtualizacaoTributaria = DATETIME(TODAY, MTIME).
-        end.
+        end. */
         
     end. /* iGrupos */ 
 END.
