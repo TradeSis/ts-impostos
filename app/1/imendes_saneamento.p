@@ -48,7 +48,7 @@ DEF VAR jouF             AS  JsonObject NO-UNDO.
 DEF VAR joCFOP      AS  JsonObject NO-UNDO.
 DEF VAR jacaracTib     AS  JsonArray NO-UNDO.
 DEF VAR jocaracTib      AS  JsonObject NO-UNDO.
-
+DEF VAR japrodEan     AS  JsonArray NO-UNDO. 
 
 def input param vlcentrada as longchar. /* JSON ENTRADA */
 def input param vtmp       as char.     /* CAMINHO PROGRESS_TMP */
@@ -103,12 +103,15 @@ DEF VAR vdtVigFin AS CHAR.
 DEF VAR vcodigoNcm AS CHAR.
 DEF VAR vcodigoCest AS CHAR.
 DEF VAR vidHistorico AS INT.
+DEF VAR veanProduto LIKE geralprodutos.eanProduto.
+
 
 //variaveis de contador
 DEF VAR iGrupos AS INT.   
 DEF VAR iRegras AS INT.
 DEF VAR iuFs AS INT.
 DEF VAR icaracTib AS INT.
+DEF VAR iprodEan AS INT.
 
 
 
@@ -244,7 +247,8 @@ if ttentrada.idGeralProduto <> ? then do:
     vcodigoNcm = "".
     find fiscalgrupo where fiscalgrupo.idGrupo = geralprodutos.idGrupo  no-lock no-error.
     if avail fiscalgrupo then do:
-        vcodigoNcm =  fiscalgrupo.codigoNcm.         
+        vcodigoNcm =  fiscalgrupo.codigoNcm.
+        vidgrupo = fiscalgrupo.idgrupo.
     end.
 
     /* GERAL FORNECIMENTO */
@@ -255,8 +259,9 @@ if ttentrada.idGeralProduto <> ? then do:
             jaCarac:ADD(bgeralpessoasfornecedor.caracTrib).
             
     END.
+    
     joProduto = NEW JsonObject().
-    joProduto:ADD("codigo",geralprodutos.eanProduto).  
+    joProduto:ADD("codigo",STRING(geralprodutos.eanProduto)).  
     joProduto:ADD("codInterno","N").
     joProduto:ADD("descricao",geralprodutos.nomeProduto).
     joProduto:ADD("ncm",vcodigoNcm).
@@ -265,7 +270,7 @@ if ttentrada.idGeralProduto <> ? then do:
     
 end.
 ELSE DO:
-    RUN LOG("idGeralProduto Recebido Todos nao atualizados").
+    //RUN LOG("idGeralProduto Recebido Todos nao atualizados").
     
     FOR EACH geralprodutos WHERE geralprodutos.dataAtualizacaoTributaria = ? NO-LOCK. 
 
@@ -273,7 +278,8 @@ ELSE DO:
         vcodigoNcm = "".
         find fiscalgrupo where fiscalgrupo.idGrupo = geralprodutos.idGrupo  no-lock no-error.
         if avail fiscalgrupo then do:
-            vcodigoNcm =  fiscalgrupo.codigoNcm.         
+            vcodigoNcm =  fiscalgrupo.codigoNcm.
+            vidgrupo = fiscalgrupo.idgrupo.
         end.
 
         /* GERAL FORNECIMENTO */
@@ -283,21 +289,16 @@ ELSE DO:
                 jaUF:ADD(bgeralpessoasfornecedor.codigoEstado).
                 jaCarac:ADD(bgeralpessoasfornecedor.caracTrib).
                 
-                
         END.
+        
         joProduto = NEW JsonObject().
-        joProduto:ADD("codigo",geralprodutos.eanProduto).  
+        joProduto:ADD("codigo",STRING(geralprodutos.eanProduto)).  
         joProduto:ADD("codInterno","N").
         joProduto:ADD("descricao",geralprodutos.nomeProduto).
         joProduto:ADD("ncm",vcodigoNcm).
         
         jaProdutos:ADD(joProduto).
       
-        DO ON ERROR UNDO:
-            FIND CURRENT geralproduto EXCLUSIVE.
-            geralproduto.idGrupo = vidgrupo.
-            geralproduto.dataAtualizacaoTributaria = DATETIME(TODAY, MTIME).
-        end.
     END.
     
 END.
@@ -343,7 +344,8 @@ netResponse = netClient:EXECUTE(netRequest).
 //TRATA RETORNO
 if type-of(netResponse:Entity, JsonObject) then do:
     joResponse = CAST(netResponse:Entity, JsonObject).
-    /*joResponse:Write(lcJsonResponse).*/
+    joResponse:Write(lcJsonResponse).
+    RUN LOG("RETORNO IMENDES " + STRING(lcJsonResponse)).
     
     joCabecalho = joResponse:GetJsonObject("Cabecalho").
         
@@ -556,12 +558,19 @@ if type-of(netResponse:Entity, JsonObject) then do:
             end.  /* iuFs */
         end. /* iRegras */
         
-        /* DO ON ERROR UNDO:
-            FIND CURRENT geralproduto EXCLUSIVE.
-            geralproduto.idGrupo = vidgrupo.
-            geralproduto.dataAtualizacaoTributaria = DATETIME(TODAY, MTIME).
-        end. */
-        
+        japrodEan = joGrupo:GetJsonArray("prodEan").
+         DO iprodEan = 1 to japrodEan:length on error undo, next:
+            veanProduto = int64(japrodEan:GetCharacter(iprodEan)).
+            RUN LOG("eanProduto " + string(veanProduto)).
+            
+            DO ON ERROR UNDO:
+                FIND geralprodutos WHERE geralprodutos.eanProduto = veanProduto EXCLUSIVE.
+                geralprodutos.idGrupo = vidgrupo.
+                geralprodutos.dataAtualizacaoTributaria = DATETIME(TODAY, MTIME).
+            end.
+            
+         END. /* iprodEan */
+            
     end. /* iGrupos */ 
 END.
 
